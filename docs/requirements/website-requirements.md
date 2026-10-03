@@ -6,7 +6,7 @@ Explain the company thesis, introduce three independent offerings, and direct vi
 
 | ID | Requirement | Acceptance |
 |---|---|---|
-| CRV-001 | Build one page: header, hero, product cards, Documents/Product/Work explanation, closing, footer | All supplied copy sections are present in meaningful reading order |
+| CRV-001 | Build one page: header, hero, product cards with the independence note, closing, footer | All supplied copy sections are present in meaningful reading order |
 | CRV-002 | Present Markset, Intentset, and Streamlane as distinct offerings | Separate names, descriptions, maturity labels, and independently configured destinations |
 | CRV-003 | Use real status and destinations | Markset points to markset.org; Intentset URL remains unset until confirmed; Streamlane is labeled in development and not publicly available |
 | CRV-004 | Keep independent adoption explicit | Page states that the products need not be adopted together |
@@ -17,7 +17,7 @@ Explain the company thesis, introduce three independent offerings, and direct vi
 
 ## Content authority
 
-`site-copy.md` is the editorial source. The wireframe contains that content in context. One adjustment in this handoff removes a local link into the Intentset repo: show the draft label until a public URL is confirmed. A real destination must be supplied before enabling “Explore Intentset.” Do not invent domain ownership or GitHub links.
+`site-copy.md` is the editorial source. For Intentset, show the draft label until a public URL is confirmed. A real destination must be supplied before enabling “Explore Intentset.” Do not invent domain ownership or GitHub links.
 
 ## Visual direction
 
