@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!dist.staging-*",
+      "!dist.previous-*",
+      "!docs/requirements/wireframes",
+      "!e2e/.build",
+      "!test-results",
+      "!playwright-report"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "double", "semicolons": "always", "trailingCommas": "all" }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": { "preset": "recommended" }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "off" } } },
+  "overrides": [
+    {
+      // The stylesheet is written one short rule to a line on purpose, as in
+      // Markset's. Linting still applies.
+      "includes": ["**/*.css"],
+      "formatter": { "enabled": false },
+      "linter": {
+        "rules": {
+          "style": {
+            // A theme layered over markset.css routinely follows a rule with a
+            // less specific one. That is the cascade working, not a mistake.
+            "noDescendingSpecificity": "off"
+          }
+        }
+      }
+    }
+  ]
+}

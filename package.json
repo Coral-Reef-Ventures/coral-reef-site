@@ -1,0 +1,29 @@
+{
+  "name": "coral-reef-site",
+  "private": true,
+  "type": "module",
+  "description": "The Coral Reef Ventures website: one Markset page, rendered by the Markset reference implementation.",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "site": "node site/build.ts",
+    "site:watch": "node site/serve.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@markset-lang/parser": "^0.3.4",
+    "@markset-lang/render-html": "^0.3.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.13",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^26.5.1",
+    "typescript": "^7.0.2"
+  },
+  "homepage": "https://coralreefventures.com/"
+}
