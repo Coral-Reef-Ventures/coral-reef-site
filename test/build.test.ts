@@ -7,7 +7,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
-import { build, CANONICAL, META } from "../site/build.ts";
+import { build, CANONICAL, META, SCHEME_SCRIPT } from "../site/build.ts";
 import { PRODUCTS } from "../site/products.ts";
 
 let dir: string;
@@ -30,16 +30,17 @@ const text = (s: string) =>
 test("CRV-001: every section of the copy is present, in reading order", () => {
   const order = [
     "Coral Reef Ventures",
-    "Documents · Product · Work",
+    "Documents · Intent · Work · Usage",
     "Building for software teams in the agentic era.",
     "Open foundations and focused tools for creating software with humans and AI working together.",
     "Explore our work",
-    "Three ideas. One direction.",
+    "Four ideas. One direction.",
     "AI is changing how software gets built.",
     "Coral Reef Ventures develops open foundations and practical products for that new way of working.",
     "Markset",
     "Intentset",
     "Streamlane",
+    "Driftline",
     "These offerings share a direction, not an adoption requirement.",
     "Better foundations for what comes next.",
     "We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.",
@@ -58,7 +59,7 @@ test("CRV-001: every section of the copy is present, in reading order", () => {
 
 test("CRV-006: headings descend one level at a time, with one h1", () => {
   const levels = [...html.matchAll(/<h([1-6])\b/g)].map((m) => Number(m[1]));
-  assert.deepEqual(levels, [1, 2, 3, 3, 3, 2]);
+  assert.deepEqual(levels, [1, 2, 3, 3, 3, 3, 2]);
 });
 
 test("CRV-002: each product has its own name, tagline, description and label", () => {
@@ -75,9 +76,10 @@ test("CRV-003: only confirmed destinations are links", () => {
   // The canonical and og:url are the page itself, not outbound links.
   const outbound = external.filter((href) => href !== CANONICAL);
   assert.deepEqual(outbound, ["https://markset.org", "https://intentset.org"]);
-  assert.doesNotMatch(html, /href="[^"]*streamlane/i);
+  assert.doesNotMatch(html, /href="[^"]*(streamlane|driftline)/i);
   assert.match(text(html), /Not publicly available yet\./);
   assert.match(text(html), /streamlane\.app/);
+  assert.match(text(html), /driftline\.app/);
 });
 
 test("the contact channel is the approved address, as a mailto link", () => {
@@ -97,8 +99,13 @@ test("CRV-006: skip link and in-page anchors resolve to ids on the page", () => 
   }
 });
 
-test("CRV-007: no script, no form, nothing loaded from another origin", async () => {
-  assert.doesNotMatch(html, /<script/i);
+test("CRV-007: no form, nothing loaded from another origin, and no script but the scheme's", async () => {
+  // The one script remembers the reader's color scheme in their own browser,
+  // as markset.org's and intentset.org's do, and sends nothing anywhere: it is
+  // not a tracking dependency, which is what CRV-007 rules out.
+  assert.equal((html.match(/<script/gi) ?? []).length, 1);
+  assert.ok(html.includes(SCHEME_SCRIPT), "and it is the scheme script");
+  assert.doesNotMatch(SCHEME_SCRIPT, /fetch|XMLHttpRequest|sendBeacon|https?:/, "it sends nothing anywhere");
   assert.doesNotMatch(html, /<form/i);
   for (const [tag, href] of html.matchAll(/<link [^>]*href="([^"]+)"/g)) {
     if (tag.includes('rel="canonical"')) continue;
@@ -112,14 +119,18 @@ test("CRV-007: no script, no form, nothing loaded from another origin", async ()
 
 test("CRV-008: title, description, canonical and social metadata", () => {
   assert.match(html, new RegExp(`<title>${META.title}</title>`));
+  assert.ok(META.title.startsWith(`${META.siteName} · `), "the family's pattern: the name, a middle dot, what it is");
   assert.match(html, new RegExp(`<meta name="description" content="${META.description}">`));
   assert.match(html, new RegExp(`<link rel="canonical" href="${CANONICAL}">`));
   for (const property of ["og:type", "og:site_name", "og:title", "og:description", "og:url"]) {
     assert.match(html, new RegExp(`<meta property="${property}" content="[^"]+">`));
   }
   assert.match(html, /<meta name="twitter:card" content="summary">/);
-  // No approved brand asset exists yet, so nothing may name an image.
-  assert.doesNotMatch(html, /og:image|twitter:image|rel="icon"/);
+  // The mark is approved (a puffer fish, spines as nodes, 2026-10-03) and is the favicon and the
+  // header's image. There is still no social image, so nothing may name one.
+  assert.match(html, /<link rel="icon" type="image\/svg\+xml" href="icon\.svg">/);
+  assert.match(html, /<a class="site-brand" href="\.\/"><img class="site-mark" src="icon\.svg" alt=""/);
+  assert.doesNotMatch(html, /og:image|twitter:image/);
 });
 
 test("the build leaves no placeholder behind", () => {

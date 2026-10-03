@@ -208,7 +208,7 @@ function startWatching(): void {
 }
 
 async function main(argv: string[]): Promise<void> {
-  const { values } = parseArgs({ args: argv, options: { port: { type: "string", default: "3000" } } });
+  const { values } = parseArgs({ args: argv, options: { port: { type: "string", default: "3004" } } });
   const port = Number(values.port);
   process.stdout.write("site: building\n");
   if (!(await rebuild())) process.exitCode = 1;
