@@ -1,5 +1,5 @@
 /**
- * The three offerings, and the one place their names, status labels and
+ * The four offerings, and the one place their names, status labels and
  * destinations are written down (backlog item 3).
  *
  * A destination is either confirmed and public, in which case the card links to
@@ -7,16 +7,16 @@
  * That is the whole guard against a broken call to action (CRV-003): a product
  * gets a link by gaining a `cta` here once its public URL is confirmed, and not
  * before. A planned destination that is not yet an
- * invitation, like streamlane.app, is `plannedDestination` and renders as text.
+ * invitation, like streamlane.app and driftline.app, is `plannedDestination` and renders as text.
  *
  * Copy is from docs/requirements/site-copy.md, which is the editorial source.
  */
 
 export interface Product {
   /** Used as the card's class, which picks its accent color in site.css. */
-  slug: "markset" | "intentset" | "streamlane";
+  slug: "markset" | "intentset" | "streamlane" | "driftline";
   name: string;
-  /** Which of documents, product and work it serves; the card's kicker. */
+  /** What it handles: documents, intent, work or usage; the card's kicker. */
   area: string;
   tagline: string;
   description: string;
@@ -44,7 +44,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: "intentset",
     name: "Intentset",
-    area: "Product",
+    area: "Intent",
     tagline: "Keep product intent connected to what you ship.",
     description:
       "An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.",
@@ -62,10 +62,21 @@ export const PRODUCTS: Product[] = [
     availability: "Not publicly available yet.",
     plannedDestination: "streamlane.app",
   },
+  {
+    slug: "driftline",
+    name: "Driftline",
+    area: "Usage",
+    tagline: "Know whether what you shipped is working.",
+    description:
+      "Product analytics that understands what your product is meant to do. It watches how each release is adopted, asks users why when something stalls, traces errors to the team that owns them, and runs feature flags and betas.",
+    label: "Product · In planning",
+    availability: "Not publicly available yet.",
+    plannedDestination: "driftline.app",
+  },
 ];
 
 /**
- * The product cards as Markset source: a three-column grid, one item per
+ * The product cards as Markset source: a two-column grid, one item per
  * product, each opened with `- {.product .<slug>}` so the theme can give it its
  * accent (spec §2.5). Generated rather than assembled as HTML, so the page stays
  * one Markset document and the renderer is the only thing writing markup.
@@ -93,7 +104,7 @@ export function productGrid(products: Product[] = PRODUCTS): string {
     }
     return lines.join("\n");
   });
-  return `:::grid{cols=3 .products}\n${items.join("\n\n")}\n:::`;
+  return `:::grid{cols=2 .products}\n${items.join("\n\n")}\n:::`;
 }
 
 /** A call to action must point at a public https URL; anything else fails the build. */

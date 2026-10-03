@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Explain the company thesis, introduce three independent offerings, and direct visitors to confirmed product destinations. This is a concise company site, not a combined product application.
+Explain the company thesis, introduce four independent offerings, and direct visitors to confirmed product destinations. This is a concise company site, not a combined product application.
 
 | ID | Requirement | Acceptance |
 |---|---|---|
 | CRV-001 | Build one page: header, hero, product cards with the independence note, closing with contact address, footer | All supplied copy sections are present in meaningful reading order |
-| CRV-002 | Present Markset, Intentset, and Streamlane as distinct offerings | Separate names, descriptions, maturity labels, and independently configured destinations |
-| CRV-003 | Use real status and destinations | Markset points to markset.org; Intentset points to intentset.org (confirmed 2026-10-02); Streamlane is labeled in development and not publicly available |
+| CRV-002 | Present Markset, Intentset, Streamlane, and Driftline as distinct offerings | Separate names, descriptions, maturity labels, and independently configured destinations |
+| CRV-003 | Use real status and destinations | Markset points to markset.org; Intentset points to intentset.org (confirmed 2026-10-02); Streamlane is labeled in development and Driftline in planning, and neither is publicly available |
 | CRV-004 | Keep independent adoption explicit | Page states that the products need not be adopted together |
 | CRV-005 | Support mobile and desktop | At 390px and 1440px, cards and text fit without horizontal scrolling or clipped controls |
 | CRV-006 | Provide accessible navigation | Semantic heading order, visible focus, skip link, keyboard-accessible links, readable contrast, meaningful labels |
@@ -21,7 +21,7 @@ Explain the company thesis, introduce three independent offerings, and direct vi
 
 ## Visual direction
 
-Generous whitespace, large readable typography, subtle coral/network suggestion, three restrained product accents. Preserve product identity. Do not imply that Markset or Intentset is a paid prerequisite to Streamlane.
+Generous whitespace, large readable typography, subtle coral/network suggestion, four restrained product accents. Preserve product identity. Do not imply that Markset or Intentset is a paid prerequisite to Streamlane.
 
 ## Launch gates
 
