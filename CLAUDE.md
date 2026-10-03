@@ -9,8 +9,8 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
 
 - **Copy is approved text.** Use `site-copy.md` verbatim; do not write new marketing copy, invent domains, GitHub links,
   contact channels (the one approved is hello@coralreefventures.com) or brand assets (logo, favicon, social image).
-- **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed. Intentset has
-  none yet; streamlane.app is a planned destination and renders as text, never as a link.
+- **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
+  (markset.org, intentset.org); streamlane.app is a planned destination and renders as text, never as a link.
 - **No script, form, tracking or external font** in the output (CRV-007). Tests enforce it.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
 - Don't add dependencies without asking.
@@ -33,6 +33,5 @@ From the requirements' launch gates, not yet settled:
 
 - Hosting destination. `homepage` in `package.json` (the canonical URL) is `https://coralreefventures.com/`, assumed from
   the company email domain. No CNAME is written; a custom domain is set in the repository's Pages settings.
-- Intentset's public URL.
 - Brand assets: there is no logo, favicon or social image, so the social card is text only.
 - Product claims and license labels, to be confirmed against actual releases.
