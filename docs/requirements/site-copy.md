@@ -64,7 +64,7 @@ Product analytics that understands what your product is meant to do. It watches 
 **Availability:** Not publicly available yet.  
 **Destination note:** driftline.app is the planned product destination, shown as text like streamlane.app.
 
-*Added 2026-10-03:* Driftline joined as the fourth offering, and the section heading became "Four ideas. One direction." Its card copy was drafted that day and awaits approval. The same day the areas were renamed so each names what its product handles: Documents (Markset), Intent (Intentset), Work (Streamlane) and Usage (Driftline). "Product" fit neither Intentset nor Driftline. The hero eyebrow, the thesis line, each card's kicker and the page title (Coral Reef Ventures · Documents. Intent. Work. Usage.) all use the four words.
+*Added 2026-10-03:* Driftline joined as the fourth offering, and the section heading became "Four ideas. One direction." Its card copy was drafted and approved that day. The same day the areas were renamed so each names what its product handles: Documents (Markset), Intent (Intentset), Work (Streamlane) and Usage (Driftline). "Product" fit neither Intentset nor Driftline. The hero eyebrow, the thesis line, each card's kicker and the page title (Coral Reef Ventures · Documents. Intent. Work. Usage.) all use the four words.
 
 **Beneath the cards:** These offerings share a direction, not an adoption requirement. Use each where it helps your team.
 
