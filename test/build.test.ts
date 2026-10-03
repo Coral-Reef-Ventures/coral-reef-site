@@ -74,8 +74,7 @@ test("CRV-003: only confirmed destinations are links", () => {
   const external = [...html.matchAll(/href="(https?:[^"]+)"/g)].map((m) => m[1]);
   // The canonical and og:url are the page itself, not outbound links.
   const outbound = external.filter((href) => href !== CANONICAL);
-  assert.deepEqual(outbound, ["https://markset.org"]);
-  assert.doesNotMatch(html, /Explore Intentset/);
+  assert.deepEqual(outbound, ["https://markset.org", "https://intentset.org"]);
   assert.doesNotMatch(html, /href="[^"]*streamlane/i);
   assert.match(text(html), /Not publicly available yet\./);
   assert.match(text(html), /streamlane\.app/);
