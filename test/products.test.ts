@@ -23,7 +23,7 @@ test("a planned destination is text, never a link", () => {
 
 test("a call to action must be an absolute https URL", () => {
   for (const href of ["", "../intentset/index.html", "http://intentset.org", "javascript:alert(1)"]) {
-    assert.throws(() => productGrid([{ ...base, cta: { text: "Explore Intentset", href } }]), href);
+    assert.throws(() => productGrid([{ ...base, cta: { text: "Visit Intentset", href } }]), href);
   }
 });
 
