@@ -30,8 +30,6 @@ const text = (s: string) =>
 test("CRV-001: every section of the copy is present, in reading order", () => {
   const order = [
     "Coral Reef Ventures",
-    "Our work",
-    "Our approach",
     "Documents · Product · Work",
     "Building for software teams in the agentic era.",
     "Open foundations and focused tools for creating software with humans and AI working together.",
@@ -45,6 +43,7 @@ test("CRV-001: every section of the copy is present, in reading order", () => {
     "These offerings share a direction, not an adoption requirement.",
     "Better foundations for what comes next.",
     "We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.",
+    "Get in touch at hello@coralreefventures.com",
     "Open foundations and focused products for software teams.",
     "© 2026 Coral Reef Ventures",
   ];
@@ -82,6 +81,11 @@ test("CRV-003: only confirmed destinations are links", () => {
   assert.match(text(html), /streamlane\.app/);
 });
 
+test("the contact channel is the approved address, as a mailto link", () => {
+  const mailto = [...html.matchAll(/href="mailto:([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(mailto, ["hello@coralreefventures.com"]);
+});
+
 test("CRV-004: the page says the products need not be adopted together", () => {
   assert.match(text(html), /share a direction, not an adoption requirement/);
 });
@@ -92,7 +96,6 @@ test("CRV-006: skip link and in-page anchors resolve to ids on the page", () => 
   for (const [, target] of html.matchAll(/href="#([^"]*)"/g)) {
     assert.ok(ids.has(target), `#${target} has no target`);
   }
-  assert.match(html, /<nav class="site-nav" aria-label="Main">/);
 });
 
 test("CRV-007: no script, no form, nothing loaded from another origin", async () => {

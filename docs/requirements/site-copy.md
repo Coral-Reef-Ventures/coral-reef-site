@@ -4,13 +4,11 @@
 
 ## Page order
 
-Header → thesis/hero → three product cards, with the independence note beneath them → closing statement → footer. Navigation: Our work (the cards), Our approach (the closing statement). No contact address, GitHub organization, or signup destination is invented. Intentset has no public destination yet; a real domain is a launch decision.
+Header → thesis/hero → three product cards, with the independence note beneath them → closing statement and contact address → footer. No navigation menu: the page is short, and the hero's "Explore our work" already leads to the cards. The contact channel is an email address (hello@coralreefventures.com), not a form. No GitHub organization or signup destination is invented. Intentset has no public destination yet; a real domain is a launch decision.
 
 ## Complete page copy
 
 **Brand:** Coral Reef Ventures
-
-**Navigation:** Our work · Our approach
 
 **Eyebrow:** DOCUMENTS · PRODUCT · WORK
 
@@ -64,6 +62,8 @@ A unified workspace for planning and moving work forward, designed as an alterna
 
 We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.
 
+**Contact:** Get in touch at hello@coralreefventures.com (a mailto link).
+
 **Footer brand:** Coral Reef Ventures  
 **Footer statement:** Open foundations and focused products for software teams.  
 **Copyright:** © 2026 Coral Reef Ventures
@@ -72,4 +72,4 @@ We are building tools that make software work easier to understand, maintain, an
 
 Desktop: oversized headline across a restrained twelve-column composition; three equal product cards; a closing statement. Markset uses violet, Intentset uses teal, and Streamlane uses warm amber as small accents. Mobile: hero becomes a readable narrow column; cards stack in the same order; product names and status stay visible; CTA targets remain easy to tap. Avoid animations and large images for the first version.
 
-Public launch checklist: confirm product statements against actual releases, confirm logo/brand rights, approve license labels, replace local Intentset destination with a confirmed URL, and decide whether any real contact channel is needed. No dependencies between the three products are implied.
+Public launch checklist: confirm product statements against actual releases, confirm logo/brand rights, approve license labels, replace local Intentset destination with a confirmed URL. Contact is decided: hello@coralreefventures.com, 2026-10-02. No dependencies between the three products are implied.
