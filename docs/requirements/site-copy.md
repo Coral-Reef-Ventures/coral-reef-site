@@ -4,7 +4,7 @@
 
 ## Page order
 
-Header → thesis/hero → three product cards, with the independence note beneath them → closing statement and contact address → footer. No navigation menu: the page is short, and the hero's "Explore our work" already leads to the cards. The contact channel is an email address (hello@coralreefventures.com), not a form. No GitHub organization or signup destination is invented. Intentset has no public destination yet; a real domain is a launch decision.
+Header → thesis/hero → three product cards, with the independence note beneath them → closing statement and contact address → footer. No navigation menu: the page is short, and the hero's "Explore our work" already leads to the cards. The contact channel is an email address (hello@coralreefventures.com), not a form. No GitHub organization or signup destination is invented.
 
 ## Complete page copy
 
@@ -40,9 +40,9 @@ A portable Markdown extension for structured, expressive documents that remain r
 
 An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.
 
-**Label:** Open-source project · Specification draft  
-**CTA:** Explore Intentset →  
-**Destination:** none until a public URL is confirmed
+**Label:** Open source  
+**CTA:** Visit Intentset →  
+**Destination:** https://intentset.org
 
 ### Streamlane
 
@@ -72,4 +72,4 @@ We are building tools that make software work easier to understand, maintain, an
 
 Desktop: oversized headline across a restrained twelve-column composition; three equal product cards; a closing statement. Markset uses violet, Intentset uses teal, and Streamlane uses warm amber as small accents. Mobile: hero becomes a readable narrow column; cards stack in the same order; product names and status stay visible; CTA targets remain easy to tap. Avoid animations and large images for the first version.
 
-Public launch checklist: confirm product statements against actual releases, confirm logo/brand rights, approve license labels, replace local Intentset destination with a confirmed URL. Contact is decided: hello@coralreefventures.com, 2026-10-02. No dependencies between the three products are implied.
+Public launch checklist: confirm product statements against actual releases, confirm logo/brand rights, approve license labels. Contact is decided: hello@coralreefventures.com, 2026-10-02. No dependencies between the three products are implied.

@@ -34,13 +34,13 @@ npm run lint && npm run typecheck
 ## Changing a product's status or destination
 
 Edit `site/products.ts`. A product gets a link only when it has a `cta`, and the build fails unless that is an absolute
-`https` URL. To enable "Explore Intentset" once its public URL is confirmed:
+`https` URL:
 
 ```ts
-cta: { text: "Explore Intentset", href: "https://…" },
+cta: { text: "Visit Intentset", href: "https://intentset.org" },
 ```
 
-and update the CRV-003 test, which lists the confirmed destinations.
+Update the CRV-003 test with it, which lists the confirmed destinations.
 
 ## Publishing
 

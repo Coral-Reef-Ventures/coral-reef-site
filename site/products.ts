@@ -4,9 +4,9 @@
  *
  * A destination is either confirmed and public, in which case the card links to
  * it, or it is not, in which case there is no `cta` and no link can be built.
- * That is the whole guard against a broken call to action: Intentset gets an
- * "Explore Intentset" link by gaining a `cta` here once its public URL is
- * confirmed (CRV-003), and not before. A planned destination that is not yet an
+ * That is the whole guard against a broken call to action (CRV-003): a product
+ * gets a link by gaining a `cta` here once its public URL is confirmed, and not
+ * before. A planned destination that is not yet an
  * invitation, like streamlane.app, is `plannedDestination` and renders as text.
  *
  * Copy is from docs/requirements/site-copy.md, which is the editorial source.
@@ -48,9 +48,8 @@ export const PRODUCTS: Product[] = [
     tagline: "Keep product intent connected to what you ship.",
     description:
       "An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.",
-    label: "Open-source project · Specification draft",
-    // No cta until a public URL is confirmed. The v0.1 review page linked a local
-    // file, which is exactly what must not ship.
+    label: "Open source",
+    cta: { text: "Visit Intentset", href: "https://intentset.org" },
   },
   {
     slug: "streamlane",
