@@ -42,10 +42,7 @@ test("CRV-001: every section of the copy is present, in reading order", () => {
     "Markset",
     "Intentset",
     "Streamlane",
-    "Documents. Product. Work.",
-    "Markset helps structure what we write.",
-    "Intentset keeps what the product means connected to what gets built.",
-    "Streamlane helps humans and agents move the work forward.",
+    "These offerings share a direction, not an adoption requirement.",
     "Better foundations for what comes next.",
     "We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.",
     "Open foundations and focused products for software teams.",
@@ -62,7 +59,7 @@ test("CRV-001: every section of the copy is present, in reading order", () => {
 
 test("CRV-006: headings descend one level at a time, with one h1", () => {
   const levels = [...html.matchAll(/<h([1-6])\b/g)].map((m) => Number(m[1]));
-  assert.deepEqual(levels, [1, 2, 3, 3, 3, 2, 2]);
+  assert.deepEqual(levels, [1, 2, 3, 3, 3, 2]);
 });
 
 test("CRV-002: each product has its own name, tagline, description and label", () => {

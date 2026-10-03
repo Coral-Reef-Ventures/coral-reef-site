@@ -24,22 +24,6 @@ Coral Reef Ventures develops open foundations and practical products for that ne
 
 {{products}}
 
-***
-
-{#approach}
-## Documents. Product. Work.
-
-:::grid{cols=3 .approach}
-- {.markset}
-  **Markset** helps structure what we write.
-
-- {.intentset}
-  **Intentset** keeps what the product means connected to what gets built.
-
-- {.streamlane}
-  **Streamlane** helps humans and agents move the work forward.
-:::
-
 {.note}
 These offerings share a direction, not an adoption requirement. Use each where it helps your team.
 
@@ -48,6 +32,7 @@ These offerings share a direction, not an adoption requirement. Use each where i
 {.eyebrow}
 Coral Reef Ventures
 
+{#approach}
 ## Better foundations for what comes next.
 
 {.statement}
