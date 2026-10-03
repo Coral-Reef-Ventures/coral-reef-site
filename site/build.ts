@@ -40,12 +40,6 @@ const FOOTER = {
   copyright: "© 2026 Coral Reef Ventures",
 };
 
-/** Header navigation: the two sections the copy names, as in-page anchors. */
-const NAV: Array<[string, string]> = [
-  ["Our work", "#work"],
-  ["Our approach", "#approach"],
-];
-
 /**
  * Build into outDir. The tree is written to a staging directory unique to this
  * build and renamed into place, so a reader (or the watch server) never sees a
@@ -101,7 +95,6 @@ export async function homePage(): Promise<string> {
 }
 
 function shell(page: { body: string; bodyAttributes: string }): string {
-  const nav = NAV.map(([label, href]) => `<a href="${href}">${esc(label)}</a>`).join("\n");
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -125,9 +118,6 @@ function shell(page: { body: string; bodyAttributes: string }): string {
 <a class="site-skip" href="#main">Skip to content</a>
 <header class="site-header">
 <a class="site-brand" href="./">${esc(META.siteName)}</a>
-<nav class="site-nav" aria-label="Main">
-${nav}
-</nav>
 </header>
 <main id="main" class="ms-document" tabindex="-1">
 ${page.body}</main>

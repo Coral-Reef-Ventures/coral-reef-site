@@ -2,7 +2,7 @@
  * stylesheet is layered over a Markset document (Markset spec §6). It sets the
  * tokens the default stylesheet reads, then styles the shell and the author
  * classes the page uses: eyebrow, lead, button, products, product, kicker,
- * tagline, status, planned, cta, note, statement.
+ * tagline, status, planned, cta, note, statement, contact.
  *
  * System fonts only, no images: the page needs nothing but these two files
  * (CRV-007). Every color is a light-dark() pair, as in markset.css, so the
@@ -82,9 +82,6 @@ main:focus { outline: none; }
   background: linear-gradient(var(--ms-border), var(--ms-border)) no-repeat center bottom / calc(100% - 2 * var(--crv-gutter)) 1px;
 }
 .site-brand { font-size: 1.2rem; font-weight: 750; letter-spacing: -0.02em; text-decoration: none; padding-block: 0.5rem; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 0 1.5rem; font-size: 0.9rem; }
-.site-nav a { display: inline-block; padding-block: 0.75rem; text-decoration: none; }
-.site-nav a:hover { text-decoration: underline; }
 
 .site-footer {
   display: flex;
@@ -223,6 +220,9 @@ main:focus { outline: none; }
 
 /* ---- closing ------------------------------------------------------------------- */
 .statement { font-size: clamp(1.3rem, 2.2vw, 1.65rem); line-height: 1.45; max-width: 34em; }
+/* The one contact channel: an address, not a form, so there is still no backend (CRV-007). */
+.ms-document > .contact { margin-top: 2.5rem; font-size: 1.1rem; }
+.contact a { display: inline-block; padding-block: 0.4rem; font-weight: 650; }
 
 /* ---- narrow screens -------------------------------------------------------------- */
 @media (max-width: 52rem) {
@@ -234,6 +234,6 @@ main:focus { outline: none; }
 
 /* ---- print ------------------------------------------------------------------------ */
 @media print {
-  .site-skip, .site-nav, .ms-document::before { display: none; }
+  .site-skip, .ms-document::before { display: none; }
   .cta a::after { content: " (" attr(href) ")"; font-weight: 400; }
 }
