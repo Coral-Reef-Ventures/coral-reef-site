@@ -1,0 +1,250 @@
+/* Coral Reef Ventures site theme, layered over markset.css the way a theme
+ * stylesheet is layered over a Markset document (Markset spec §6). It sets the
+ * tokens the default stylesheet reads, then styles the shell and the author
+ * classes the page uses: eyebrow, lead, button, products, product, kicker,
+ * tagline, status, planned, cta, approach, note, statement.
+ *
+ * System fonts only, no images: the page needs nothing but these two files
+ * (CRV-007). Every color is a light-dark() pair, as in markset.css, so the
+ * reader's system preference picks the scheme. */
+
+/* ---- tokens ------------------------------------------------------------------ */
+body {
+  --ms-font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ms-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ms-measure: 42rem;
+  --ms-measure-wide: 72.5rem;
+  --ms-radius: 4px;
+
+  --ms-fg: light-dark(#2e3836, #ece7dc);
+  --ms-fg-muted: light-dark(#5b6159, #a9ab9f);
+  --ms-bg: light-dark(#fbf5ed, #141a19);
+  --ms-surface: light-dark(#f4ece0, #1b2221);
+  --ms-border: light-dark(#ddd5c9, #333b39);
+
+  /* The three product accents (site-copy.md layout notes). The bar colors are
+   * decoration; the -text variants are darkened or lightened until they read
+   * as text on the page background. */
+  --crv-markset: light-dark(#9982bc, #ab97d1);
+  --crv-intentset: light-dark(#468a72, #5aa88c);
+  --crv-streamlane: light-dark(#c79e4c, #d3ad5f);
+  --crv-markset-text: light-dark(#664d93, #c2b3e3);
+  --crv-intentset-text: light-dark(#2c6a54, #7cc3a8);
+  --crv-streamlane-text: light-dark(#7d5a12, #dfbd76);
+  --crv-focus: light-dark(#b8461f, #f29a74);
+
+  --crv-gutter: 2rem;
+  line-height: 1.65;
+}
+@media (max-width: 47.5rem) {
+  body { --crv-gutter: 1.25rem; }
+}
+
+/* ---- shell ------------------------------------------------------------------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+body { margin: 0; overflow-wrap: break-word; }
+
+a { color: inherit; text-decoration-color: var(--crv-intentset); text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--crv-focus); outline-offset: 4px; border-radius: 2px; }
+main:focus { outline: none; }
+
+.site-skip {
+  position: absolute;
+  left: 0.75rem;
+  top: -100px;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  background: var(--ms-bg);
+  color: var(--ms-fg);
+  border: 1px solid var(--ms-fg);
+}
+.site-skip:focus { top: 0.75rem; }
+
+.site-header, .site-footer, .ms-document {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--ms-measure-wide);
+  margin-inline: auto;
+  padding-inline: var(--crv-gutter);
+}
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding-block: 1.25rem;
+  /* A rule drawn inside the gutters, so it starts at the content's left edge. */
+  background: linear-gradient(var(--ms-border), var(--ms-border)) no-repeat center bottom / calc(100% - 2 * var(--crv-gutter)) 1px;
+}
+.site-brand { font-size: 1.2rem; font-weight: 750; letter-spacing: -0.02em; text-decoration: none; padding-block: 0.5rem; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 0 1.5rem; font-size: 0.9rem; }
+.site-nav a { display: inline-block; padding-block: 0.75rem; text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding-block: 2rem 2.5rem;
+  background: linear-gradient(var(--ms-border), var(--ms-border)) no-repeat center top / calc(100% - 2 * var(--crv-gutter)) 1px;
+  font-size: 0.8rem;
+  color: var(--ms-fg-muted);
+}
+.site-footer p { margin: 0; }
+.site-footer strong { color: var(--ms-fg); }
+
+/* ---- document ---------------------------------------------------------------- */
+.ms-document { position: relative; padding-block: 5rem 4rem; }
+.ms-document > hr { margin-block: 4rem; max-width: none; }
+
+.ms-document h1, .ms-document h2, .ms-document h3 { font-family: var(--ms-font-body); color: var(--ms-fg); }
+.ms-document > h1 {
+  max-width: 15em;
+  margin-top: 1.25rem;
+  font-size: clamp(2.75rem, 6.2vw, 5.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  font-weight: 640;
+  text-wrap: balance;
+}
+.ms-document > h2 {
+  font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: 620;
+  text-wrap: balance;
+}
+.ms-document h3 { font-size: 2rem; line-height: 1.2; letter-spacing: -0.03em; font-weight: 650; }
+
+.eyebrow, .kicker, .status {
+  font-family: var(--ms-font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.eyebrow { font-size: 0.72rem; color: var(--ms-fg-muted); }
+.ms-document > .eyebrow:first-child { margin-top: 0; }
+
+.lead { font-size: 1.25rem; line-height: 1.5; max-width: 38rem; }
+.ms-document > h1 + .lead { margin-top: 1.5rem; }
+
+/* The three dots under the hero, one per product accent. Drawn by CSS, so they
+ * carry no text and nothing for a screen reader to announce. */
+.ms-document > h1 + .lead::after {
+  content: "";
+  display: block;
+  width: 3.5rem;
+  height: 0.8rem;
+  margin-top: 1.9rem;
+  background:
+    radial-gradient(circle closest-side, var(--crv-markset) 98%, transparent) 0 0 / 0.8rem 0.8rem no-repeat,
+    radial-gradient(circle closest-side, var(--crv-intentset) 98%, transparent) 1.3rem 0 / 0.8rem 0.8rem no-repeat,
+    radial-gradient(circle closest-side, var(--crv-streamlane) 98%, transparent) 2.6rem 0 / 0.8rem 0.8rem no-repeat;
+}
+
+/* A subtle connected-network figure beside the hero: decoration only, so it is
+ * a background with no text, and it steps aside on narrower screens rather
+ * than crowding the headline. */
+/* 68rem is where the figure clears the lead paragraph, measured: at 64rem it
+ * overlapped the lead's last 32px. */
+@media (min-width: 68rem) {
+  .ms-document::before {
+    content: "";
+    position: absolute;
+    top: 21rem;
+    right: var(--crv-gutter);
+    width: 24rem;
+    height: 15rem;
+    pointer-events: none;
+    opacity: 0.55;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 240' fill='none'%3E%3Cg stroke='%23988f80' stroke-width='1'%3E%3Cpath d='M40 170 112 96 196 132 268 52 344 104M112 96 150 30 268 52M196 132 236 206 344 104M40 170 236 206M150 30 196 132'/%3E%3C/g%3E%3Ccircle cx='40' cy='170' r='5' fill='%239982bc'/%3E%3Ccircle cx='112' cy='96' r='7' fill='%239982bc'/%3E%3Ccircle cx='150' cy='30' r='4' fill='%23988f80'/%3E%3Ccircle cx='196' cy='132' r='8' fill='%23468a72'/%3E%3Ccircle cx='236' cy='206' r='4' fill='%23988f80'/%3E%3Ccircle cx='268' cy='52' r='6' fill='%23468a72'/%3E%3Ccircle cx='344' cy='104' r='7' fill='%23c79e4c'/%3E%3C/svg%3E") no-repeat right top / contain;
+  }
+}
+
+/* The hero's call to action, and the product cards' links: whole-height tap
+ * targets, with the arrow added here so it is not part of the link's name. */
+.button a, .cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 3rem;
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+.button a {
+  box-sizing: border-box;
+  padding: 0.65rem 1.25rem;
+  border: 1px solid var(--ms-fg);
+  border-radius: var(--ms-radius);
+  text-decoration: none;
+}
+.button a:hover { background: var(--ms-fg); color: var(--ms-bg); }
+.button.down a::after { content: "↓" / ""; }
+.cta a::after { content: "→" / ""; }
+.ms-document > h1 ~ p:has(> .button) { margin-top: 2rem; }
+
+/* ---- product cards ------------------------------------------------------------ */
+.ms-document > h2 ~ .lead + p { max-width: 38rem; }
+.ms-grid.products { --ms-gap: 2rem; margin-top: 2.5rem; }
+.ms-grid.products[data-cols="3"] { --ms-cols: 3; }
+.product {
+  --crv-accent: var(--ms-border);
+  --crv-accent-text: var(--ms-fg-muted);
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 0 0;
+  background: none;
+  border: 0;
+  border-top: 4px solid var(--crv-accent);
+  border-radius: 0;
+}
+.markset { --crv-accent: var(--crv-markset); --crv-accent-text: var(--crv-markset-text); }
+.intentset { --crv-accent: var(--crv-intentset); --crv-accent-text: var(--crv-intentset-text); }
+.streamlane { --crv-accent: var(--crv-streamlane); --crv-accent-text: var(--crv-streamlane-text); }
+
+.product > * + * { margin-top: 1rem; }
+.kicker { font-size: 0.7rem; color: var(--crv-accent-text); }
+.product > h3 { margin-top: 0.75rem; }
+.tagline { font-size: 1.3rem; line-height: 1.35; letter-spacing: -0.01em; }
+.product > p:has(> .status) { margin-top: auto; padding-top: 1.5rem; }
+.status { font-size: 0.68rem; color: var(--crv-accent-text); }
+.product > p:has(> .status) ~ p { margin-top: 0.4rem; font-size: 0.9rem; }
+.planned { color: var(--ms-fg-muted); }
+
+/* ---- approach ------------------------------------------------------------------ */
+.ms-grid.approach { --ms-gap: 2rem; }
+.ms-grid.approach[data-cols="3"] { --ms-cols: 3; }
+.approach > .ms-grid-item {
+  padding: 1rem 0 0;
+  background: none;
+  border: 0;
+  border-top: 2px solid var(--crv-accent);
+  border-radius: 0;
+  font-size: 1.1rem;
+}
+.approach strong { color: var(--crv-accent-text); }
+.note { color: var(--ms-fg-muted); }
+.ms-document > .ms-grid + .note { margin-top: 2rem; }
+
+/* ---- closing ------------------------------------------------------------------- */
+.statement { font-size: clamp(1.3rem, 2.2vw, 1.65rem); line-height: 1.45; max-width: 34em; }
+
+/* ---- narrow screens -------------------------------------------------------------- */
+@media (max-width: 52rem) {
+  .ms-grid.products[data-cols="3"], .ms-grid.approach[data-cols="3"] { --ms-cols: 1; }
+  .ms-document { padding-block: 3rem 3rem; }
+  .ms-document > hr { margin-block: 3rem; }
+  .ms-document h3 { font-size: 1.75rem; }
+}
+
+/* ---- print ------------------------------------------------------------------------ */
+@media print {
+  .site-skip, .site-nav, .ms-document::before { display: none; }
+  .cta a::after { content: " (" attr(href) ")"; font-weight: 400; }
+}
