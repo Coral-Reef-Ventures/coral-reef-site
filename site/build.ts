@@ -24,7 +24,7 @@ const pkg = JSON.parse(await readFile(join(root, "package.json"), "utf8")) as { 
 export const CANONICAL = new URL(pkg.homepage).href;
 
 /**
- * Search and share metadata (CRV-008). The title is the wireframe's, the
+ * Search and share metadata (CRV-008). The title is the v0.1 review's, the
  * description is the hero's lead, and nothing here names an image: there is no
  * approved brand asset yet, so the social card is the text-only summary.
  */

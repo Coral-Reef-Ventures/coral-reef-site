@@ -2,7 +2,7 @@
  * stylesheet is layered over a Markset document (Markset spec §6). It sets the
  * tokens the default stylesheet reads, then styles the shell and the author
  * classes the page uses: eyebrow, lead, button, products, product, kicker,
- * tagline, status, planned, cta, approach, note, statement.
+ * tagline, status, planned, cta, note, statement.
  *
  * System fonts only, no images: the page needs nothing but these two files
  * (CRV-007). Every color is a light-dark() pair, as in markset.css, so the
@@ -217,27 +217,16 @@ main:focus { outline: none; }
 .product > p:has(> .status) ~ p { margin-top: 0.4rem; font-size: 0.9rem; }
 .planned { color: var(--ms-fg-muted); }
 
-/* ---- approach ------------------------------------------------------------------ */
-.ms-grid.approach { --ms-gap: 2rem; }
-.ms-grid.approach[data-cols="3"] { --ms-cols: 3; }
-.approach > .ms-grid-item {
-  padding: 1rem 0 0;
-  background: none;
-  border: 0;
-  border-top: 2px solid var(--crv-accent);
-  border-radius: 0;
-  font-size: 1.1rem;
-}
-.approach strong { color: var(--crv-accent-text); }
+/* The independence note, directly under the cards it is about (CRV-004). */
 .note { color: var(--ms-fg-muted); }
-.ms-document > .ms-grid + .note { margin-top: 2rem; }
+.ms-document > .ms-grid + .note { margin-top: 2.5rem; }
 
 /* ---- closing ------------------------------------------------------------------- */
 .statement { font-size: clamp(1.3rem, 2.2vw, 1.65rem); line-height: 1.45; max-width: 34em; }
 
 /* ---- narrow screens -------------------------------------------------------------- */
 @media (max-width: 52rem) {
-  .ms-grid.products[data-cols="3"], .ms-grid.approach[data-cols="3"] { --ms-cols: 1; }
+  .ms-grid.products[data-cols="3"] { --ms-cols: 1; }
   .ms-document { padding-block: 3rem 3rem; }
   .ms-document > hr { margin-block: 3rem; }
   .ms-document h3 { font-size: 1.75rem; }
