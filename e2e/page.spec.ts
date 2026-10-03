@@ -37,19 +37,28 @@ for (const width of [390, 1440]) {
   });
 }
 
-test("CRV-006: the keyboard reaches every link in reading order, with a visible focus ring", async ({ page }) => {
+test("CRV-006: the keyboard reaches every link and the scheme control in reading order, with a visible focus ring", async ({
+  page,
+}) => {
   await open(page, 1440, "light");
-  const expected = await page.evaluate(() => [...document.querySelectorAll("a")].map((a) => a.textContent?.trim()));
+  // The scheme control is one stop, its checked radio, as any radio group is.
+  const name = (el: Element) => (el instanceof HTMLInputElement ? `scheme:${el.id}` : el.textContent?.trim());
+  const expected = await page.evaluate(
+    (fn) => [...document.querySelectorAll("a, .site-scheme-input:checked")].map(new Function(`return (${fn})`)()),
+    name.toString(),
+  );
   expect(expected.length).toBeGreaterThan(3);
   const seen: Array<{ label: string | undefined; outline: string }> = [];
   for (let i = 0; i < expected.length; i++) {
     await page.keyboard.press("Tab");
     seen.push(
-      await page.evaluate(() => {
+      await page.evaluate((fn) => {
         const el = document.activeElement as HTMLElement;
-        const style = getComputedStyle(el);
-        return { label: el.textContent?.trim(), outline: `${style.outlineStyle} ${style.outlineWidth}` };
-      }),
+        // A radio is clipped out of sight, so its ring is drawn on its label.
+        const ringed = el instanceof HTMLInputElement ? (el.nextElementSibling as HTMLElement) : el;
+        const style = getComputedStyle(ringed);
+        return { label: new Function(`return (${fn})`)()(el), outline: `${style.outlineStyle} ${style.outlineWidth}` };
+      }, name.toString()),
     );
   }
   expect(seen.map((s) => s.label)).toEqual(expected);

@@ -30,7 +30,9 @@ export const CANONICAL = new URL(pkg.homepage).href;
  */
 export const META = {
   siteName: "Coral Reef Ventures",
-  title: "Coral Reef Ventures — Documents. Product. Work.",
+  // The pattern all four sites share (Streamlane's): the name, a middle dot, and
+  // what it is. The words are the v0.1 review's; only the separator changed.
+  title: "Coral Reef Ventures · Documents. Intent. Work. Usage.",
   description: "Open foundations and focused tools for creating software with humans and AI working together.",
 };
 
@@ -73,8 +75,9 @@ async function writeSite(out: string): Promise<string[]> {
   await mkdir(join(out, "css"), { recursive: true });
   await cp(defaultStylesheetPath, join(out, "css", "markset.css"));
   await cp(join(root, "site", "site.css"), join(out, "css", "site.css"));
+  await cp(join(root, "site", "icon.svg"), join(out, "icon.svg"));
   await writeFile(join(out, "index.html"), await homePage());
-  return ["index.html", "css/markset.css", "css/site.css"];
+  return ["index.html", "css/markset.css", "css/site.css", "icon.svg"];
 }
 
 /** The home page: site/content/index.md with the product cards substituted in, rendered and wrapped. */
@@ -112,13 +115,14 @@ function shell(page: { body: string; bodyAttributes: string }): string {
 <meta name="twitter:title" content="${esc(META.title)}">
 <meta name="twitter:description" content="${esc(META.description)}">
 <link rel="stylesheet" href="css/markset.css">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body${page.bodyAttributes}>
-<a class="site-skip" href="#main">Skip to content</a>
+${SCHEME_SCRIPT}<a class="site-skip" href="#main">Skip to content</a>
 <header class="site-header">
-<a class="site-brand" href="./">${esc(META.siteName)}</a>
-</header>
+<a class="site-brand" href="./"><img class="site-mark" src="icon.svg" alt="" width="28" height="28">${esc(META.siteName)}</a>
+${SCHEME_CONTROL}</header>
 <main id="main" class="ms-document" tabindex="-1">
 ${page.body}</main>
 <footer class="site-footer">
@@ -129,6 +133,69 @@ ${page.body}</main>
 </html>
 `;
 }
+
+/**
+ * The reader's color scheme, the same control markset.org and intentset.org
+ * have: three radio inputs, read by body:has() in site.css, with markset.css
+ * resolving every color from color-scheme. Auto is checked, so a reader who
+ * never touches it keeps their system preference. Each option is an icon with
+ * its word kept in the accessibility tree.
+ */
+const ICON_AUTO = `<svg class="site-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor" stroke="none"/></svg>`;
+const ICON_LIGHT = `<svg class="site-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4"/></svg>`;
+const ICON_DARK = `<svg class="site-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.5 8.5 0 1 0 10.2 10.2z"/></svg>`;
+
+export const SCHEME_CONTROL = `<div class="site-scheme" role="group" aria-label="Color scheme">
+<input type="radio" name="ms-scheme" id="ms-scheme-auto" class="site-scheme-input" checked>
+<label class="site-scheme-option" for="ms-scheme-auto" title="Match the system">${ICON_AUTO}<span class="site-visually-hidden">Auto</span></label>
+<input type="radio" name="ms-scheme" id="ms-scheme-light" class="site-scheme-input">
+<label class="site-scheme-option" for="ms-scheme-light" title="Light">${ICON_LIGHT}<span class="site-visually-hidden">Light</span></label>
+<input type="radio" name="ms-scheme" id="ms-scheme-dark" class="site-scheme-input">
+<label class="site-scheme-option" for="ms-scheme-dark" title="Dark">${ICON_DARK}<span class="site-visually-hidden">Dark</span></label>
+</div>
+`;
+
+/**
+ * The page's one script, and all it does is remember the reader's scheme
+ * choice across a reload, which no CSS can do. It is not tracking (CRV-007): it
+ * stores one word in the reader's own browser and sends nothing anywhere. With
+ * scripting off the control still works for the visit. It writes data-scheme on
+ * <body>, the hook markset.css publishes, and runs first so the scheme is in
+ * force before anything paints.
+ */
+export const SCHEME_SCRIPT = `<script>
+(function () {
+  var key = "ms-scheme";
+  var read = function () {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  };
+  var apply = function (value) {
+    if (value === "light" || value === "dark") document.body.dataset.scheme = value;
+    else delete document.body.dataset.scheme;
+  };
+  apply(read());
+  document.addEventListener("change", function (event) {
+    var input = event.target;
+    if (!input || input.name !== key) return;
+    var value = input.id.slice(key.length + 1);
+    apply(value);
+    try {
+      if (value === "auto") localStorage.removeItem(key);
+      else localStorage.setItem(key, value);
+    } catch (e) {}
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    var value = read();
+    var input = document.getElementById(key + "-" + (value === "light" || value === "dark" ? value : "auto"));
+    if (input) input.checked = true;
+  });
+})();
+</script>
+`;
 
 function esc(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
