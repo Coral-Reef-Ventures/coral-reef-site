@@ -4,7 +4,7 @@
 
 ## Page order
 
-Header → thesis/hero → three product cards → Documents / Product / Work → closing statement → footer. Navigation: Our work, Our approach. No contact address, GitHub organization, or signup destination is invented. The review wireframe links Intentset locally; a real domain is a launch decision.
+Header → thesis/hero → three product cards, with the independence note beneath them → closing statement → footer. Navigation: Our work (the cards), Our approach (the closing statement). No contact address, GitHub organization, or signup destination is invented. The review wireframe links Intentset locally; a real domain is a launch decision.
 
 ## Complete page copy
 
@@ -56,15 +56,9 @@ A unified workspace for planning and moving work forward, designed as an alterna
 **Availability:** Not publicly available yet.  
 **Destination note:** streamlane.app is the planned product destination. The review page shows this as text, not an invitation to start using the product.
 
-## Documents. Product. Work.
+**Beneath the cards:** These offerings share a direction, not an adoption requirement. Use each where it helps your team.
 
-**Markset** helps structure what we write.
-
-**Intentset** keeps what the product means connected to what gets built.
-
-**Streamlane** helps humans and agents move the work forward.
-
-These offerings share a direction, not an adoption requirement. Use each where it helps your team.
+*Revised 2026-10-02:* a separate "Documents. Product. Work." section, with a one-line role for each product, followed the cards in v0.1. It introduced the same three products a second time, and its framing is already carried by the hero eyebrow, the page title and each card's kicker, so it was removed and its independence note moved under the cards.
 
 ## Better foundations for what comes next.
 
@@ -76,6 +70,6 @@ We are building tools that make software work easier to understand, maintain, an
 
 ## Layout notes
 
-Desktop: oversized headline across a restrained twelve-column composition; three equal product cards; a closing three-column statement. Markset uses violet, Intentset uses teal, and Streamlane uses warm amber as small accents. Mobile: hero becomes a readable narrow column; cards stack in the same order; product names and status stay visible; CTA targets remain easy to tap. Avoid animations and large images for the first version.
+Desktop: oversized headline across a restrained twelve-column composition; three equal product cards; a closing statement. Markset uses violet, Intentset uses teal, and Streamlane uses warm amber as small accents. Mobile: hero becomes a readable narrow column; cards stack in the same order; product names and status stay visible; CTA targets remain easy to tap. Avoid animations and large images for the first version.
 
 Public launch checklist: confirm product statements against actual releases, confirm logo/brand rights, approve license labels, replace local Intentset destination with a confirmed URL, and decide whether any real contact channel is needed. No dependencies between the three products are implied.
