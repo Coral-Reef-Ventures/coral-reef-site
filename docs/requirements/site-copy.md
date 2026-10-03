@@ -1,10 +1,10 @@
-# Coral Reef Ventures: one-page site copy and wireframe brief
+# Coral Reef Ventures: one-page site copy and layout brief
 
 **Version:** 0.1 • **Purpose:** Explain the organization, introduce three offerings, and direct visitors to product information. Visual direction: calm editorial layout, generous whitespace, subtle connected geometry, and distinct product accents without literal ocean imagery.
 
 ## Page order
 
-Header → thesis/hero → three product cards, with the independence note beneath them → closing statement → footer. Navigation: Our work (the cards), Our approach (the closing statement). No contact address, GitHub organization, or signup destination is invented. The review wireframe links Intentset locally; a real domain is a launch decision.
+Header → thesis/hero → three product cards, with the independence note beneath them → closing statement → footer. Navigation: Our work (the cards), Our approach (the closing statement). No contact address, GitHub organization, or signup destination is invented. Intentset has no public destination yet; a real domain is a launch decision.
 
 ## Complete page copy
 
@@ -44,7 +44,7 @@ An open framework connecting observable product behavior to its implementation, 
 
 **Label:** Open-source project · Specification draft  
 **CTA:** Explore Intentset →  
-**Destination in review:** local Intentset wireframe; public URL to be confirmed
+**Destination:** none until a public URL is confirmed
 
 ### Streamlane
 

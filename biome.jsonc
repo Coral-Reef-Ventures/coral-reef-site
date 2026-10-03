@@ -7,7 +7,6 @@
       "!**/dist",
       "!dist.staging-*",
       "!dist.previous-*",
-      "!docs/requirements/wireframes",
       "!e2e/.build",
       "!test-results",
       "!playwright-report"

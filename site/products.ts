@@ -49,7 +49,7 @@ export const PRODUCTS: Product[] = [
     description:
       "An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.",
     label: "Open-source project · Specification draft",
-    // No cta until a public URL is confirmed. The review wireframe linked a local
+    // No cta until a public URL is confirmed. The v0.1 review page linked a local
     // file, which is exactly what must not ship.
   },
   {
