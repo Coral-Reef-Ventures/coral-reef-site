@@ -32,8 +32,10 @@ These offerings share a direction, not an adoption requirement. Use each where i
 {.eyebrow}
 Coral Reef Ventures
 
-{#approach}
 ## Better foundations for what comes next.
 
 {.statement}
 We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.
+
+{.contact}
+Get in touch at [hello@coralreefventures.com](mailto:hello@coralreefventures.com).
