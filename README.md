@@ -1,7 +1,7 @@
 # Coral Reef Ventures website
 
-The parent-company site: one page that explains the thesis and introduces Markset, Intentset and Streamlane as
-independent offerings. Requirements are in [docs/requirements/](docs/requirements/README.md).
+The parent-company site: one page that explains the thesis and introduces Markset, Intentset, Streamlane and
+Driftline as independent offerings. Requirements are in [docs/requirements/](docs/requirements/README.md).
 
 The page is a [Markset](https://markset.org) document, `site/content/index.md`, rendered to static HTML by the Markset
 reference implementation and deployed to GitHub Pages. There is no framework, no client-side script and no backend.
@@ -12,7 +12,7 @@ Node ≥ 22.18. TypeScript runs directly through Node's type stripping; there is
 
 ```sh
 npm install
-npm run site:watch   # http://localhost:3000, rebuilds and reloads on change
+npm run site:watch   # http://localhost:3004, rebuilds and reloads on change
 npm run site         # build into dist/
 npm test             # requirements checks against the built HTML
 npx playwright install chromium   # once

@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Documents · Product · Work
+Documents · Intent · Work · Usage
 
 # Building for software teams in the agentic era.
 
@@ -15,10 +15,10 @@ Open foundations and focused tools for creating software with humans and AI work
 ***
 
 {#work}
-## Three ideas. One direction.
+## Four ideas. One direction.
 
 {.lead}
-AI is changing how software gets built. The surrounding systems—documents, product knowledge, and work management—need to evolve with it.
+AI is changing how software gets built. The surrounding systems—documents, product intent, work management, and how software is used—need to evolve with it.
 
 Coral Reef Ventures develops open foundations and practical products for that new way of working.
 

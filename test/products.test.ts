@@ -30,7 +30,7 @@ test("a call to action must be an absolute https URL", () => {
 test("the products appear in the approved order, each with a distinct accent", () => {
   assert.deepEqual(
     PRODUCTS.map((p) => p.name),
-    ["Markset", "Intentset", "Streamlane"],
+    ["Markset", "Intentset", "Streamlane", "Driftline"],
   );
-  assert.equal(new Set(PRODUCTS.map((p) => p.slug)).size, 3);
+  assert.equal(new Set(PRODUCTS.map((p) => p.slug)).size, 4);
 });
