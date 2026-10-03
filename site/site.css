@@ -151,7 +151,9 @@ main:focus { outline: none; }
 /* A subtle connected-network figure beside the hero: decoration only, so it is
  * a background with no text, and it steps aside on narrower screens rather
  * than crowding the headline. */
-@media (min-width: 64rem) {
+/* 68rem is where the figure clears the lead paragraph, measured: at 64rem it
+ * overlapped the lead's last 32px. */
+@media (min-width: 68rem) {
   .ms-document::before {
     content: "";
     position: absolute;

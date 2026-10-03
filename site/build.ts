@@ -57,8 +57,17 @@ export async function build(outDir: string = join(root, "dist")): Promise<string
   const previous = `${outDir}.previous-${tag}`;
   try {
     const written = await writeSite(staging);
-    await rename(outDir, previous).catch(() => undefined); // absent on a first build
-    await rename(staging, outDir);
+    const hadPrevious = await rename(outDir, previous).then(
+      () => true,
+      () => false, // absent on a first build
+    );
+    try {
+      await rename(staging, outDir);
+    } catch (error) {
+      // Put the previous build back rather than let the cleanup below delete it.
+      if (hadPrevious) await rename(previous, outDir);
+      throw error;
+    }
     return written;
   } finally {
     await rm(staging, { recursive: true, force: true });
