@@ -8,7 +8,7 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
 ## Rules
 
 - **Copy is approved text.** Use `site-copy.md` verbatim; do not write new marketing copy, invent domains, GitHub links,
-  contact addresses or brand assets (logo, favicon, social image).
+  contact channels (the one approved is hello@coralreefventures.com) or brand assets (logo, favicon, social image).
 - **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed. Intentset has
   none yet; streamlane.app is a planned destination and renders as text, never as a link.
 - **No script, form, tracking or external font** in the output (CRV-007). Tests enforce it.
