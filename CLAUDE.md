@@ -15,7 +15,7 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
 - **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
-  (markset.org, intentset.org); streamlane.app and driftline.app are planned destinations and render as text, never as links.
+  (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
 - **No form, tracking or external font** in the output (CRV-007), and **one script**: the color-scheme control's, the same
   as markset.org's and intentset.org's, which stores one word in the reader's browser and sends nothing anywhere. CRV-007
   rules out a tracking dependency, not that. Tests enforce both halves.
@@ -44,7 +44,8 @@ From the requirements' launch gates, not yet settled:
 - Hosting destination. `homepage` in `package.json` (the canonical URL) is `https://coralreefventures.com/`, assumed from
   the company email domain. No CNAME is written; a custom domain is set in the repository's Pages settings.
 - Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
-- Product claims and license labels, to be confirmed against actual releases.
+- Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
+  Intentset `Open source · Early release`.
 
 <!-- BEGIN AWS Agent Toolkit rules -->
 # AWS Guidance for the new AWS experience

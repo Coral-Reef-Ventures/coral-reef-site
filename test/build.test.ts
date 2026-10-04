@@ -36,7 +36,7 @@ test("CRV-001: every section of the copy is present, in reading order", () => {
     "Explore our work",
     "Four ideas. One direction.",
     "AI is changing how software gets built.",
-    "Coral Reef Ventures develops open foundations and practical products for that new way of working.",
+    "Agents now write much of the code, the documents and the plans.",
     "Markset",
     "Intentset",
     "Streamlane",
@@ -75,11 +75,11 @@ test("CRV-003: only confirmed destinations are links", () => {
   const external = [...html.matchAll(/href="(https?:[^"]+)"/g)].map((m) => m[1]);
   // The canonical and og:url are the page itself, not outbound links.
   const outbound = external.filter((href) => href !== CANONICAL);
-  assert.deepEqual(outbound, ["https://markset.org", "https://intentset.org"]);
-  assert.doesNotMatch(html, /href="[^"]*(streamlane|driftline)/i);
+  assert.deepEqual(outbound, ["https://markset.org", "https://intentset.org", "https://driftline.app"]);
+  assert.doesNotMatch(html, /href="[^"]*streamlane/i);
   assert.match(text(html), /Not publicly available yet\./);
   assert.match(text(html), /streamlane\.app/);
-  assert.match(text(html), /driftline\.app/);
+  assert.match(text(html), /Early access by request\./);
 });
 
 test("the contact channel is the approved address, as a mailto link", () => {
