@@ -6,7 +6,7 @@
  * Output: dist/ with relative links, so it works at any base path (a GitHub
  * Pages project site lives under /<repo>/) as well as on a custom domain.
  *
- *   npm run site
+ *   pnpm run site
  */
 import { cp, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
