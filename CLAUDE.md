@@ -25,11 +25,12 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
 ## Toolchain
 
 - Node ≥ 22.18. Erasable TypeScript only (no enums, namespaces, parameter properties); import with `.ts` extensions.
-- `npm test` builds into a temporary directory and checks the output. `npm run e2e` is Playwright, as in Streamlane and
+- pnpm (pinned by `packageManager`; moved from npm 2026-10-04 with the lockfile imported). `pnpm test` builds into a
+  temporary directory and checks the output. `pnpm run e2e` is Playwright, as in Streamlane and
   Markset's editor: `e2e/global-setup.ts` builds into `e2e/.build`, and `e2e/page.spec.ts` checks it in Chromium at
   390px and 1440px in both color schemes for overflow, tap targets, keyboard order, focus rings and WCAG AA contrast.
-  `npx playwright install chromium` once before the first run.
-- `npm run lint` is Biome, configured in `biome.jsonc`; the stylesheet is exempt from formatting, as in Markset.
+  `pnpm exec playwright install chromium` once before the first run.
+- `pnpm run lint` is Biome, configured in `biome.jsonc`; the stylesheet is exempt from formatting, as in Markset.
 - `site/site.css` sets Markset's tokens and styles the author classes the page uses. Every color is a `light-dark()`
   pair, as in `markset.css`. The four product accents (violet, teal, amber, sea blue) each have a bar color and a darker or
   lighter `-text` variant that clears 4.5:1. Each product card shows that product's own mark beside its name, carried
