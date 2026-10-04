@@ -22,25 +22,25 @@ Open foundations and focused tools for creating software with humans and AI work
 
 AI is changing how software gets built. The surrounding systems—documents, product intent, work management, and how software is used—need to evolve with it.
 
-Coral Reef Ventures develops open foundations and practical products for that new way of working.
+Agents now write much of the code, the documents and the plans. Each of these tools keeps people able to read, steer and verify what they produce.
 
 ### Markset
 
-**Rich documents without leaving Markdown.**
+**Documents your agents write, and people want to read.**
 
-A portable Markdown extension for structured, expressive documents that remain readable as text. Built for content that needs to move between people, tools, and publishing systems.
+Markdown with a small, closed vocabulary of layout: cards, grids, tabs, metrics and charts. Agents write it from one guide and check their own work; people review plain text that reads as Markdown wherever it goes.
 
-**Label:** Open source  
+**Label:** Open source · v0  
 **CTA:** Visit Markset →  
 **Destination:** https://markset.org
 
 ### Intentset
 
-**Keep product intent connected to what you ship.**
+**Keep control of what your agents build.**
 
-An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.
+Readable records of what your product promises, which code delivers each promise and how it is checked, kept current by your agents in the same commit as the code. People review the product, not the diff.
 
-**Label:** Open source  
+**Label:** Open source · Early release  
 **CTA:** Visit Intentset →  
 **Destination:** https://intentset.org
 
@@ -58,13 +58,16 @@ A unified workspace for planning and moving work forward, designed as an alterna
 
 **Know whether what you shipped is working.**
 
-Product analytics that understands what your product is meant to do. It watches how each release is adopted, asks users why when something stalls, traces errors to the team that owns them, and runs feature flags and betas.
+Knows what each release is meant to do, and watches real users meet it. When adoption stalls it asks them why, traces errors to the team that owns them, and runs feature flags and betas.
 
 **Label:** Product · In planning  
-**Availability:** Not publicly available yet.  
-**Destination note:** driftline.app is the planned product destination, shown as text like streamlane.app.
+**Availability:** Early access by request.  
+**CTA:** Visit Driftline →  
+**Destination:** https://driftline.app
 
 *Added 2026-10-03:* Driftline joined as the fourth offering, and the section heading became "Four ideas. One direction." Its card copy was drafted and approved that day. The same day the areas were renamed so each names what its product handles: Documents (Markset), Intent (Intentset), Work (Streamlane) and Usage (Driftline). "Product" fit neither Intentset nor Driftline. The hero eyebrow, the thesis line, each card's kicker and the page title (Coral Reef Ventures · Documents. Intent. Work. Usage.) all use the four words.
+
+*Revised 2026-10-04:* the products' own sites moved to the agent era, and three cards had fallen behind them. Markset and Intentset take their sites' headlines as taglines and say who writes the documents and the records: agents, reviewed by people. Intentset's "Start with readable files" went, because its records are not meant to be written by hand. Driftline's description no longer opens with "product analytics", which its own positioning rules out, and its card links driftline.app, live since that day with an early-access request. The two open-source labels now say how mature each is: Markset's specification is declared (v0), Intentset's is an early release. The second paragraph of the section became the through-line all four sites now share.
 
 **Beneath the cards:** These offerings share a direction, not an adoption requirement. Use each where it helps your team.
 
