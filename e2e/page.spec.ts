@@ -107,3 +107,45 @@ for (const scheme of ["light", "dark"] as const) {
     expect(failures).toEqual([]);
   });
 }
+
+/** Choose a scheme the way a reader does: open the control by hovering it, then click the option. */
+async function choose(page: Page, scheme: "light" | "dark"): Promise<void> {
+  await page.hover(".site-scheme");
+  await page.click(`label[for="ms-scheme-${scheme}"]`);
+  await expect(page.locator(`#ms-scheme-${scheme}`)).toBeChecked();
+}
+
+/** Which tile each product's mark shows: "paper" when its picture carries the paper color, else "ink". */
+async function tiles(page: Page): Promise<Record<string, string>> {
+  return page.evaluate(() =>
+    Object.fromEntries(
+      ["markset", "intentset", "streamlane", "driftline"].map((slug) => {
+        const h3 = document.querySelector(`.product.${slug} > h3`) as HTMLElement;
+        const image = getComputedStyle(h3, "::before").backgroundImage;
+        return [slug, /F4F7F6/i.test(image) ? "paper" : "ink"];
+      }),
+    ),
+  );
+}
+
+test("Streamlane and Driftline swap to the paper tile together on dark, and only they do", async ({ page }) => {
+  await open(page, 1440, "light");
+  expect(await tiles(page)).toEqual({ markset: "ink", intentset: "ink", streamlane: "ink", driftline: "ink" });
+
+  const dark = { markset: "ink", intentset: "ink", streamlane: "paper", driftline: "paper" };
+  await open(page, 1440, "dark");
+  expect(await tiles(page), "system dark").toEqual(dark);
+
+  await open(page, 1440, "light");
+  await choose(page, "dark");
+  expect(await tiles(page), "dark chosen with the control").toEqual(dark);
+
+  await open(page, 1440, "dark");
+  await choose(page, "light");
+  expect(await tiles(page), "light chosen over a dark system").toEqual({
+    markset: "ink",
+    intentset: "ink",
+    streamlane: "ink",
+    driftline: "ink",
+  });
+});

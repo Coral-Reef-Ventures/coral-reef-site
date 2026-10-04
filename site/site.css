@@ -246,24 +246,30 @@ body:has(#ms-scheme-dark:checked) { color-scheme: dark; }
 
 /* Each product's own mark beside its name, as the product's site shows it:
  * Markset's from markset.org, Intentset's from intentset.org, Streamlane's
- * ink tile from its brand package, and Driftline's, drawn 2026-10-03 in the
+ * tiles from its brand package, and Driftline's, drawn 2026-10-03 in the
  * same language: a line drifting up from the baseline it was meant to follow. They are the products' identities, so they
- * keep their own colors in both schemes rather than taking this page's. The
+ * keep their own colors rather than taking this page's. The
  * name beside each says who it is, so the mark is decoration with nothing to
  * announce. */
 .product > h3 { display: flex; align-items: center; gap: 0.75rem; }
 .product > h3::before { content: ""; flex: none; width: 2.25rem; height: 2.25rem; background: var(--crv-mark) no-repeat center / contain; }
 .markset { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23664d93'/%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='38' cy='42' r='8.5'/%3E%3Ccircle cx='64' cy='42' r='8.5'/%3E%3Ccircle cx='90' cy='42' r='8.5'/%3E%3Crect x='29' y='64' width='70' height='9' rx='4.5'/%3E%3Crect x='29' y='82' width='46' height='9' rx='4.5' opacity='0.72'/%3E%3C/g%3E%3C/svg%3E"); }
 .intentset { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%231f5f52'/%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 86 L64 42 L98 86'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='30' cy='86' r='11'/%3E%3Ccircle cx='64' cy='42' r='11'/%3E%3Ccircle cx='98' cy='86' r='11'/%3E%3C/g%3E%3C/svg%3E"); }
-.streamlane { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112.64' fill='%23123A3C'/%3E%3Cg transform='translate(97.28 97.28) scale(13.226666666666667)'%3E%3Cpath d='M3 7h12' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 12h18' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 17h12' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='19.2' cy='7' r='1.9' fill='%23F2A93B'/%3E%3C/g%3E%3C/svg%3E"); }
-.driftline { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%232a5a8c'/%3E%3Cg transform='translate(2 -2)'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 88H98' opacity='0.55'/%3E%3Cpath d='M30 88C60 88 66 50 94 44'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='30' cy='88' r='10'/%3E%3Ccircle cx='94' cy='44' r='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-/* Streamlane's brand puts its ink tile on light surfaces and its light tile on
- * dark ones. A picture cannot follow color-scheme the way a color can, so the
- * swap follows the same three things the scheme does: the reader's system, the
- * control's radio, and the data-scheme the script restores. */
-body:has(#ms-scheme-dark:checked) .streamlane, body[data-scheme="dark"] .streamlane { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112.64' fill='%23F4F7F6'/%3E%3Cg transform='translate(97.28 97.28) scale(13.226666666666667)'%3E%3Cpath d='M3 7h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 12h18' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 17h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='19.2' cy='7' r='1.9' fill='%23F2A93B'/%3E%3C/g%3E%3C/svg%3E"); }
+.streamlane { --crv-mark-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112.64' fill='%23123A3C'/%3E%3Cg transform='translate(97.28 97.28) scale(13.226666666666667)'%3E%3Cpath d='M3 7h12' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 12h18' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 17h12' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='19.2' cy='7' r='1.9' fill='%23F2A93B'/%3E%3C/g%3E%3C/svg%3E"); --crv-mark-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112.64' fill='%23F4F7F6'/%3E%3Cg transform='translate(97.28 97.28) scale(13.226666666666667)'%3E%3Cpath d='M3 7h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 12h18' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 17h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='19.2' cy='7' r='1.9' fill='%23F2A93B'/%3E%3C/g%3E%3C/svg%3E"); }
+.driftline { --crv-mark-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%232a5a8c'/%3E%3Cg transform='translate(2 -2)'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 88H98' opacity='0.55'/%3E%3Cpath d='M30 88C60 88 66 50 94 44'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='30' cy='88' r='10'/%3E%3Ccircle cx='94' cy='44' r='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); --crv-mark-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23F4F7F6'/%3E%3Cg transform='translate(2 -2)'%3E%3Cg fill='none' stroke='%232a5a8c' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 88H98' opacity='0.55'/%3E%3Cpath d='M30 88C60 88 66 50 94 44'/%3E%3C/g%3E%3Cg fill='%232a5a8c'%3E%3Ccircle cx='30' cy='88' r='10'/%3E%3Ccircle cx='94' cy='44' r='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+/* Streamlane and Driftline are one family, and Streamlane's brand puts its ink
+ * tile on light surfaces and its paper tile on dark ones, so both swap, always
+ * together: one rule names the family. A picture cannot follow color-scheme the
+ * way a color can, so the swap follows the same three things the scheme does:
+ * the reader's system, the control's radio, and the data-scheme the script
+ * restores. Driftline's paper tile is Streamlane's paper with Driftline's blue
+ * as the glyph. Markset and Intentset keep one tile in both schemes, as their
+ * own sites show them. */
+:is(.streamlane, .driftline) { --crv-mark: var(--crv-mark-ink); }
+body:has(#ms-scheme-dark:checked) :is(.streamlane, .driftline),
+body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-mark-paper); }
 @media (prefers-color-scheme: dark) {
-  body:not([data-scheme="light"]):not(:has(#ms-scheme-light:checked)) .streamlane { --crv-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112.64' fill='%23F4F7F6'/%3E%3Cg transform='translate(97.28 97.28) scale(13.226666666666667)'%3E%3Cpath d='M3 7h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 12h18' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M3 17h12' stroke='%23123A3C' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='19.2' cy='7' r='1.9' fill='%23F2A93B'/%3E%3C/g%3E%3C/svg%3E"); }
+  body:not([data-scheme="light"]):not(:has(#ms-scheme-light:checked)) :is(.streamlane, .driftline) { --crv-mark: var(--crv-mark-paper); }
 }
 
 .product > * + * { margin-top: 1rem; }
