@@ -7,7 +7,8 @@
  * That is the whole guard against a broken call to action (CRV-003): a product
  * gets a link by gaining a `cta` here once its public URL is confirmed, and not
  * before. A planned destination that is not yet an
- * invitation, like streamlane.app and driftline.app, is `plannedDestination` and renders as text.
+ * invitation, like streamlane.app, is `plannedDestination` and renders as text. driftline.app gained a
+ * `cta` on 2026-10-04, when its site went live with an early-access request.
  *
  * Copy is from docs/requirements/site-copy.md, which is the editorial source.
  */
@@ -35,20 +36,20 @@ export const PRODUCTS: Product[] = [
     slug: "markset",
     name: "Markset",
     area: "Documents",
-    tagline: "Rich documents without leaving Markdown.",
+    tagline: "Documents your agents write, and people want to read.",
     description:
-      "A portable Markdown extension for structured, expressive documents that remain readable as text. Built for content that needs to move between people, tools, and publishing systems.",
-    label: "Open source",
+      "Markdown with a small, closed vocabulary of layout: cards, grids, tabs, metrics and charts. Agents write it from one guide and check their own work; people review plain text that reads as Markdown wherever it goes.",
+    label: "Open source · v0",
     cta: { text: "Visit Markset", href: "https://markset.org" },
   },
   {
     slug: "intentset",
     name: "Intentset",
     area: "Intent",
-    tagline: "Keep product intent connected to what you ship.",
+    tagline: "Keep control of what your agents build.",
     description:
-      "An open framework connecting observable product behavior to its implementation, verification, and customer knowledge. Start with readable files; build a model people and agents can follow.",
-    label: "Open source",
+      "Readable records of what your product promises, which code delivers each promise and how it is checked, kept current by your agents in the same commit as the code. People review the product, not the diff.",
+    label: "Open source · Early release",
     cta: { text: "Visit Intentset", href: "https://intentset.org" },
   },
   {
@@ -68,10 +69,10 @@ export const PRODUCTS: Product[] = [
     area: "Usage",
     tagline: "Know whether what you shipped is working.",
     description:
-      "Product analytics that understands what your product is meant to do. It watches how each release is adopted, asks users why when something stalls, traces errors to the team that owns them, and runs feature flags and betas.",
+      "Knows what each release is meant to do, and watches real users meet it. When adoption stalls it asks them why, traces errors to the team that owns them, and runs feature flags and betas.",
     label: "Product · In planning",
-    availability: "Not publicly available yet.",
-    plannedDestination: "driftline.app",
+    availability: "Early access by request.",
+    cta: { text: "Visit Driftline", href: "https://driftline.app" },
   },
 ];
 

@@ -20,7 +20,7 @@ Open foundations and focused tools for creating software with humans and AI work
 {.lead}
 AI is changing how software gets built. The surrounding systems—documents, product intent, work management, and how software is used—need to evolve with it.
 
-Coral Reef Ventures develops open foundations and practical products for that new way of working.
+Agents now write much of the code, the documents and the plans. Each of these tools keeps people able to read, steer and verify what they produce.
 
 {{products}}
 
