@@ -11,13 +11,13 @@ reference implementation and deployed to GitHub Pages. There is no framework, no
 Node ≥ 22.18. TypeScript runs directly through Node's type stripping; there is no compile step.
 
 ```sh
-npm install
-npm run site:watch   # http://localhost:3004, rebuilds and reloads on change
-npm run site         # build into dist/
-npm test             # requirements checks against the built HTML
-npx playwright install chromium   # once
-npm run e2e          # Chromium at 390px and 1440px, light and dark
-npm run lint && npm run typecheck
+pnpm install
+pnpm run site:watch   # http://localhost:3004, rebuilds and reloads on change
+pnpm run site         # build into dist/
+pnpm test             # requirements checks against the built HTML
+pnpm exec playwright install chromium   # once
+pnpm run e2e          # Chromium at 390px and 1440px, light and dark
+pnpm run lint && pnpm run typecheck
 ```
 
 ## Where things live

@@ -7,8 +7,8 @@ import { defineConfig, devices } from "@playwright/test";
  * both color schemes. global-setup.ts builds the site into e2e/.build, so the
  * run never races dist/ against site:watch.
  *
- *   npx playwright install chromium   # once
- *   npm run e2e
+ *   pnpm exec playwright install chromium   # once
+ *   pnpm run e2e
  */
 export default defineConfig({
   testDir: "./e2e",
