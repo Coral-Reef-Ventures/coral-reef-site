@@ -1,9 +1,19 @@
 # Coral Reef Ventures site
 
-One static page for the parent company, built the way the Markset site is: the page is Markset source rendered by
-`@markset-lang/parser` and `@markset-lang/render-html`, a TypeScript build script run by Node's type stripping, and a
-Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
-`website-requirements.md` holds the CRV requirements the tests are named after.
+Two things live here, one replacing the other (ADR 0001, `docs/decisions/0001-the-door-and-the-app.md`, proposed
+2026-10-04):
+
+- **The Pages page** (`site/`, `test/`, `e2e/page.spec.ts`): one static page, built the way the Markset site is, as
+  Markset source rendered by `@markset-lang/parser` and `@markset-lang/render-html`, a TypeScript build script run by
+  Node's type stripping, and a Pages workflow. It serves coralreefventures.com until the cutover (plan Phase 2b) and is
+  deleted 14 days after it.
+- **The CRV app** (`apps/web`, `packages/brand`, and `amplify/` once the backend lands): the door to Streamlane and
+  Driftline and the company's system of record for interest and access. Next.js static export and Mantine on Amplify
+  Gen 2, with the door's copy in Markset (`apps/web/content/`).
+
+Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
+`website-requirements.md` holds the CRV requirements the tests are named after (v0.2, proposed, adds CRV-009 to
+CRV-014 and supersedes CRV-007).
 
 ## Rules
 
@@ -14,13 +24,43 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
   over the first version's plain spines, so the fish carries the network figure and the dots of Markset's mark. The
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
+- **New copy is drafted in `site-copy.md`, marked proposed, and Gary approves it before it goes live.** The door, its
+  privacy page and the invitation text are proposed (2026-10-04) and go live only at the cutover, after Gary approves
+  them (plan step P8). `site-copy.md` is the source of the app's content files: `apps/web/content/door.md` and
+  `privacy.md` are copied into it verbatim, and `apps/web/lib/content.test.ts` fails if either differs. Change the copy
+  there first and the content file in the same commit. The form's and sign-in's words are listed there too; keep the
+  components' strings in step with it.
 - **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
-- **No form, tracking or external font** in the output (CRV-007), and **one script**: the color-scheme control's, the same
-  as markset.org's and intentset.org's, which stores one word in the reader's browser and sends nothing anywhere. CRV-007
-  rules out a tracking dependency, not that. Tests enforce both halves.
+  The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives
+  them "Open to invited guests." (CRV-003 v0.2).
+- **The Pages page only: no form, tracking or external font** (CRV-007, which v0.2 supersedes for the app), and **one
+  script**: the color-scheme control's, the same as markset.org's and intentset.org's, which stores one word in the
+  reader's browser and sends nothing anywhere. CRV-007 rules out a tracking dependency, not that. `test/` enforces both
+  halves until the page is retired.
+- **The app: no tracking, no external font, no third-party script** (CRV-011). Nothing loads from another origin but
+  the AWS endpoints the form and sign-in call. The browser stores only the sign-in tokens, the form's guest identity id
+  and the scheme word, and coralreefventures.com sets no cookie. The locked sites set exactly two, both the door's
+  (`__Host-crv_door`, one hour; `__Host-crv_door_state`, 10 minutes during sign-in). The form and the sign-in are
+  allowed; analytics, tag managers, web fonts from another origin and embeds are not.
+- **Access is decided by a grant, and an invitation binds to an identity** (ADR 0001). `AccessGrant` is the one place
+  access is decided. An invitation binds to the first Cognito and Google identity that accepts it, never to an address
+  alone. `CRV_ADMIN_EMAILS` (gary@coralreefventures.com, the first admin) is the one break-glass path; keep the list
+  short.
+- **Nothing personal or secret is logged**: no request body, message, email address, cookie, ticket or token. Each
+  function logs an event kind, ids and a status, and a test per function holds it.
+- **Every stored field has a retention period** (plan §2.3a), kept as constants the privacy page quotes. A changed
+  period changes the privacy copy, which is proposed copy again until Gary approves it.
+- **Unlocking a locked site is a recorded decision** (`door.unlocked` in Activity, with a reason), never a silent
+  rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
-- Don't add dependencies without asking.
+- Don't add dependencies without asking. The ones the door plan names were approved 2026-10-04; anything beyond them
+  still needs asking.
+- **AWS: the `coral-reef` profile, us-east-2, every Regional resource.** No Lambda@Edge, no us-east-1 certificate, no
+  reserved Lambda concurrency (the project's limit is 10, which allows none). An agent deploys only a temporary
+  `ampx sandbox`, and deletes it after.
+- **Check DNS over HTTPS** (`https://dns.google/resolve`) or with Route 53's `TestDNSAnswer`, never plain `dig`: this
+  machine's network intercepts port 53 and answers wrongly.
 
 ## Toolchain
 
@@ -40,14 +80,22 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
 
 ## Hosting
 
-Decided 2026-10-04: GitHub Pages, like markset.org and intentset.org. `homepage` in `package.json` (the canonical URL)
-is `https://coralreefventures.com/`, and the build writes `dist/CNAME` from its host, which is what tells Pages the
-custom domain, so moving the site is one string (a test holds it). DNS is set at the registrar, not in this repository.
+Until the cutover: GitHub Pages, decided earlier on 2026-10-04 (#11), like markset.org and intentset.org. `homepage` in
+`package.json` (the canonical URL) is `https://coralreefventures.com/`, and the build writes `dist/CNAME` from its host,
+which is what tells Pages the custom domain (a test holds it). DNS is at the registrar (dnsowl, NameSilo) today.
+
+After it, ADR 0001: the CRV app on the Amplify `WEB` app `coral-reef-site` in the coral-reef project (us-east-2), with
+`coralreefventures.com` in a Route 53 zone in the project and every existing record copied, Workspace mail included.
+`apps/web/hosting/` holds the build spec, headers and rules, applied with `update-app`.
 
 ## Open launch decisions
 
 From the requirements' launch gates, not yet settled:
 
+- The door copy, the privacy page with its retention periods, the invitation text and requirements v0.2, all proposed
+  in `docs/requirements/` (P8, before the cutover).
+- Whether the product repositories stay public (plan decision D1, before the lock): the door locks the sites, not the
+  source.
 - Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
 - Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
   Intentset `Open source · Early release`.
