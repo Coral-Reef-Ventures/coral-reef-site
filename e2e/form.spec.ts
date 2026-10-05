@@ -44,7 +44,7 @@ test("a valid submission is sent once, with where it came from, and thanked", as
       name: "Ada Lovelace",
       email: "ada@example.com",
       organization: "Analytical Engines",
-      interests: "advisor",
+      interests: ["advisor"],
       message: "I would like to help.",
       site: "streamlane",
       website: "",
