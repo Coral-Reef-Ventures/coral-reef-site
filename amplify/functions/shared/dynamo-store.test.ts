@@ -1,4 +1,5 @@
 import { ConditionalCheckFailedException } from "@aws-sdk/client-dynamodb";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { describe, expect, it } from "vitest";
 
 import { memoryStore } from "../../test/memory-store.ts";
@@ -76,6 +77,27 @@ describe("the DynamoDB store", () => {
       "throttled",
     );
     await expect(dynamoStore({}).get("Nope", { id: "x" })).rejects.toThrow(/No table/);
+  });
+
+  it("reads an item strongly consistently, which DynamoDB does only when asked", async () => {
+    const sent: unknown[] = [];
+    const store = dynamoStore(
+      { Invitation: "Invitation-api-NONE" },
+      {
+        send: async (command) => {
+          sent.push(command);
+          return { Item: { email: "a@b.co" } };
+        },
+      },
+    );
+    expect(await store.get("Invitation", { email: "a@b.co" })).toEqual({ email: "a@b.co" });
+    expect(sent).toHaveLength(1);
+    expect(sent[0]).toBeInstanceOf(GetCommand);
+    expect((sent[0] as GetCommand).input).toEqual({
+      TableName: "Invitation-api-NONE",
+      Key: { email: "a@b.co" },
+      ConsistentRead: true,
+    });
   });
 
   it("follows a query's pages and stops at its limit", async () => {

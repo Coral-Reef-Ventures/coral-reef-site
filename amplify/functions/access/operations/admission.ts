@@ -150,7 +150,8 @@ export const admitSignIn = async (deps: Deps, args: SignIn): Promise<Admission> 
     throw error;
   }
 
-  // The address's invitation is read consistently, so it can show a binding to this identity the index does not yet.
+  // The address's invitation is read consistently (Store.get always is), so it can show a binding to this identity the
+  // index does not yet.
   if (!bound && invitation?.cognitoSub === sub) bound = invitation;
   if (bound) {
     if (bound.status !== "accepted") return refused("REVOKED");
@@ -173,7 +174,8 @@ export const admitSignIn = async (deps: Deps, args: SignIn): Promise<Admission> 
     }
   } catch (error) {
     // Another identity bound the address first: exactly one wins, and this one never gets a token.
-    // The same identity in two sign-ins at once binds once: the one that lost reads the binding it would have made.
+    // The same identity in two sign-ins at once binds once: the one that lost reads, consistently, the binding it would
+    // have made, so it is admitted rather than deleted.
     if (error instanceof ConditionFailed) {
       const current = await deps.store.get("Invitation", { email });
       if (current?.cognitoSub === sub && current.status === "accepted") return { admitted: true, admin };

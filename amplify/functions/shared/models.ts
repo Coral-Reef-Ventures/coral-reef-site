@@ -28,6 +28,7 @@ export const indexes = {
   activityByArea: { model: "Activity", name: "byArea", partition: "area", sort: "at" },
   submissionByStatus: { model: "Submission", name: "byStatus", partition: "status", sort: "receivedAt" },
   submissionByEmail: { model: "Submission", name: "byEmail", partition: "email", sort: "receivedAt" },
+  submissionByPerson: { model: "Submission", name: "byPerson", partition: "personId", sort: "receivedAt" },
   invitationByStatus: { model: "Invitation", name: "byStatus", partition: "status", sort: "statusAt" },
   invitationBySub: { model: "Invitation", name: "byCognitoSub", partition: "cognitoSub" },
   grantByPerson: { model: "AccessGrant", name: "byPerson", partition: "personId", sort: "resource" },

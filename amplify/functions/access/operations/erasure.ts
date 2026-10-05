@@ -6,10 +6,10 @@ import { admittedUsernames } from "./admission.ts";
 import { actorId, grantsOf, normalEmail } from "./common.ts";
 
 /**
- * Erasure (plan §2.3, §2.3a). deletePerson removes a Person and everything that names them, every Submission sent from
- * their address with its Activity, and their Cognito user. eraseEmail is for anyone whose address was submitted, by
- * them or by someone else. The record of an erasure, `people.deleted`, holds ids only and names no Person, so it is not
- * itself erased.
+ * Erasure (plan §2.3, §2.3a). deletePerson removes a Person and everything that names them: every Submission sent from
+ * their address or invited from for them, with its Activity, and their Cognito user. eraseEmail is for anyone whose
+ * address was submitted, by them or by someone else. The record of an erasure, `people.deleted`, holds ids only and
+ * names no Person, so it is not itself erased.
  */
 
 const queryAll = (deps: Deps, index: (typeof indexes)[keyof typeof indexes], value: string) =>
@@ -20,18 +20,33 @@ const queryAll = (deps: Deps, index: (typeof indexes)[keyof typeof indexes], val
     ...("sort" in index ? { sort: { name: index.sort } } : {}),
   });
 
-/** Every Submission from an address, and each one's Activity. Returns how many submissions went. */
-const eraseSubmissions = async (deps: Deps, email: string): Promise<number> => {
-  const submissions = await queryAll(deps, indexes.submissionByEmail, email);
-  for (const submission of submissions) {
-    const id = String(submission.id);
+/** Each Submission found, once, with its Activity. Returns how many submissions went. */
+const eraseFound = async (deps: Deps, found: Item[][]): Promise<number> => {
+  const ids = new Set(found.flat().map((submission) => String(submission.id)));
+  for (const id of ids) {
     for (const item of await queryAll(deps, indexes.activityBySubject, id)) {
       await deps.store.write({ delete: { table: "Activity", key: { id: String(item.id) } } });
     }
     await deps.store.write({ delete: { table: "Submission", key: { id } } });
   }
-  return submissions.length;
+  return ids.size;
 };
+
+/** Every Submission from an address, and each one's Activity. */
+const eraseSubmissions = async (deps: Deps, email: string): Promise<number> =>
+  eraseFound(deps, [await queryAll(deps, indexes.submissionByEmail, email)]);
+
+/**
+ * A Person's submissions: those sent from their address, and every one an admin invited them from, which names them by
+ * `personId` whatever address sent it. The address alone misses an invitation sent to an address other than the one
+ * that wrote in, and one rebindInvitation has since moved; invite takes the submission's `expiresAt` away, so nothing
+ * else would ever delete either.
+ */
+const erasePersonSubmissions = async (deps: Deps, personId: string, email: string): Promise<number> =>
+  eraseFound(deps, [
+    await queryAll(deps, indexes.submissionByEmail, email),
+    await queryAll(deps, indexes.submissionByPerson, personId),
+  ]);
 
 /**
  * Every Cognito user the app created for an invitation or a person: the bound one, and each one pre sign-up admitted for
@@ -61,7 +76,7 @@ const erasePerson = async (deps: Deps, personId: string): Promise<{ found: boole
   for (const grant of await grantsOf(deps, personId)) {
     await deps.store.write({ delete: { table: "AccessGrant", key: { id: String(grant.id) } } });
   }
-  const submissions = await eraseSubmissions(deps, email);
+  const submissions = await erasePersonSubmissions(deps, personId, email);
   if (ownInvitation) await deps.store.write({ delete: { table: "Invitation", key: { email } } });
   try {
     await deps.store.write({ delete: { table: "PersonEmail", key: { email }, when: { eq: ["personId", personId] } } });

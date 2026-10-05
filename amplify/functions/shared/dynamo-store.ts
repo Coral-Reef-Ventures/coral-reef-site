@@ -130,9 +130,10 @@ export const dynamoStore = (
   };
   return {
     async get(table: string, key: Key) {
-      const result = (await sender.send(new GetCommand({ TableName: tableName(table), Key: key }))) as {
-        Item?: Item;
-      };
+      // Strongly consistent, as the Store promises (store.ts); DynamoDB's default is eventually consistent.
+      const result = (await sender.send(
+        new GetCommand({ TableName: tableName(table), Key: key, ConsistentRead: true }),
+      )) as { Item?: Item };
       return result.Item;
     },
     async query(query: Query) {

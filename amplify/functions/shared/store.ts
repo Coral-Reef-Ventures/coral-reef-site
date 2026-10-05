@@ -52,6 +52,12 @@ export class ConditionFailed extends Error {
 }
 
 export type Store = {
+  /**
+   * The item as the last write that succeeded left it: a strongly consistent read, always. The guards that keep
+   * admitSignIn from deleting a real invitee's user, and erasure's reach to every username pre sign-up recorded, both
+   * depend on seeing a write made a moment before, and DynamoDB's default read may not. An index cannot be read this
+   * way (a query on one may lag), which is why each guard reads the table itself.
+   */
   get(table: string, key: Key): Promise<Item | undefined>;
   /** Every match, following pages, unless `limit` says fewer. */
   query(query: Query): Promise<Item[]>;

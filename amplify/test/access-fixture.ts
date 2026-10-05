@@ -6,7 +6,7 @@ import { doorSites } from "../areas/access/sites.ts";
 import { type AppSyncEvent, createAccess } from "../functions/access/access.ts";
 import type { AccessConfig, Deps, Directory } from "../functions/access/context.ts";
 import { ulid } from "../functions/shared/ids.ts";
-import { modelKeys } from "../functions/shared/models.ts";
+import { modelKeys, row } from "../functions/shared/models.ts";
 import { type MemoryStore, memoryStore } from "./memory-store.ts";
 
 /** The door key, as KMS would hold it: signing returns DER, exactly as KMS's Sign does. */
@@ -123,4 +123,47 @@ export const invitedAndBound = async (
   const result = await signIn(f, email, sub);
   f.directory.emails.set(`Google_${sub}`, email);
   return result;
+};
+
+/** A form submission from `email`, with its `interest.submitted` Activity, as crv-interest writes them. */
+export const submit = async (f: Fixture, id: string, email: string) => {
+  const now = new Date("2026-10-01T00:00:00Z");
+  await f.store.write({
+    put: {
+      table: "Submission",
+      item: row(
+        "Submission",
+        {
+          id,
+          name: "N",
+          email,
+          interests: ["other"],
+          message: "m",
+          sourceSite: "crv",
+          status: "new",
+          statusAt: now.toISOString(),
+          receivedAt: now.toISOString(),
+        },
+        now,
+      ),
+    },
+  });
+  await f.store.write({
+    put: {
+      table: "Activity",
+      item: row(
+        "Activity",
+        {
+          id: `A-${id}`,
+          actorId: "system",
+          area: "interest",
+          kind: "interest.submitted",
+          subjectType: "Submission",
+          subjectId: id,
+          at: now.toISOString(),
+        },
+        now,
+      ),
+    },
+  });
 };

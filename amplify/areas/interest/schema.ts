@@ -30,6 +30,7 @@ export const interest = {
       receivedAt: a.datetime().required(),
       reviewedBy: a.string(),
       reviewedAt: a.datetime(),
+      // Set only by invite, and never cleared: an invited submission is kept as long as its Person (plan §2.3a).
       personId: a.id(),
       // DynamoDB TTL, set when declined or archived (plan §2.3a).
       expiresAt: a.timestamp(),
@@ -37,6 +38,9 @@ export const interest = {
     .secondaryIndexes((index) => [
       index("status").sortKeys(["receivedAt"]).name("byStatus").queryField("listSubmissionsByStatus"),
       index("email").sortKeys(["receivedAt"]).name("byEmail").queryField("listSubmissionsByEmail"),
+      // The submissions an admin invited someone from, whatever address sent them: deletePerson erases them with the
+      // Person, which the address alone cannot find once the invitation went to another address or moved to one.
+      index("personId").sortKeys(["receivedAt"]).name("byPerson").queryField("listSubmissionsByPerson"),
     ])
     .disableOperations([...noGeneratedWrites])
     .authorization(adminsRead),

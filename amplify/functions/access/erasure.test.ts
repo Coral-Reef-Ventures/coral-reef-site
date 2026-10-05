@@ -8,53 +8,11 @@ import {
   roles,
   signIn,
   signUp,
+  submit,
   userIdentity,
 } from "../../test/access-fixture.ts";
-import { row } from "../shared/models.ts";
 
 const admin = adminIdentity();
-
-const submit = async (f: ReturnType<typeof fixture>, id: string, email: string) => {
-  const now = new Date("2026-10-01T00:00:00Z");
-  await f.store.write({
-    put: {
-      table: "Submission",
-      item: row(
-        "Submission",
-        {
-          id,
-          name: "N",
-          email,
-          interests: ["other"],
-          message: "m",
-          sourceSite: "crv",
-          status: "new",
-          statusAt: now.toISOString(),
-          receivedAt: now.toISOString(),
-        },
-        now,
-      ),
-    },
-  });
-  await f.store.write({
-    put: {
-      table: "Activity",
-      item: row(
-        "Activity",
-        {
-          id: `A-${id}`,
-          actorId: "system",
-          area: "interest",
-          kind: "interest.submitted",
-          subjectType: "Submission",
-          subjectId: id,
-          at: now.toISOString(),
-        },
-        now,
-      ),
-    },
-  });
-};
 
 describe("deletePerson", () => {
   it("removes the Person, their address claim, invitation, grants, Activity, submissions and Cognito user", async () => {
@@ -180,5 +138,45 @@ describe("eraseEmail", () => {
     for (const table of ["Person", "PersonEmail", "Invitation", "AccessGrant"])
       expect(f.store.all(table), table).toEqual([]);
     expect(f.directory.remove).toHaveBeenCalledWith("Google_sub-1");
+  });
+});
+
+describe("an invited submission goes with its Person, whatever address sent it", () => {
+  const invitedFrom = async (f: ReturnType<typeof fixture>, submissionId: string, email: string) => {
+    await f.call("invite", { email, sites: ["driftline"], submissionId }, admin);
+    return String(f.store.all("Person").find((person) => person.email === email)?.id);
+  };
+  const leftOf = (f: ReturnType<typeof fixture>) => ({
+    submissions: f.store.all("Submission").map((s) => s.id),
+    activity: f.store
+      .all("Activity")
+      .map((a) => `${a.kind}:${a.subjectId === "SUB2" ? "SUB2" : ""}`)
+      .sort(),
+  });
+
+  it("after rebindInvitation moved the invitation to a new address", async () => {
+    const f = fixture();
+    await submit(f, "SUB1", "ada@example.com");
+    await submit(f, "SUB2", "bob@example.com");
+    const personId = await invitedFrom(f, "SUB1", "ada@example.com");
+    await signUp(f, "ada@example.com", "sub-1");
+    await signIn(f, "ada@example.com", "sub-1");
+    await f.call("rebindInvitation", { email: "ada@example.com", newEmail: "ada@new.example" }, admin);
+    expect(f.store.all("Person")[0]?.email).toBe("ada@new.example");
+
+    await f.call("deletePerson", { personId }, admin);
+    expect(leftOf(f)).toEqual({ submissions: ["SUB2"], activity: ["interest.submitted:SUB2", "people.deleted:"] });
+    expect(f.store.all("Activity").find((a) => a.kind === "people.deleted")?.detail).toEqual({ submissions: 1 });
+  });
+
+  it("when the invitation went to another address than the one that wrote in", async () => {
+    const f = fixture();
+    await submit(f, "SUB1", "ada@example.com");
+    await submit(f, "SUB2", "bob@example.com");
+    const personId = await invitedFrom(f, "SUB1", "ada@work.example");
+    expect(f.store.all("Submission").find((s) => s.id === "SUB1")).toMatchObject({ status: "invited", personId });
+
+    await f.call("deletePerson", { personId }, admin);
+    expect(leftOf(f)).toEqual({ submissions: ["SUB2"], activity: ["interest.submitted:SUB2", "people.deleted:"] });
   });
 });
