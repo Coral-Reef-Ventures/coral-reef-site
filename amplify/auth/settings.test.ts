@@ -28,8 +28,8 @@ describe("CRV_AUTH_DOMAIN_PREFIX", () => {
 describe("CRV_AUTH_CALLBACK_URLS", () => {
   it("defaults to the local dev server's two pages", () => {
     expect(parseCallbackUrls(undefined)).toEqual({
-      callbackUrls: ["http://localhost:3003/signed-in/"],
-      logoutUrls: ["http://localhost:3003/signout/done/"],
+      callbackUrls: ["http://localhost:3002/signed-in/"],
+      logoutUrls: ["http://localhost:3002/signout/done/"],
     });
   });
   it("splits every origin's URLs by page", () => {
@@ -68,7 +68,7 @@ describe("CRV_ADMIN_EMAILS", () => {
 
 describe("the other settings", () => {
   it("CRV_ADMIN_ORIGIN is an origin and nothing more", () => {
-    expect(parseAdminOrigin(undefined)).toBe("http://localhost:3003");
+    expect(parseAdminOrigin(undefined)).toBe("http://localhost:3002");
     expect(parseAdminOrigin("https://coralreefventures.com")).toBe("https://coralreefventures.com");
     expect(() => parseAdminOrigin("https://coralreefventures.com/admin")).toThrow();
     expect(() => parseAdminOrigin("http://coralreefventures.com")).toThrow();
