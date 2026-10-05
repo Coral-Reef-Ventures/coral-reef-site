@@ -57,9 +57,12 @@ describe("the privacy page", () => {
   const privacy = text("privacy.md");
 
   // The retention periods (plan §2.3a). 1.3 adds amplify/areas/retention.ts and ties these to its constants.
-  it.each(["12 months", "90 days", "24 hours", "1 month", "35 days", "within a few days"])("states %s", (period) => {
-    expect(privacy).toContain(period);
-  });
+  it.each(["12 months", "90 days", "24 hours", "10 minutes", "1 month", "35 days", "within a few days"])(
+    "states %s",
+    (period) => {
+      expect(privacy).toContain(period);
+    },
+  );
 
   it("says what is stored, the browser's part, erasure and the one contact address", () => {
     for (const phrase of [
@@ -71,6 +74,23 @@ describe("the privacy page", () => {
     ]) {
       expect(privacy, phrase).toContain(phrase);
     }
+  });
+});
+
+describe("site-copy.md, the source of the door's words", () => {
+  const root = join(import.meta.dirname, "..", "..", "..");
+  const copy = readFileSync(join(root, "docs", "requirements", "site-copy.md"), "utf8");
+  const blocks = new Map(
+    [...copy.matchAll(/^```markdown file=(\S+)\n([\s\S]*?)\n```$/gm)].map((m) => [m[1], `${m[2]}\n`] as const),
+  );
+
+  it("holds a block for each content file, and no other", () => {
+    expect([...blocks.keys()].sort()).toEqual(["apps/web/content/door.md", "apps/web/content/privacy.md"]);
+  });
+
+  // Copy is approved text: a content file is its block in site-copy.md, changed there first, in the same commit.
+  it.each(["apps/web/content/door.md", "apps/web/content/privacy.md"])("%s is its block, verbatim", (file) => {
+    expect(readFileSync(join(root, file), "utf8")).toBe(blocks.get(file));
   });
 });
 
