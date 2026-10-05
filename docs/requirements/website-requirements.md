@@ -2,8 +2,9 @@
 
 **Status:** v0.2 is proposed (2026-10-04). Gary approves it with the door copy in `site-copy.md` (plan step P8) before
 coralreefventures.com moves to the app. The decision behind it is
-[ADR 0001](../decisions/0001-the-door-and-the-app.md). Until the cutover the GitHub Pages page (`site/`) still meets
-v0.1, CRV-007 included, and its tests keep checking it; the old page and those tests go 14 days after the cutover.
+[ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
+2026-10-05. The GitHub Pages page (`site/`) still meets v0.1, CRV-007 included, and its tests keep checking it until it
+and they are deleted on 2026-10-19, 14 days after the cutover.
 
 ## Purpose
 
@@ -46,5 +47,5 @@ Generous whitespace, large readable typography, subtle coral/network suggestion,
 Review product claims and availability; confirm outbound links; test responsive behavior and keyboard navigation;
 verify metadata and broken links; approve final copy. Door copy approved; the leak check green on every host.
 
-Hosting is decided by ADR 0001: the app on Amplify in the coral-reef project (us-east-2), with GitHub Pages serving the
-v0.1 page until the cutover.
+Hosting is decided by ADR 0001: the app on Amplify in the coral-reef project (us-east-2), serving coralreefventures.com
+since 2026-10-05, with GitHub Pages kept deployed for the v0.1 page until 2026-10-19.

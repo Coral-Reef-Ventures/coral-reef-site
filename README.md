@@ -1,5 +1,9 @@
 # Coral Reef Ventures website
 
+**Since 2026-10-05 coralreefventures.com is served by the CRV app (`apps/web`, on Amplify), not by this page.** The page
+below stays deployed to GitHub Pages, without the domain, until 2026-10-19, and is then deleted. Hosting is in
+`CLAUDE.md` and `apps/web/hosting/README.md`.
+
 The parent-company site: one page that explains the thesis and introduces Markset, Intentset, Streamlane and
 Driftline as independent offerings. Requirements are in [docs/requirements/](docs/requirements/README.md).
 
