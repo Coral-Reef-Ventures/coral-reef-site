@@ -1,7 +1,7 @@
 import type { PreSignUpTriggerEvent } from "aws-lambda";
 
 import { log, metric } from "../../functions/shared/log.ts";
-import { dataClient, unwrap } from "../../functions/shared/data-client.ts";
+import { documents, graphql } from "../../functions/shared/data-client.ts";
 
 export type CheckAdmission = (email: string, triggerSource: string) => Promise<{ admitted: boolean }>;
 
@@ -36,7 +36,9 @@ export const createPreSignUp =
 
 /** crv-pre-sign-up: one call to checkAdmission on crv-access, through the data client. */
 export const handler = createPreSignUp(async (email, triggerSource) => {
-  const client = await dataClient();
-  const answer = unwrap(await client.queries.checkAdmission({ email, triggerSource }));
-  return { admitted: answer.admitted === true };
+  const { checkAdmission } = await graphql<{ checkAdmission: { admitted: boolean } }>(documents.checkAdmission, {
+    email,
+    triggerSource,
+  });
+  return { admitted: checkAdmission.admitted === true };
 });

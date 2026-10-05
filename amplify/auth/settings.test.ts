@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import { doorSites, findSite, siteList } from "../areas/access/sites.ts";
@@ -106,9 +109,15 @@ describe("the site registry", () => {
     expect(siteList(sites)).toBe("Streamlane and Driftline");
     expect(siteList(sites.slice(1))).toBe("Driftline");
   });
-  it("matches the door's own copy of the list", async () => {
-    const { lockedSites } = await import("../../apps/web/src/features/access/door-session/sites.ts");
-    expect(lockedSites.map((s) => [s.id, s.host]).sort()).toEqual(
+  it("matches the door's own copy of the list", () => {
+    // Read as text: the door's list is private to its slice, and the two need only agree.
+    const door = readFileSync(
+      fileURLToPath(new URL("../../apps/web/src/features/access/door-session/sites.ts", import.meta.url)),
+      "utf8",
+    );
+    const listed = [...door.matchAll(/\{ id: "(\w+)", host: "([\w.-]+)"/g)].map(([, id, host]) => [id, host]);
+    expect(listed).toHaveLength(2);
+    expect(listed.sort()).toEqual(
       doorSites("")
         .map((s) => [s.id, s.hosts[0]])
         .sort(),

@@ -1,7 +1,7 @@
 import type { PreTokenGenerationTriggerEvent } from "aws-lambda";
 
 import { log } from "../../functions/shared/log.ts";
-import { dataClient, unwrap } from "../../functions/shared/data-client.ts";
+import { documents, graphql } from "../../functions/shared/data-client.ts";
 
 export type SignIn = { userName: string; sub: string; googleSub: string; email: string };
 export type AdmitSignIn = (
@@ -61,7 +61,8 @@ export const createPreTokenGeneration =
 
 /** crv-pre-token-generation: one call to admitSignIn on crv-access, through the data client. */
 export const handler = createPreTokenGeneration(async (signIn) => {
-  const client = await dataClient();
-  const answer = unwrap(await client.mutations.admitSignIn(signIn));
-  return { admitted: answer.admitted === true, reason: answer.reason, admin: answer.admin };
+  const { admitSignIn } = await graphql<{
+    admitSignIn: { admitted: boolean; reason?: string | null; admin?: boolean | null };
+  }>(documents.admitSignIn, signIn);
+  return { admitted: admitSignIn.admitted === true, reason: admitSignIn.reason, admin: admitSignIn.admin };
 });

@@ -1,5 +1,5 @@
 import { retention } from "../../areas/retention.ts";
-import { dataClient, unwrap } from "../shared/data-client.ts";
+import { documents, graphql } from "../shared/data-client.ts";
 import { errorName, log } from "../shared/log.ts";
 
 export type Stale = { personId?: string | null };
@@ -36,24 +36,25 @@ export const createRetention = (deps: RetentionDeps) => async () => {
   return { deleted, failed };
 };
 
+type Page = { listInvitationsByStatus: { items: Stale[]; nextToken?: string | null } };
+
 export const handler = createRetention({
   async stale(status, before) {
-    const client = await dataClient();
     const found: Stale[] = [];
     let nextToken: string | null | undefined;
     do {
-      const page = await client.models.Invitation.listInvitationsByStatus(
-        { status, statusAt: { lt: before } },
-        { selectionSet: ["personId"], ...(nextToken ? { nextToken } : {}) },
-      );
-      found.push(...unwrap(page));
+      const { listInvitationsByStatus: page } = await graphql<Page>(documents.listInvitationsByStatus, {
+        status,
+        statusAt: { lt: before },
+        nextToken,
+      });
+      found.push(...page.items);
       nextToken = page.nextToken;
     } while (nextToken);
     return found;
   },
   async deletePerson(personId) {
-    const client = await dataClient();
-    unwrap(await client.mutations.deletePerson({ personId }));
+    await graphql(documents.deletePerson, { personId });
   },
   now: () => new Date(),
 });
