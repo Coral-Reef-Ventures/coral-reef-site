@@ -12,3 +12,6 @@ scope:
 sourceRoots:
   - apps/web/src/**
   - amplify/**
+# The one corner of the app that knows Amplify: the door's whole view of the backend and of sign-in (DoorApi).
+infrastructure:
+  - apps/web/src/infrastructure/**
