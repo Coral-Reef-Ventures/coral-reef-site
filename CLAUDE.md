@@ -74,7 +74,8 @@ CRV-014 and supersedes CRV-007).
   operation against `test/memory-store.ts` with the same conditions DynamoDB is sent. `amplify/vitest.config.ts`
   synthesizes the backend twice, as a sandbox and as the branch, before its tests, reading no account.
   `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`; set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` and
-  placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first); delete it afterwards with
+  placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first, piped from `printf`, not
+  `echo`: the client id goes into the identity pool, which refuses its trailing newline); delete it afterwards with
   `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes` and remove the two secrets.
   defineAuth always replaces the Cognito domain prefix with a hash, so `backend.ts` sets the fixed one on the domain
   resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
