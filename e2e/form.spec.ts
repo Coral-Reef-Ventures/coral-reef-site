@@ -1,7 +1,8 @@
 /** The interest form against the stub backend: validation, the thank-you, the rate-limited answer, and a failure. */
 import { expect, type Page, test } from "@playwright/test";
 
-const base = () => process.env.CRV_WEB_URL as string;
+// The form is on its own page since 2026-10-05; the home page has none.
+const base = () => `${process.env.CRV_WEB_URL as string}/get-involved/`;
 
 async function fill(page: Page, email = "ada@example.com") {
   await page.getByLabel("Your name").fill("Ada Lovelace");
@@ -35,7 +36,7 @@ test("a bad address and no interest are each refused in words", async ({ page })
 });
 
 test("a valid submission is sent once, with where it came from, and thanked", async ({ page }) => {
-  await page.goto(`${base()}/?site=streamlane`);
+  await page.goto(`${base()}?site=streamlane`);
   await fill(page);
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Thank you" })).toBeFocused();

@@ -98,15 +98,16 @@ changes in `website-requirements.md` v0.2, before coralreefventures.com moves to
 Phase 2b cutover). Until then the sections above stay the approved record, and they are still what GitHub Pages serves.
 The decision behind this copy is [ADR 0001](../decisions/0001-the-door-and-the-app.md).
 
-This file is the source. The app's two content files are copied into it verbatim, below, and
+This file is the source. The app's three content files are copied into it verbatim, below, and
 `apps/web/lib/content.test.ts` fails if either one differs from its block here. Change the copy here first and the
 content file in the same commit.
 
 ## Door (proposed, 2026-10-04)
 
-**Page order:** header → thesis/hero → the four product cards, with the independence note beneath them → "Get
-involved" (the interest form) → "Have an invitation?" (Google sign-in) → closing statement and contact address →
-footer. The approved hero, section, closing and footer copy is unchanged.
+**Page order:** header → thesis/hero → the four product cards, with the independence note beneath them → closing
+statement and contact address → footer. The approved hero, section, closing and footer copy is unchanged. "Get
+involved" and "Have an invitation?" were on this page until 2026-10-05 and are now their own page, below. The header's
+one link, "Get involved", goes there.
 
 **Product cards.** Markset and Intentset keep their approved cards and links. Streamlane and Driftline keep their
 names, taglines, descriptions and labels, and their availability line becomes **Open to invited guests.** Neither card
@@ -114,8 +115,7 @@ links anywhere for a visitor, because the sites behind the door would only send 
 invitee instead sees **Continue to Streamlane** and **Continue to Driftline**, one for each site they were invited to.
 `{{products}}` is the four cards, generated from `site/products.ts` by `apps/web/lib/products.ts`.
 
-**The page source,** `apps/web/content/door.md`. `{{interest-form}}` and `{{sign-in}}` mark where the form and the
-sign-in go; their words follow.
+**The page source,** `apps/web/content/door.md`.
 
 ```markdown file=apps/web/content/door.md
 ---
@@ -149,8 +149,39 @@ These offerings share a direction, not an adoption requirement. Use each where i
 
 ***
 
+{.eyebrow}
+Coral Reef Ventures
+
+## Better foundations for what comes next.
+
+{.statement}
+We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.
+
+{.contact}
+Get in touch at [hello@coralreefventures.com](mailto:hello@coralreefventures.com).
+```
+
+## Get involved page (proposed, 2026-10-05)
+
+**Moved 2026-10-05, at Gary's request:** "Get involved" (the interest form) and "Have an invitation?" (the Google
+sign-in) left the door page for a page of their own at `/get-involved/`, with their words unchanged. "Get involved" is
+the page's heading, so it is an h1 where it was an h2; "Have an invitation?" stays an h2. The anchors `#involved` and
+`#invited` stay with the sections. A visit to `/` that carries a locked site's sign-in request or a refused ticket (the
+gate redirects to the door's origin), or names `#involved` or `#invited`, is forwarded to this page.
+
+**Page order:** header → "Get involved" (the interest form) → "Have an invitation?" (Google sign-in) → footer. The page's
+description is the "Get involved" lead.
+
+**The page source,** `apps/web/content/get-involved.md`. `{{interest-form}}` and `{{sign-in}}` mark where the form and
+the sign-in go; their words follow.
+
+```markdown file=apps/web/content/get-involved.md
+---
+markset: 0
+---
+
 {#involved}
-## Get involved
+# Get involved
 
 {.lead}
 Interested in taking part with funding, as a design partner or as an advisor? Tell us who you are and what you have in mind.
@@ -166,19 +197,6 @@ Interested in taking part with funding, as a design partner or as an advisor? Te
 Sign in with the Google account your invitation went to.
 
 {{sign-in}}
-
-***
-
-{.eyebrow}
-Coral Reef Ventures
-
-## Better foundations for what comes next.
-
-{.statement}
-We are building tools that make software work easier to understand, maintain, and share as the way we build it changes.
-
-{.contact}
-Get in touch at [hello@coralreefventures.com](mailto:hello@coralreefventures.com).
 ```
 
 ### The interest form
@@ -272,8 +290,8 @@ address until the cutover).
 >
 > You are invited to *site list*, open for now only to invited guests.
 >
-> To come in, go to *door*/#invited and sign in with Google using this address, *address*. The invitation belongs to
-> the first Google account that signs in with it, so use the account this message came to.
+> To come in, go to *door*/get-involved/#invited and sign in with Google using this address, *address*. The invitation
+> belongs to the first Google account that signs in with it, so use the account this message came to.
 >
 > If anything does not work, reply to this message or write to hello@coralreefventures.com.
 >

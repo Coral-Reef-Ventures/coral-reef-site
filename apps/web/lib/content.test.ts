@@ -10,13 +10,16 @@ const text = (file: string, slots: string[] = []) =>
     .map((s) => ("html" in s ? s.html : `[[${s.slot}]]`))
     .join("\n");
 
-describe("the door's content", () => {
-  const door = text("door.md", ["interest-form", "sign-in"]);
+const h1s = (html: string) => html.match(/<h1\b/g)?.length ?? 0;
 
-  it("parses as Markset with no error and puts the form and the sign-in where the copy says", () => {
-    expect(door.indexOf("Get involved")).toBeLessThan(door.indexOf("[[interest-form]]"));
-    expect(door.indexOf("[[interest-form]]")).toBeLessThan(door.indexOf("Have an invitation?"));
-    expect(door.indexOf("Have an invitation?")).toBeLessThan(door.indexOf("[[sign-in]]"));
+describe("the door's content", () => {
+  const door = text("door.md");
+
+  it("parses as Markset with no error, with one h1 and neither the form nor the sign-in", () => {
+    expect(h1s(door)).toBe(1);
+    for (const gone of ["Get involved", "Have an invitation?", 'id="involved"', 'id="invited"', "[[interest-form]]"]) {
+      expect(door, gone).not.toContain(gone);
+    }
   });
 
   it("carries the approved copy in the approved order", () => {
@@ -49,7 +52,20 @@ describe("the door's content", () => {
   });
 
   it("refuses a slot it was not given", () => {
-    expect(() => segments("door.md", [])).toThrow(/unknown slot/);
+    expect(() => segments("get-involved.md", ["interest-form"])).toThrow(/unknown slot/);
+  });
+});
+
+describe("the Get involved page", () => {
+  const page = text("get-involved.md", ["interest-form", "sign-in"]);
+
+  it("has one h1, Get involved, and puts the form and then the sign-in where the copy says", () => {
+    expect(h1s(page)).toBe(1);
+    expect(page).toMatch(/<h1 id="involved">Get involved<\/h1>/);
+    expect(page).toMatch(/<h2 id="invited">Have an invitation\?<\/h2>/);
+    expect(page.indexOf("Get involved")).toBeLessThan(page.indexOf("[[interest-form]]"));
+    expect(page.indexOf("[[interest-form]]")).toBeLessThan(page.indexOf("Have an invitation?"));
+    expect(page.indexOf("Have an invitation?")).toBeLessThan(page.indexOf("[[sign-in]]"));
   });
 });
 
@@ -80,16 +96,17 @@ describe("the privacy page", () => {
 describe("site-copy.md, the source of the door's words", () => {
   const root = join(import.meta.dirname, "..", "..", "..");
   const copy = readFileSync(join(root, "docs", "requirements", "site-copy.md"), "utf8");
+  const files = ["apps/web/content/door.md", "apps/web/content/get-involved.md", "apps/web/content/privacy.md"];
   const blocks = new Map(
     [...copy.matchAll(/^```markdown file=(\S+)\n([\s\S]*?)\n```$/gm)].map((m) => [m[1], `${m[2]}\n`] as const),
   );
 
   it("holds a block for each content file, and no other", () => {
-    expect([...blocks.keys()].sort()).toEqual(["apps/web/content/door.md", "apps/web/content/privacy.md"]);
+    expect([...blocks.keys()].sort()).toEqual(files);
   });
 
   // Copy is approved text: a content file is its block in site-copy.md, changed there first, in the same commit.
-  it.each(["apps/web/content/door.md", "apps/web/content/privacy.md"])("%s is its block, verbatim", (file) => {
+  it.each(files)("%s is its block, verbatim", (file) => {
     expect(readFileSync(join(root, file), "utf8")).toBe(blocks.get(file));
   });
 });

@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/privacy/", "/signout/"];
+const pages = ["/", "/get-involved/", "/privacy/", "/signout/"];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });
@@ -51,7 +51,7 @@ for (const path of pages) {
 test("the keyboard reaches every link, control and the scheme control in order, each with a visible focus ring", async ({
   page,
 }) => {
-  await open(page, "/", 1440, "light");
+  await open(page, "/get-involved/", 1440, "light");
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelector("a")?.textContent)).toBe("Skip to content");
   const rings: string[] = [];
@@ -82,7 +82,7 @@ test("the skip link moves focus into the main content", async ({ page }) => {
 });
 
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/privacy/"]) {
+  for (const path of ["/", "/get-involved/", "/privacy/"]) {
     test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
       await open(page, path, 1440, scheme);
       await page.waitForTimeout(300);
@@ -125,16 +125,49 @@ for (const scheme of ["light", "dark"] as const) {
   }
 }
 
+test("the home page has one h1 and neither the form nor the sign-in; the Get involved page has one h1 and both", async ({
+  page,
+}) => {
+  await page.goto(`${base()}/`);
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Get involved" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Have an invitation?" })).toHaveCount(0);
+  await expect(page.locator("form")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Main" }).first().getByRole("link")).toHaveText(["Get involved"]);
+
+  await page.goto(`${base()}/get-involved/`);
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.getByRole("heading", { level: 1, name: "Get involved" })).toHaveAttribute("id", "involved");
+  await expect(page.getByRole("heading", { level: 2, name: "Have an invitation?" })).toHaveAttribute("id", "invited");
+  await expect(page.getByRole("form", { name: "Get involved" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await expect(page).toHaveTitle(/^Get involved/);
+});
+
+test("a locked site's request to the door's origin, and an old link to a moved section, reach the Get involved page", async ({
+  page,
+}) => {
+  const query = `?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${"A".repeat(22)}`;
+  await page.goto(`${base()}/${query}`);
+  await page.waitForURL(`${base()}/get-involved/${query}`);
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await page.goto(`${base()}/#invited`);
+  await page.waitForURL(`${base()}/get-involved/#invited`);
+  await page.goto(`${base()}/?error=NOT_INVITED`);
+  await page.waitForURL(`${base()}/get-involved/?error=NOT_INVITED`);
+});
+
 test("the invitation sign-in offers Google, and carries what a site asked for through it", async ({ page }) => {
   const state = "A".repeat(22);
-  await page.goto(`${base()}/?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${state}`);
+  await page.goto(`${base()}/get-involved/?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${state}`);
   await page.getByRole("button", { name: "Sign in with Google" }).click();
   const carried = await page.evaluate(() => (window as unknown as { __crvSignIn?: string }).__crvSignIn);
   expect(JSON.parse(carried ?? "{}")).toEqual({ site: "driftline", host: "driftline.app", next: "/docs/", state });
 });
 
 test("a refused sign-in says there is no invitation and starts the form with that", async ({ page }) => {
-  await page.goto(`${base()}/?error=NOT_INVITED`);
+  await page.goto(`${base()}/get-involved/?error=NOT_INVITED`);
   await expect(page.getByText("There is no invitation for that Google account yet.")).toBeVisible();
   await expect(page.getByLabel("Message")).toHaveValue(/no invitation for that account/);
 });
@@ -162,7 +195,7 @@ test("a signed-in stranger is sent back to the door with the form", async ({ pag
     }
   });
   await page.goto(`${base()}/signed-in/`);
-  await page.waitForURL(/\/\?error=NOT_INVITED/);
+  await page.waitForURL(/\/get-involved\/\?error=NOT_INVITED/);
   await expect(page.getByText("There is no invitation for that Google account yet.")).toBeVisible();
 });
 

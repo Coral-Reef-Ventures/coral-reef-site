@@ -13,17 +13,14 @@ const Lockup = () => (
 );
 
 /**
- * The shell, bound to Coral Reef Ventures. The door has two sections to reach and no social cards: the card builder
+ * The shell, bound to Coral Reef Ventures. The door has one page to reach, where the form and the sign-in are, and no social cards: the card builder
  * fetches a web font at build time, and this site loads nothing from another origin.
  */
 export const site = createSite({
   name: "Coral Reef Ventures",
   url: siteUrl,
   description: "Open foundations and focused tools for creating software with humans and AI working together.",
-  nav: [
-    { key: "involved", label: "Get involved", href: "/#involved" },
-    { key: "invited", label: "Have an invitation?", href: "/#invited" },
-  ],
+  nav: [{ key: "involved", label: "Get involved", href: "/get-involved/" }],
   lockup: <Lockup />,
   actions: [],
   footer: {
