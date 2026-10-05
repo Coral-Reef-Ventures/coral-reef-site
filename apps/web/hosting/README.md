@@ -144,6 +144,101 @@ that `amplify_outputs.json` lands at `apps/web/amplify_outputs.json`, and that `
 - Admin pages are static shells; what they show comes from AppSync, which authorizes every call.
 - CloudWatch log groups of the backend's functions keep logs for one month, set in the functions' definitions.
 
+## The leak check
+
+`scripts/leak-check.ts` (`pnpm run leak-check`) proves CRV-014 on each locked site, on every host: the apex, `www`, the
+product app's `main.<appId>.amplifyapp.com` and any temporary app's host. Without a session every path answers the
+gate's coming-soon page (a 401, the same bytes for every path but the next in its sign-in link) or, for anything that
+is not a page load, an empty 401, never a byte of the site; with a session it answers 200; asked again without one it
+still gives nothing, which is the CDN cache check; `www` goes to the apex before the gate runs and the amplifyapp.com
+host gets 403. Every gated answer must be `no-store` or `private` (RULE-GATED-NO-STORE) and carry `X-Robots-Tag:
+noindex`. The paths are the live sitemap's pages, everything those pages reference (`/_next/static/**`, `/og/*.png`,
+icons), and probes (`/404.html`, `/sitemap.xml`, `/index.txt`, a page that does not exist).
+
+**Which sites.** The ones `locked: true` in `scripts/leak-check/sites.ts`, set in the change that records a flip;
+`--site <id>` checks one before that. `--test-host <site>:<host> --only-test-hosts` checks a temporary app alone
+(Phase 3, step 2), and the CRV app's `CRV_DOOR_TEST_HOSTS` must list the same host, or no ticket is issued for it.
+
+**The session.** The check mints one the way an invitee gets one, as a temporary invitee,
+`door-leak-check@coralreefventures.com` (which receives no mail: nothing is sent):
+
+1. `eraseEmail` on that address and AdminDeleteUser, to clear whatever an interrupted run left.
+2. `invite` it to the sites being checked, by invoking crv-access directly with IAM, as an admin of the door. crv-access
+   trusts the AppSync identity in its event, so the right to invoke the function is the right to call any operation as
+   anyone; that is why the role below is held to one repository branch.
+3. AdminCreateUser (pre sign-up admits it because the invitation is pending, plan §2.2) and a random permanent password,
+   passed to the CLI in a file only the run can read and deleted at once.
+4. USER_SRP_AUTH, the app client's one password flow, so pre token generation binds the invitation like any first
+   sign-in. Measured 2026-10-05 against the live pool: 2.3 s.
+5. `issueSiteTicket` through the API with that user's token, for each gated host; the ticket is posted to the host's
+   `/_door` with a matching state cookie, and the gate's 303 sets the session.
+6. Step 1 again, whatever happened. The invitee's own Activity is erased with it; each erasure leaves one
+   `people.deleted` row (ids only, kept indefinitely, plan §2.3a), so the admin's activity view shows two a day, by
+   `user:leak-check`.
+
+Proved against the live backend on 2026-10-05 up to step 5's ticket (`aud` driftline.app, `next` kept, `st` bound, one
+hour), and cleaned up; the gate's half waits for the first flip.
+
+**By hand,** after every product deploy and each flip: `AWS_PROFILE=coral-reef AWS_CLI=~/.local/bin/aws pnpm run
+leak-check --site driftline`. `--no-session` needs no AWS at all and runs every check that does not need a session.
+
+**In CI,** `.github/workflows/leak-check.yml` runs daily at 11:23 UTC and by hand (Actions, "Leak check", with an
+optional site and test host). It is a workflow of its own so a locked site's state never fails a pull request. With the
+repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's OIDC; without it, it runs with
+`--no-session` and warns.
+
+**The role CI needs (not created yet).** In the coral-reef project, us-east-2:
+
+1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`, if the
+   project has none. **The project's SCP denies `iam:GetOpenIDConnectProvider` and
+   `iam:ListOpenIDConnectProviders` to `AccountFullAccessRole`** (checked 2026-10-05), so creating one may need the
+   project's advanced features turned on in AWS Settings first, or may not be possible at all; until it is, CI runs
+   without a session and the authenticated half is run by hand.
+2. A role, `crv-leak-check`, with this trust policy, so only this repository's `main` (the schedule and a manual run)
+   can assume it:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+       "Effect": "Allow",
+       "Principal": { "Federated": "arn:aws:iam::865000063691:oidc-provider/token.actions.githubusercontent.com" },
+       "Action": "sts:AssumeRoleWithWebIdentity",
+       "Condition": {
+         "StringEquals": {
+           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+           "token.actions.githubusercontent.com:sub": "repo:Coral-Reef-Ventures/coral-reef-site:ref:refs/heads/main"
+         }
+       }
+     }]
+   }
+   ```
+
+3. This inline policy, and a maximum session of one hour:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       { "Sid": "FindTheBackend", "Effect": "Allow", "Action": "amplify:GetBranch",
+         "Resource": "arn:aws:amplify:us-east-2:865000063691:apps/d1fw6blayytium/branches/main" },
+       { "Sid": "ReadItsOutputs", "Effect": "Allow", "Action": "cloudformation:DescribeStacks",
+         "Resource": "arn:aws:cloudformation:us-east-2:865000063691:stack/amplify-d1fw6blayytium-main-branch-*/*" },
+       { "Sid": "InviteAndEraseTheInvitee", "Effect": "Allow", "Action": "lambda:InvokeFunction",
+         "Resource": "arn:aws:lambda:us-east-2:865000063691:function:amplify-d1fw6blayytium-mai-crvaccesslambda*" },
+       { "Sid": "TheInviteesUser", "Effect": "Allow",
+         "Action": ["cognito-idp:AdminCreateUser", "cognito-idp:AdminSetUserPassword", "cognito-idp:AdminDeleteUser"],
+         "Resource": "arn:aws:cognito-idp:us-east-2:865000063691:userpool/us-east-2_rKIikq747" }
+     ]
+   }
+   ```
+
+   The sign-in and the ticket need no IAM: they are Cognito's public calls and the API with the invitee's own token. A
+   replaced user pool changes the last ARN.
+4. Set the repository variable (not a secret; it names a role, it grants nothing alone):
+   `gh variable set CRV_LEAK_CHECK_ROLE_ARN --repo Coral-Reef-Ventures/coral-reef-site --body arn:aws:iam::865000063691:role/crv-leak-check`,
+   then run the workflow by hand once and read its log.
+
 ## Rollback
 
 **The domain, back to GitHub Pages** (deployed until 2026-10-19):

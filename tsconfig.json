@@ -16,6 +16,7 @@
     "site/**/*.ts",
     "test/**/*.ts",
     "e2e/**/*.ts",
+    "scripts/**/*.ts",
     "packages/**/*.ts",
     "vitest.config.ts",
     "playwright.config.ts"

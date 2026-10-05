@@ -1,0 +1,59 @@
+# The leak check (scripts/leak-check.ts; plan Phase 3, CRV-014, RULE-GATED-NO-STORE), daily and by hand. A workflow of
+# its own, so a locked site's state never fails a pull request's CI. It checks the sites marked locked in
+# scripts/leak-check/sites.ts and passes with nothing to do until one is.
+#
+# With the repository variable CRV_LEAK_CHECK_ROLE_ARN set, it assumes that role over GitHub's OIDC and mints a session
+# for a temporary invitee (apps/web/hosting/README.md, "The leak check", has the role's policies). Without it, it runs
+# every check that needs no session and says so: no byte without a session, the coming-soon page, the empty 401s, the
+# refused hosts and www.
+name: Leak check
+on:
+  schedule:
+    - cron: "23 11 * * *"
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "One site to check whether or not sites.ts marks it locked (driftline or streamlane); empty for the locked ones"
+        required: false
+        default: ""
+      test_host:
+        description: "A temporary app's host to check alone, as <site>:<host>; it must also be in the CRV app's CRV_DOOR_TEST_HOSTS"
+        required: false
+        default: ""
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  # One temporary invitee at a time: two runs would erase each other's.
+  group: leak-check
+  cancel-in-progress: false
+jobs:
+  leak-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      # The check uses Node's own modules only, so there is nothing to install.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - if: vars.CRV_LEAK_CHECK_ROLE_ARN != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.CRV_LEAK_CHECK_ROLE_ARN }}
+          role-session-name: crv-leak-check
+          aws-region: us-east-2
+      - name: Leak check
+        env:
+          SITE: ${{ inputs.site }}
+          TEST_HOST: ${{ inputs.test_host }}
+          WITH_SESSION: ${{ vars.CRV_LEAK_CHECK_ROLE_ARN != '' }}
+        run: |
+          args=()
+          if [ -n "$SITE" ]; then args+=(--site "$SITE"); fi
+          if [ -n "$TEST_HOST" ]; then args+=(--test-host "$TEST_HOST" --only-test-hosts); fi
+          if [ "$WITH_SESSION" != "true" ]; then
+            echo "::warning::No CRV_LEAK_CHECK_ROLE_ARN: checking without a session only."
+            args+=(--no-session)
+          fi
+          node scripts/leak-check.ts "${args[@]}"
