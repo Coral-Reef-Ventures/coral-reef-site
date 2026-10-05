@@ -16,7 +16,7 @@ Node ≥ 22.18. TypeScript runs directly through Node's type stripping; there is
 
 ```sh
 pnpm install
-pnpm run site:watch   # http://localhost:3004, rebuilds and reloads on change
+pnpm run site:watch   # http://localhost:3009, rebuilds and reloads on change
 pnpm run site         # build into dist/
 pnpm test             # requirements checks against the built HTML
 pnpm exec playwright install chromium   # once
