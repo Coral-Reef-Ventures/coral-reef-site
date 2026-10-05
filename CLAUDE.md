@@ -66,8 +66,9 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
 - **The leak check proves the lock** (CRV-014): `scripts/leak-check.ts`, daily in `.github/workflows/leak-check.yml`
   (a workflow of its own, so a locked site never fails a pull request) and by hand after every product deploy. It
   checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip.
-  Its session is a temporary invitee it creates and erases itself; `apps/web/hosting/README.md`, "The leak check", has
-  how, and the IAM role CI needs, which does not exist yet.
+  Its session is an existing invitee (`crv-check@example.com`) it sets a fresh password for and signs in as; it makes
+  no admin call and never invites, erases or creates anyone, because inviting is an admin's job (go-ahead §17c).
+  `apps/web/hosting/README.md`, "The leak check", has how, and the IAM role CI needs, which does not exist yet.
 - **Unlocking a locked site is a recorded decision** (`door.unlocked` in Activity, with a reason), never a silent
   rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).

@@ -1,10 +1,10 @@
 import { createHash, createHmac, randomBytes } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
 import type { Exchange, Send } from "./http.ts";
-import { type Aws, clearInvitee, discoverBackend, enterWithTicket, invitee, invokeAccess } from "./session.ts";
+import { type Aws, defaultInvitee as invitee, discoverBackend, enterWithTicket, setPassword } from "./session.ts";
 import {
   claimSignature,
   ephemeral,
@@ -22,20 +22,24 @@ const backend = {
   userPoolId: "us-east-2_Pool1",
   clientId: "client",
   graphqlUrl: "https://api.test/graphql",
-  accessFunction: "crvaccesslambda-fn",
 };
 
-/** A fake AWS CLI: records each call, and answers `lambda invoke` by writing the out file the CLI would. */
-const fakeAws = (answer: (args: string[]) => { stdout?: string; out?: unknown; fail?: string }) => {
+/** A fake AWS CLI: records each call, and the input file of any call that takes one, read before it is deleted. */
+const fakeAws = (answer: (args: string[]) => { stdout?: string; fail?: string }) => {
   const calls: string[][] = [];
+  const inputs: unknown[] = [];
   const aws: Aws = async (args) => {
     calls.push(args);
+    const file = args[args.indexOf("--cli-input-json") + 1];
+    if (args.includes("--cli-input-json") && file) {
+      const path = file.replace("file://", "");
+      inputs.push({ body: JSON.parse(readFileSync(path, "utf8")), mode: statSync(path).mode & 0o777 });
+    }
     const result = answer(args);
     if (result.fail) throw new Error(`aws ${args.slice(0, 2).join(" ")}: ${result.fail}`);
-    if (args[0] === "lambda") writeFileSync(args.at(-1) ?? "", JSON.stringify(result.out ?? {}));
     return result.stdout ?? "{}";
   };
-  return { aws, calls };
+  return { aws, calls, inputs };
 };
 
 describe("minting a session", () => {
@@ -48,10 +52,6 @@ describe("minting a session", () => {
               { OutputKey: "userPoolId", OutputValue: "us-east-2_Pool1" },
               { OutputKey: "webClientId", OutputValue: "client" },
               { OutputKey: "awsAppsyncApiEndpoint", OutputValue: "https://api.test/graphql" },
-              {
-                OutputKey: "definedFunctions",
-                OutputValue: JSON.stringify(["crvinterestlambda-a", "crvaccesslambda-fn"]),
-              },
             ]),
           },
     );
@@ -61,37 +61,30 @@ describe("minting a session", () => {
     );
   });
 
-  it("invokes crv-access as an admin of the door, and reports a refusal by its code", async () => {
-    let payload: unknown;
-    const { aws } = fakeAws((args) => {
-      const file = args[args.indexOf("--payload") + 1]?.replace("file://", "") ?? "";
-      payload = JSON.parse(readFileSync(file, "utf8"));
-      return args.includes("crvaccesslambda-fn") && (payload as { fieldName: string }).fieldName === "invite"
-        ? {
-            stdout: JSON.stringify({ StatusCode: 200, FunctionError: "Unhandled" }),
-            out: { errorMessage: "BAD_SITES" },
-          }
-        : { stdout: JSON.stringify({ StatusCode: 200 }), out: { ok: true } };
+  it("sets the existing invitee a fresh permanent password through a private file, and makes no other call", async () => {
+    const { aws, calls, inputs } = fakeAws(() => ({ stdout: "" }));
+    const first = await setPassword(aws, backend, invitee);
+    const second = await setPassword(aws, backend, invitee);
+    expect(calls.map((call) => call.slice(0, 2).join(" "))).toEqual([
+      "cognito-idp admin-set-user-password",
+      "cognito-idp admin-set-user-password",
+    ]);
+    expect(inputs[0]).toEqual({
+      body: { UserPoolId: "us-east-2_Pool1", Username: invitee, Password: first, Permanent: true },
+      mode: 0o600,
     });
-    expect(await invokeAccess(aws, backend, "eraseEmail", { email: invitee })).toEqual({ ok: true });
-    expect(payload).toEqual({
-      fieldName: "eraseEmail",
-      arguments: { email: invitee },
-      identity: { sub: "leak-check", username: "leak-check", groups: ["admins"], claims: {} },
-    });
-    await expect(invokeAccess(aws, backend, "invite", { email: invitee, sites: [] })).rejects.toThrow(
-      "crv-access refused invite: BAD_SITES",
-    );
+    expect(first).not.toBe(second);
+    expect(first).toMatch(/^Lc1!/);
+    expect(invitee).toBe("crv-check@example.com");
+    const missing = fakeAws(() => ({ fail: "UserNotFoundException" }));
+    await expect(setPassword(missing.aws, backend, "nobody@example.com")).rejects.toThrow(/UserNotFoundException/);
   });
 
-  it("clears the invitee through crv-access and then Cognito, where a user already gone is fine", async () => {
-    const { aws, calls } = fakeAws((args) =>
-      args[0] === "cognito-idp" ? { fail: "UserNotFoundException" } : { stdout: "{}", out: { ok: true } },
-    );
-    await clearInvitee(aws, backend);
-    expect(calls.map((call) => call.slice(0, 2).join(" "))).toEqual(["lambda invoke", "cognito-idp admin-delete-user"]);
-    const failing = fakeAws((args) => (args[0] === "cognito-idp" ? { fail: "AccessDeniedException" } : { out: {} }));
-    await expect(clearInvitee(failing.aws, backend)).rejects.toThrow(/AccessDeniedException/);
+  it("makes no admin call to the door and creates or deletes no one: inviting is an admin's job", () => {
+    const source = readFileSync(new URL("./session.ts", import.meta.url), "utf8");
+    for (const forbidden of ["lambda", "admin-create-user", "admin-delete-user", "eraseEmail", '"invite"']) {
+      expect(source, forbidden).not.toContain(forbidden);
+    }
   });
 
   it("posts the ticket with its state cookie and keeps only the session cookie's value", async () => {
