@@ -34,11 +34,25 @@ type Answer<T> = { data?: T; errors?: { message: string }[] };
 type Graphql = { graphql(options: { query: string; variables: object; authMode: string }): Promise<unknown> };
 
 let api: Graphql | undefined;
-/** The one `generateClient` in the app. */
-const client = (): Graphql => {
+/** The one `generateClient` in the app. The admin views' AdminApi (adminAmplify.ts) is made over it too. */
+export const amplifyGraphql = (): Graphql => {
   if (!configure()) throw new Error("The door is not connected to a backend.");
   api ??= generateClient() as unknown as Graphql;
   return api;
+};
+const client = amplifyGraphql;
+
+/**
+ * The groups of this browser's signed-in session, from its ID token's `cognito:groups` (pre token generation puts
+ * `admins` there for an admin), or null when there is no session or no backend. The admin views read it before they
+ * load; AppSync checks the same group again on every admin operation.
+ */
+export const sessionGroups = async (): Promise<string[] | null> => {
+  if (!configure()) return null;
+  const { tokens } = await fetchAuthSession();
+  if (!tokens?.idToken) return null;
+  const groups = tokens.idToken.payload["cognito:groups"];
+  return Array.isArray(groups) ? groups.filter((group): group is string => typeof group === "string") : [];
 };
 
 const call = async <T>(query: string, variables: object, authMode: "identityPool" | "userPool"): Promise<T> => {

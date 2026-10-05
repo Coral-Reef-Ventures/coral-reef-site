@@ -6,7 +6,8 @@ import { describe, expect, inject, it } from "vitest";
 
 /**
  * The GraphQL documents written by hand, held to the schema AppSync is given: the door's client
- * (apps/web/src/infrastructure/amplify/client.ts) and the triggers' and sweep's (functions/shared/data-client.ts).
+ * (apps/web/src/infrastructure/amplify/client.ts), the admin views' (adminAmplify.ts beside it) and the triggers' and
+ * sweep's (functions/shared/data-client.ts).
  * The schema is the transformed one from the synth, so generated index queries are there too. For each document: the
  * operation type, every variable's type against the field's argument, every required argument supplied, and the fields
  * it selects present on the type the field returns.
@@ -84,6 +85,42 @@ describe("the hand-written GraphQL documents", () => {
     ]);
   });
   it.each(door.map((d) => [d.field, d] as const))("the door's %s matches the schema", (_name, d) => check(d));
+
+  const admin = parse(read("../../apps/web/src/infrastructure/amplify/adminAmplify.ts"));
+  it("the admin views' are the admin-read queries they list by and the admin mutations", () => {
+    expect(admin.map((d) => `${d.kind} ${d.field}`)).toEqual([
+      "query listSubmissionsByStatus",
+      "query listInvitationsByStatus",
+      "query listAccessGrantsByResource",
+      "query listActivityBySubject",
+      "query listActivityByPerson",
+      "query listActivityByArea",
+      "query getSubmission",
+      "mutation updateSubmission",
+      "mutation invite",
+      "mutation revokeInvitation",
+      "mutation restoreInvitation",
+      "mutation setGrants",
+      "mutation rebindInvitation",
+      "mutation deletePerson",
+      "mutation eraseEmail",
+    ]);
+  });
+  it.each(admin.map((d) => [d.field, d] as const))("the admin views' %s matches the schema", (_name, d) => check(d));
+
+  it("lets the user pool reach every operation and type the admin views use, for the admins group", () => {
+    for (const d of admin) {
+      const root = d.kind === "query" ? "Query" : "Mutation";
+      const block = new RegExp(`^type ${root}\\b[^{]*\\{([\\s\\S]*?)^\\}`, "m").exec(sdl)?.[1] ?? "";
+      expect(new RegExp(`^\\s*${d.field}\\b[^\\n]*@aws_cognito_user_pools`, "m").test(block), d.field).toBe(true);
+    }
+    for (const type of ["InvitationView", "InviteResult", "Done"]) {
+      expect(
+        new RegExp(`^type ${type} @aws_cognito_user_pools\\(cognito_groups: \\["admins"\\]\\)`, "m").test(sdl),
+        type,
+      ).toBe(true);
+    }
+  });
 
   const backend = parse(read("../functions/shared/data-client.ts"));
   it("the backend's are the triggers' two and the sweep's two", () => {

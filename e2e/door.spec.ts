@@ -342,6 +342,24 @@ test("an invited, signed-in visitor is offered each site they may continue to", 
   await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
 });
 
+test("a sign-in started on an admin page goes back to it, and only to an admin page", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("crv-stub-session", "admin");
+    localStorage.setItem("crv-stub-state", JSON.stringify({ admin: "/admin/submission/?id=01K6ABCDEF" }));
+  });
+  await page.goto(`${base()}/signed-in/`);
+  await page.waitForURL(/\/admin\/submission\/\?id=01K6ABCDEF$/);
+
+  const other = await page.context().newPage();
+  await other.addInitScript(() => {
+    localStorage.setItem("crv-stub-session", "admin");
+    localStorage.setItem("crv-stub-state", JSON.stringify({ admin: "//evil.example/" }));
+  });
+  await other.goto(`${base()}/signed-in/`);
+  await expect(other.getByRole("link", { name: "Admin" })).toHaveAttribute("href", "/admin/");
+  expect(new URL(other.url()).pathname).toBe("/signed-in/");
+});
+
 test("a signed-in stranger is sent back to the door with the form", async ({ page }) => {
   // Seeded once: the stub ends the session on the way out, and a script that set it on every page would sign them back in.
   await page.addInitScript(() => {
