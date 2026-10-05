@@ -1,0 +1,18 @@
+# Values the records may use. The owner is `maintainers` until there are teams. Availability needs the release, the
+# roles and the edition: the app is one hosted deployment, and its three kinds of caller are the visitor (no
+# sign-in), the invitee (signed in with an invitation) and the admin.
+owners:
+  - maintainers
+audiences:
+  - engineering
+  - product
+  - leadership
+releases:
+  - phase-1
+roles:
+  - visitor
+  - invitee
+  - admin
+editions:
+  - hosted
+flags: []
