@@ -77,7 +77,9 @@ async function writeSite(out: string): Promise<string[]> {
   await cp(join(root, "site", "site.css"), join(out, "css", "site.css"));
   await cp(join(root, "site", "icon.svg"), join(out, "icon.svg"));
   await writeFile(join(out, "index.html"), await homePage());
-  return ["index.html", "css/markset.css", "css/site.css", "icon.svg"];
+  // What tells Pages the custom domain: the host of the canonical URL, so moving the site is one string.
+  await writeFile(join(out, "CNAME"), `${new URL(CANONICAL).host}\n`);
+  return ["index.html", "css/markset.css", "css/site.css", "icon.svg", "CNAME"];
 }
 
 /** The home page: site/content/index.md with the product cards substituted in, rendered and wrapped. */
