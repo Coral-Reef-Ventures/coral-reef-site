@@ -95,7 +95,9 @@ Public launch checklist: confirm product statements against actual releases, con
 
 **Status: proposed.** Nothing below is approved yet. Gary approves it, with the retention periods and the requirement
 changes in `website-requirements.md` v0.2, before coralreefventures.com moves to the app (plan step P8, ahead of the
-Phase 2b cutover). Until then the sections above stay the approved record, and they are still what GitHub Pages serves.
+Phase 2b cutover). Until then the sections above stay the approved record. The cutover came first, on 2026-10-05, so
+the app serves this copy on coralreefventures.com while it awaits approval, and GitHub Pages, without the domain, still
+serves the sections above until 2026-10-19.
 The decision behind this copy is [ADR 0001](../decisions/0001-the-door-and-the-app.md).
 
 This file is the source. The app's three content files are copied into it verbatim, below, and
@@ -281,8 +283,7 @@ Google's consent screen shows the address of our sign-in service and links to th
 
 What "Copy invitation" in the admin view prepares, for Gary to send from his own mail; the app sends nothing itself
 until it has SES (ADR 0001). *site list* is the invited sites by name ("Streamlane", "Driftline" or "Streamlane and
-Driftline"), *address* is the invited email, and *door* is `https://coralreefventures.com` (the app's own Amplify
-address until the cutover).
+Driftline"), *address* is the invited email, and *door* is `https://coralreefventures.com`.
 
 **Subject:** Your invitation to *site list*
 

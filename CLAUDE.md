@@ -5,8 +5,8 @@ Two things live here, one replacing the other (ADR 0001, `docs/decisions/0001-th
 
 - **The Pages page** (`site/`, `test/`, `e2e/page.spec.ts`): one static page, built the way the Markset site is, as
   Markset source rendered by `@markset-lang/parser` and `@markset-lang/render-html`, a TypeScript build script run by
-  Node's type stripping, and a Pages workflow. It serves coralreefventures.com until the cutover (plan Phase 2b) and is
-  deleted 14 days after it.
+  Node's type stripping, and a Pages workflow. It served coralreefventures.com until the cutover (plan Phase 2b,
+  2026-10-05) and stays deployed, without the domain, until 2026-10-19, when Phase 2c deletes it.
 - **The CRV app** (`apps/web`, `packages/brand` and the backend in `amplify/`): the door to Streamlane and
   Driftline and the company's system of record for interest and access. Next.js static export and Mantine on Amplify
   Gen 2, with the door's copy in Markset (`apps/web/content/`).
@@ -25,10 +25,10 @@ CRV-014 and supersedes CRV-007).
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
 - **New copy is drafted in `site-copy.md`, marked proposed, and Gary approves it before it goes live.** The door, its
-  privacy page and the invitation text are proposed (2026-10-04) and go live only at the cutover, after Gary approves
-  them (plan step P8). `site-copy.md` is the source of the app's content files: `apps/web/content/door.md`,
-  `get-involved.md` and `privacy.md` are copied into it verbatim, and `apps/web/lib/content.test.ts` fails if any
-  differs. Change the copy there first and the content file in the same commit. The form's and sign-in's words are
+  privacy page and the invitation text are proposed (2026-10-04) and await Gary's approval (plan step P8); the app
+  has served them on coralreefventures.com since the cutover, 2026-10-05. `site-copy.md` is the source of the app's
+  content files: `apps/web/content/door.md`, `get-involved.md` and `privacy.md` are copied into it verbatim, and
+  `apps/web/lib/content.test.ts` fails if any differs. Change the copy there first and the content file in the same commit. The form's and sign-in's words are
   listed there too; keep the components' strings in step with it.
 - **The app's pages.** `/` is the door: the story, the four product cards and the closing statement. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
@@ -115,20 +115,31 @@ CRV-014 and supersedes CRV-007).
 
 ## Hosting
 
-Until the cutover: GitHub Pages, decided earlier on 2026-10-04 (#11), like markset.org and intentset.org. `homepage` in
-`package.json` (the canonical URL) is `https://coralreefventures.com/`, and the build writes `dist/CNAME` from its host,
-which is what tells Pages the custom domain (a test holds it). DNS is at the registrar (dnsowl, NameSilo) today.
+ADR 0001: the CRV app on the Amplify `WEB` app `coral-reef-site` (`d1fw6blayytium`, branch `main`) in the coral-reef
+project (us-east-2) has served `coralreefventures.com` since 2026-10-05 10:47 CDT, apex and `www`, on an
+Amplify-managed certificate; `www` redirects to the apex through `custom-rules.json`. It still answers at
+`https://main.d1fw6blayytium.amplifyapp.com`. `apps/web/hosting/` holds the build spec, headers and rules, applied with
+`update-app`, and its README the custom domain and how to roll it back. `homepage` in `package.json` (the canonical URL)
+is `https://coralreefventures.com/`.
 
-After it, ADR 0001: the CRV app on the Amplify `WEB` app `coral-reef-site` in the coral-reef project (us-east-2), with
-`coralreefventures.com` in a Route 53 zone in the project and every existing record copied, Workspace mail included.
-`apps/web/hosting/` holds the build spec, headers and rules, applied with `update-app`.
+DNS is the Route 53 zone `Z1017162VVBRZ8PDRIQ3` in the coral-reef project; NameSilo (the registrar) points its
+nameservers there. The zone's records were copied from NameSilo's: first the GitHub Pages A records and `www` CNAME,
+replaced at the cutover by the apex ALIAS, the `www` CNAME and the ACM validation CNAME that Amplify wrote itself; then
+Google Workspace's MX, SPF and DKIM, and Google's verification CNAME, unchanged. NameSilo's own records are kept, so
+rolling back is setting its nameservers again.
+
+GitHub Pages, decided earlier on 2026-10-04 (#11), stays deployed until 2026-10-19 in case the switch has to be undone.
+Its custom domain is removed once `www`'s old cached records expire. Phase 2c then deletes `site/`, `test/`,
+`e2e/page.spec.ts` and `.github/workflows/pages.yml`, and disables Pages.
 
 ## Open launch decisions
 
 From the requirements' launch gates, not yet settled:
 
 - The door copy, the privacy page with its retention periods, the invitation text and requirements v0.2, all proposed
-  in `docs/requirements/` (P8, before the cutover).
+  in `docs/requirements/` (P8). The cutover went ahead on 2026-10-05 without it; the copy is live and still Gary's to
+  approve.
+- Phase 2c, on or after 2026-10-19: delete the Pages page and its workflow and disable Pages.
 - Whether the product repositories stay public (plan decision D1, before the lock): the door locks the sites, not the
   source.
 - Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
