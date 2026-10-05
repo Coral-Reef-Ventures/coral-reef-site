@@ -52,8 +52,10 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   halves until the page is retired.
 - **The app: no tracking, no external font, no third-party script** (CRV-011). Nothing loads from another origin but
   the AWS endpoints the form and sign-in call. The browser stores only the sign-in tokens, the form's guest identity id
-  and the scheme word, and coralreefventures.com sets no cookie. The locked sites set exactly two, both the door's
-  (`__Host-crv_door`, one hour; `__Host-crv_door_state`, 10 minutes during sign-in). The form and the sign-in are
+  and the scheme word, and coralreefventures.com sets no cookie. The locked sites set three, all the door's
+  (`__Host-crv_door`, one hour; `__Host-crv_door_state`, 10 minutes during sign-in; `__Host-crv_door_seen`, 30 days,
+  holding nothing about who you are, so an expired hour renews without the coming-soon page: Gary kept it 2026-10-05,
+  go-ahead §17d, and `/privacy/` says so in his words). The form and the sign-in are
   allowed; analytics, tag managers, web fonts from another origin and embeds are not.
 - **Access is decided by a grant, and an invitation binds to an identity** (ADR 0001). `AccessGrant` is the one place
   access is decided. An invitation binds to the first Cognito and Google identity that accepts it, never to an address
@@ -68,7 +70,8 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip.
   Its session is an existing invitee (`crv-check@example.com`) it sets a fresh password for and signs in as; it makes
   no admin call and never invites, erases or creates anyone, because inviting is an admin's job (go-ahead §17c).
-  `apps/web/hosting/README.md`, "The leak check", has how, and the IAM role CI needs, which does not exist yet.
+  `apps/web/hosting/README.md`, "The leak check", has how, and the IAM role CI needs, `crv-leak-check`, which does not
+  exist yet (checked 2026-10-05), so the daily run checks without a session until it does.
 - **Unlocking a locked site is a recorded decision** (`door.unlocked` in Activity, with a reason), never a silent
   rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
@@ -142,6 +145,11 @@ Its custom domain is removed once `www`'s old cached records expire. Phase 2c th
 ## Open launch decisions
 
 From the requirements' launch gates, not yet settled:
+
+- **Phase 3, the lock, is built but not applied** (2026-10-05). Both product sites build their lock (site-tools 0.4.0;
+  driftline #13 and #14, streamlane #344), but both live apps are still `WEB` and public, and no site is `locked` in
+  `scripts/leak-check/sites.ts`. The driftline.app flip was refused by the agent's permission system as a production
+  deploy and waits on Gary. `apps/web/hosting/README.md`, "Phase 3: status", has the exit list and what is left.
 
 - Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
   privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.
