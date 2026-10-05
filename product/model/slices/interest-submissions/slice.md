@@ -14,21 +14,20 @@ intentset:
   links:
     implements: [BEH-ADMIN-INVITES]
     informedBy: [ADR-AREAS]
+    dependsOn: [SLICE-ACCESS-INVITATIONS, SLICE-PEOPLE-ACTIVITY]
   slice:
     kind: product
     domain: interest
     entrypoints: [apps/web/src/features/interest/submissions/index.ts]
     layers:
-      presentation: []
-      application: []
+      presentation: [apps/web/src/features/interest/submissions/*.tsx, apps/web/src/features/interest/submissions/index.ts]
+      application: [apps/web/src/features/interest/submissions/model.ts]
       policy: []
       model: []
       external: []
     claims:
       - kind: source
         path: apps/web/src/features/interest/submissions/**
-      - kind: source
-        path: apps/web/app/admin/**
     usesResources: []
 ---
 
@@ -36,7 +35,7 @@ intentset:
 
 ## Responsibility
 
-Planned owner of the admin's view of submissions: the table with its status filter, the detail with notes and status, and the Invite action that turns a submission into an invitation (the invitation itself is SLICE-ACCESS-INVITATIONS's). Nothing is built. The slice is a draft: its entrypoint and claims are planned paths, which Intentset reports as warnings until the slice leaves draft (VSA §3). Layers and resources are empty until the code exists.
+Planned owner of the admin's view of submissions: the table with its status filter, the detail with notes and status, and the Invite action that turns a submission into an invitation (the invitation itself is SLICE-ACCESS-INVITATIONS's). Built in PR 1.5 against an AdminApi interface that a stub implements until the backend is bound. The route files under apps/web/app/admin are composition, and the shared admin shell holds the table frame and the second-click confirm. The slice stays a draft. Application and model layers are empty because the slice has no use-cases of its own beyond what the backend operations do, and its types live in the infrastructure seam.
 
 ## Public contract
 
