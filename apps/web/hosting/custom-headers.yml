@@ -1,0 +1,37 @@
+# Response headers for the Coral Reef Ventures app, applied with
+# `aws amplify update-app --custom-headers file://apps/web/hosting/custom-headers.yml` (not a root customHttp.yml,
+# which would apply to every app built from the repository).
+#
+# The policy allows only the app itself and the AWS endpoints it calls in us-east-2: no third-party script, no
+# external font, and nothing but sign-in sets a cookie. Next.js inlines its route payloads in <script> tags and
+# Mantine sets inline styles, hence 'unsafe-inline' for both.
+#
+# connect-src: the AppSync API (the form's submitInterest and the data client), Cognito (sign-in), the identity pool
+# (the form's guest credentials) and the hosted UI's domain, whose prefix is fixed in code as crv-door.
+# form-action: the door posts a ticket to each locked site's /_door, so those hosts must be named. While a locked
+# site is being tested on a temporary host, add that host here (CRV_DOOR_TEST_HOSTS names it for the backend) and
+# take it out afterwards; the file in the repository stays production-only.
+#
+# A monorepo app's headers take the same `applications` + `appRoot` shape as its build spec; the flat form fails the
+# build at "Unable to save headers: Monorepo spec provided without 'applications' key" (Driftline, 2026-10-04).
+applications:
+  - appRoot: apps/web
+    customHeaders:
+      - pattern: "**"
+        headers:
+          - key: Strict-Transport-Security
+            value: max-age=31536000
+          - key: Content-Security-Policy
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.appsync-api.us-east-2.amazonaws.com https://cognito-idp.us-east-2.amazonaws.com https://cognito-identity.us-east-2.amazonaws.com https://crv-door.auth.us-east-2.amazoncognito.com; form-action 'self' https://streamlane.app https://driftline.app; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+          - key: X-Content-Type-Options
+            value: nosniff
+          - key: X-Frame-Options
+            value: DENY
+          - key: Referrer-Policy
+            value: strict-origin-when-cross-origin
+          - key: Permissions-Policy
+            value: camera=(), microphone=(), geolocation=(), payment=()
+      - pattern: "/_next/static/**"
+        headers:
+          - key: Cache-Control
+            value: public, max-age=31536000, immutable

@@ -18,6 +18,8 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
+      # The draft model validates at L2; planned paths warn until a slice leaves draft.
+      - run: pnpm run intentset
       - run: pnpm run typecheck
       - run: pnpm test
       - run: pnpm exec playwright install --with-deps chromium
