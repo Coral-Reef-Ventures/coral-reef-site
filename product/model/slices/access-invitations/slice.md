@@ -19,8 +19,8 @@ intentset:
     domain: access
     entrypoints: [apps/web/src/features/access/invitations/index.ts]
     layers:
-      presentation: []
-      application: []
+      presentation: [apps/web/src/features/access/invitations/*.tsx, apps/web/src/features/access/invitations/index.ts]
+      application: [apps/web/src/features/access/invitations/model.ts]
       policy: []
       model: []
       external: []
@@ -40,7 +40,7 @@ intentset:
 
 ## Responsibility
 
-Planned owner of invitations: creating them, binding them to the first identity that accepts, revoking, restoring, rebinding, grants, and erasing a person. Nothing is built. The slice is a draft: its entrypoint and claims are planned paths, which Intentset reports as warnings until the slice leaves draft (VSA §3). Layers and resources are empty until the code exists.
+Planned owner of invitations: creating them, binding them to the first identity that accepts, revoking, restoring, rebinding, grants, and erasing a person. The admin views are built in PR 1.5 against an AdminApi interface that a stub implements until the backend is bound; the backend and the sign-in binding are still planned. The slice stays a draft. Its policy and model layers are empty: model.ts holds view logic over the seam's types (filters, validation, labels), which is application, and the business rules are the backend operations'.
 
 ## Public contract
 

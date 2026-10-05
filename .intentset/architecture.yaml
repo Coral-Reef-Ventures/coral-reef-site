@@ -12,6 +12,12 @@ scope:
 sourceRoots:
   - apps/web/src/**
   - amplify/**
-# The one corner of the app that knows Amplify: the door's whole view of the backend and of sign-in (DoorApi).
+# The regions outside the slices (VSA §1). The one corner of the app that knows Amplify is infrastructure: the door's
+# view of the backend and of sign-in (DoorApi) and the admin views' (AdminApi). The admin shell is shared presentation
+# with no product behavior, and the route files are composition.
+shared:
+  - apps/web/src/features/admin/shell/**
 infrastructure:
   - apps/web/src/infrastructure/**
+composition:
+  - apps/web/app/**

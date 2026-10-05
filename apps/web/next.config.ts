@@ -17,7 +17,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // The screen tests build the door beside the real build, with the stub backend, without touching out/.
   ...(process.env.CRV_WEB_DIST ? { distDir: process.env.CRV_WEB_DIST } : {}),
-  env: { CRV_AMPLIFY_OUTPUTS: outputs, CRV_STUB: process.env.NEXT_PUBLIC_CRV_STUB === "1" ? "1" : "" },
+  // NEXT_PUBLIC_CRV_ADMIN_STUB is always defined, so a build without the admin stub folds that branch away and ships
+  // none of its sample data (adminClient.ts).
+  env: {
+    CRV_AMPLIFY_OUTPUTS: outputs,
+    CRV_STUB: process.env.NEXT_PUBLIC_CRV_STUB === "1" ? "1" : "",
+    NEXT_PUBLIC_CRV_ADMIN_STUB: process.env.NEXT_PUBLIC_CRV_ADMIN_STUB === "1" ? "1" : "",
+  },
   transpilePackages: [
     "@crv/brand",
     "@coralreefventures/site",
