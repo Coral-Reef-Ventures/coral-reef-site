@@ -83,6 +83,21 @@ main:focus { outline: none; }
 @media (max-width: 62em) {
   .door-scheme-slot > .site-scheme:is(:hover, :focus-within) { flex-direction: column; }
 }
+
+/* The nav, as markset.org and intentset.org lay theirs out: at the right of the bar, not in its middle, as muted text
+ * with the site's link underline on hover and on the current page, and with the open pill's width held clear before the
+ * scheme control (--door-scheme-w, as their --site-scheme-w), so the control opens into space the bar already keeps
+ * and the gap from the last link to the collapsed pill matches theirs. reef's shell centers its nav, which is right for
+ * Streamlane's and Driftline's sites and not for this one; the bar nav is the one directly in the header's row, so the
+ * folded menu's copy is untouched. Below 62em the nav folds into the menu and the slot is the pill's size again. */
+body { --door-scheme-w: 5.6rem; }
+header > div > nav[aria-label="Main"] { justify-content: flex-end; gap: 0 1.5rem; }
+header > div > nav[aria-label="Main"] > a { padding: 0.5rem 0; border-radius: 0; background: none; font-size: 0.95rem; color: var(--ms-fg-muted); text-decoration: none; }
+header > div > nav[aria-label="Main"] > a:hover,
+header > div > nav[aria-label="Main"] > a[aria-current="page"] { background: none; color: var(--ms-fg); font-weight: inherit; text-decoration: underline; text-decoration-color: var(--site-link-underline); text-decoration-thickness: 2px; text-underline-offset: 0.35em; }
+@media (min-width: 62.0625em) {
+  .door-scheme-slot { width: var(--door-scheme-w); }
+}
 body:has(#ms-scheme-light:checked) { color-scheme: light; }
 body:has(#ms-scheme-dark:checked) { color-scheme: dark; }
 .site-scheme { display: flex; align-items: center; gap: 1px; padding: 2px; border: 1px solid var(--ms-border); border-radius: 999px; background: var(--ms-bg); }
