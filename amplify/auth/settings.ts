@@ -15,7 +15,7 @@ import { doorSites } from "../areas/access/sites.ts";
  * - CRV_DOOR_TEST_HOSTS: temporary hosts of a locked site under test (areas/access/sites.ts); empty otherwise.
  */
 
-const localOrigin = "http://localhost:3003";
+const localOrigin = "http://localhost:3002";
 const defaultCallbackUrls = `${localOrigin}/signed-in/,${localOrigin}/signout/done/`;
 export const defaultAdminEmails = "gary@coralreefventures.com";
 
