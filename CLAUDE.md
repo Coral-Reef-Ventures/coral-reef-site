@@ -76,8 +76,9 @@ CRV-014 and supersedes CRV-007).
   `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`; set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` and
   placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first, piped from `printf`, not
   `echo`: the client id goes into the identity pool, which refuses its trailing newline); delete it afterwards with
-  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes`, remove the two secrets, and delete
-  the `/aws/lambda/amplify-coralreefsite-crv*` log groups Amplify's own custom-resource functions leave behind (they
+  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes`, with `CRV_AUTH_DOMAIN_PREFIX` still
+  set (the delete synthesizes the backend first, and the settings check refuses it unset), remove the two secrets, and
+  delete the `/aws/lambda/amplify-coralreefsite-crv*` log groups Amplify's own custom-resource functions leave behind (they
   are created on first use, so no stack owns them). The key waits KMS's 7 days before it goes. Then move
   `.amplify/artifacts` out of the way: CDK's hotswap cache in it remembers the deleted stacks, and the next
   `ampx sandbox --once` fails with "Stack with id ... does not exist" until it is gone. On the sandbox an
