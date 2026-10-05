@@ -112,6 +112,8 @@ describe("the WAF web ACL", () => {
   });
 
   it("blocks more than 10 submitInterest requests and more than 300 of any kind per address in 5 minutes", () => {
+    // JS_DECODE: a JSON body can spell the field name with \u escapes. MATCH: WAF reads 8 KB of an AppSync body, and
+    // a query padded past that must count as a submission rather than slip under the 300-request rule.
     expect(rules.map((rule) => rule.Name)).toEqual(["submit-interest-per-ip", "all-per-ip"]);
     const [submit, any] = rules;
     expect(submit?.Statement.RateBasedStatement).toMatchObject({
@@ -119,7 +121,14 @@ describe("the WAF web ACL", () => {
       EvaluationWindowSec: 300,
       AggregateKeyType: "IP",
     });
-    expect(JSON.stringify(submit?.Statement.RateBasedStatement.ScopeDownStatement)).toContain("submitInterest");
+    expect(submit?.Statement.RateBasedStatement.ScopeDownStatement).toEqual({
+      ByteMatchStatement: {
+        FieldToMatch: { Body: { OversizeHandling: "MATCH" } },
+        PositionalConstraint: "CONTAINS",
+        SearchString: "submitInterest",
+        TextTransformations: [{ Priority: 0, Type: "JS_DECODE" }],
+      },
+    });
     expect(any?.Statement.RateBasedStatement).toMatchObject({ Limit: 300, EvaluationWindowSec: 300 });
     for (const rule of rules) expect(rule.Action).toEqual({ Block: {} });
   });

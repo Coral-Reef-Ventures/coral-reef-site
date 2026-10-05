@@ -163,6 +163,11 @@ backend.crvInterest.addEnvironment("NOTICE_TOPIC_ARN", notices.topicArn);
 // The regional WAF web ACL on the AppSync API (plan §2.4), so nothing goes in us-east-1. One rule blocks an address
 // sending more than 10 submitInterest requests in 5 minutes (10 is WAF's lowest limit); the other, more than 300
 // requests of any kind. Sampled requests stay off, because a sample would keep a request body.
+// The scope-down has to see the field name however a caller spells the body. The body is JSON, so `submitInterest`
+// can arrive as `\u0073ubmitInterest` and still reach AppSync as the field: JS_DECODE undoes those escapes before the
+// match. And WAF reads only the first 8 KB of a body sent to AppSync, so a query padded past that hides the name:
+// oversize MATCH counts every such request as a submission. A real submission is under 8 KB unless its message is long
+// and mostly non-ASCII, and then it is counted as what it is; no other operation's request comes near 8 KB.
 const webAclName = named("crv-door");
 const visibility = (metricName: string) => ({
   cloudWatchMetricsEnabled: true,
@@ -186,10 +191,10 @@ const webAcl = new CfnWebACL(dataStack, "DoorWebAcl", {
           aggregateKeyType: "IP",
           scopeDownStatement: {
             byteMatchStatement: {
-              fieldToMatch: { body: { oversizeHandling: "CONTINUE" } },
+              fieldToMatch: { body: { oversizeHandling: "MATCH" } },
               positionalConstraint: "CONTAINS",
               searchString: "submitInterest",
-              textTransformations: [{ priority: 0, type: "NONE" }],
+              textTransformations: [{ priority: 0, type: "JS_DECODE" }],
             },
           },
         },
