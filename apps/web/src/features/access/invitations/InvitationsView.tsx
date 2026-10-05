@@ -4,7 +4,7 @@ import { Button, Group, SegmentedControl, Stack, Text, TextInput, Title } from "
 import { useState } from "react";
 import type { InvitationStatus } from "../../../infrastructure/amplify/api.ts";
 import { INVITATION_STATUSES } from "../../../infrastructure/amplify/api.ts";
-import { getAdminApi } from "../../../infrastructure/amplify/client.ts";
+import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { ConfirmButton, ErrorNotice, messageOf, titleCase, useLoad } from "../../admin/shell/index.ts";
 import { InviteForm } from "./InviteForm.tsx";
 import { InvitationsTable, type InvitationActions } from "./InvitationsTable.tsx";

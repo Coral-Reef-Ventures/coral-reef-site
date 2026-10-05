@@ -3,7 +3,7 @@
 import { Anchor, Button, Checkbox, Group, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { SITES, type InviteResult, type SiteId } from "../../../infrastructure/amplify/api.ts";
-import { getAdminApi } from "../../../infrastructure/amplify/client.ts";
+import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { ErrorNotice, messageOf } from "../../admin/shell/index.ts";
 import { mailtoHref, validateInvite } from "./model.ts";
 

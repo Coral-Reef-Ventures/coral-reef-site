@@ -2,7 +2,7 @@
 
 import { Table, Text } from "@mantine/core";
 import type { Activity, ActivityQuery } from "../../../infrastructure/amplify/api.ts";
-import { getAdminApi } from "../../../infrastructure/amplify/client.ts";
+import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { ErrorNotice, formatWhen, useLoad } from "../../admin/shell/index.ts";
 import { kindLabel } from "./model.ts";
 

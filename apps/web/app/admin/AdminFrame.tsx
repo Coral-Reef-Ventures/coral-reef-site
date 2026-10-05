@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { AdminShell } from "../../src/features/admin/shell/index.ts";
-import { prepareAdminApi } from "../../src/infrastructure/amplify/client.ts";
+import { prepareAdminApi } from "../../src/infrastructure/amplify/adminClient.ts";
 
 /** Composition: binds the backend, then lets the views mount, since they ask for it as they load. */
 export function AdminFrame({ title, children }: { title: string; children: ReactNode }) {

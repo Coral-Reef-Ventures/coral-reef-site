@@ -3,7 +3,7 @@
 import { SegmentedControl } from "@mantine/core";
 import { useState } from "react";
 import { SUBMISSION_STATUSES, type SubmissionStatus } from "../../../infrastructure/amplify/api.ts";
-import { getAdminApi } from "../../../infrastructure/amplify/client.ts";
+import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { ErrorNotice, titleCase, useLoad } from "../../admin/shell/index.ts";
 import { SubmissionsTable } from "./SubmissionsTable.tsx";
 

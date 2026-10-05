@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createStubApi } from "./stub.ts";
-import { getAdminApi, prepareAdminApi, setAdminApi } from "./client.ts";
+import { createStubApi } from "./adminStub.ts";
+import { getAdminApi, prepareAdminApi, setAdminApi } from "./adminClient.ts";
 
 afterEach(() => {
   setAdminApi(undefined);

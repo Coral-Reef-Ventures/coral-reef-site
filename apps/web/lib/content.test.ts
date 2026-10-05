@@ -1,0 +1,91 @@
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+
+import { segments } from "./markset.ts";
+import { doorProducts } from "./products.ts";
+
+const text = (file: string, slots: string[] = []) =>
+  segments(file, slots)
+    .map((s) => ("html" in s ? s.html : `[[${s.slot}]]`))
+    .join("\n");
+
+describe("the door's content", () => {
+  const door = text("door.md", ["interest-form", "sign-in"]);
+
+  it("parses as Markset with no error and puts the form and the sign-in where the copy says", () => {
+    expect(door.indexOf("Get involved")).toBeLessThan(door.indexOf("[[interest-form]]"));
+    expect(door.indexOf("[[interest-form]]")).toBeLessThan(door.indexOf("Have an invitation?"));
+    expect(door.indexOf("Have an invitation?")).toBeLessThan(door.indexOf("[[sign-in]]"));
+  });
+
+  it("carries the approved copy in the approved order", () => {
+    const order = [
+      "Building for software teams in the agentic era.",
+      "Four ideas. One direction.",
+      "Markset",
+      "Intentset",
+      "Streamlane",
+      "Driftline",
+      "These offerings share a direction, not an adoption requirement.",
+      "Better foundations for what comes next.",
+      "hello@coralreefventures.com",
+    ];
+    let at = 0;
+    for (const phrase of order) {
+      const found = door.indexOf(phrase, at);
+      expect(found, phrase).toBeGreaterThan(-1);
+      at = found;
+    }
+  });
+
+  it("links a visitor to Markset and Intentset only, and reads 'Open to invited guests' for the two behind the door", () => {
+    expect(door).toContain("https://markset.org");
+    expect(door).toContain("https://intentset.org");
+    expect(door).not.toContain("https://driftline.app");
+    expect(door).not.toContain("streamlane.app");
+    expect(door.match(/Open to invited guests\./g)).toHaveLength(2);
+    expect(doorProducts.filter((p) => p.cta).map((p) => p.slug)).toEqual(["markset", "intentset"]);
+  });
+
+  it("refuses a slot it was not given", () => {
+    expect(() => segments("door.md", [])).toThrow(/unknown slot/);
+  });
+});
+
+describe("the privacy page", () => {
+  const privacy = text("privacy.md");
+
+  // The retention periods (plan §2.3a). 1.3 adds amplify/areas/retention.ts and ties these to its constants.
+  it.each(["12 months", "90 days", "24 hours", "1 month", "35 days", "within a few days"])("states %s", (period) => {
+    expect(privacy).toContain(period);
+  });
+
+  it("says what is stored, the browser's part, erasure and the one contact address", () => {
+    for (const phrase of [
+      "What the interest form stores",
+      "What the invitation sign-in stores",
+      "What your browser keeps",
+      "erase",
+      "hello@coralreefventures.com",
+    ]) {
+      expect(privacy, phrase).toContain(phrase);
+    }
+  });
+});
+
+describe("a production build", () => {
+  const out = join(import.meta.dirname, "..", "out");
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((name) => {
+      const full = join(dir, name);
+      return statSync(full).isDirectory() ? walk(full) : [full];
+    });
+
+  // Present after `pnpm web:build`. The stub backend answers by what a visitor types, so it must not reach a reader.
+  it.skipIf(!existsSync(out))("holds no trace of the stub backend", () => {
+    for (const file of walk(out).filter((f) => f.endsWith(".js"))) {
+      expect(readFileSync(file, "utf8"), file).not.toContain("stubbed outage");
+    }
+  });
+});

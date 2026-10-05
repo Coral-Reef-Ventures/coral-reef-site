@@ -3,7 +3,7 @@
 import { Button, Group, Select, Stack, Text, Textarea, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { SUBMISSION_STATUSES, type Submission, type SubmissionStatus } from "../../../infrastructure/amplify/api.ts";
-import { getAdminApi } from "../../../infrastructure/amplify/client.ts";
+import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { InviteForm } from "../../access/invitations/index.ts";
 import { ErrorNotice, formatWhen, messageOf, titleCase, useLoad } from "../../admin/shell/index.ts";
 import { ActivityList } from "../../people/activity/index.ts";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createStubApi } from "./stub.ts";
+import { createStubApi } from "./adminStub.ts";
 
 const fixed = () => new Date("2026-10-05T12:00:00Z");
 
