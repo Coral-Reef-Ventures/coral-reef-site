@@ -78,9 +78,12 @@ CRV-014 and supersedes CRV-007).
   `echo`: the client id goes into the identity pool, which refuses its trailing newline); delete it afterwards with
   `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes`, remove the two secrets, and delete
   the `/aws/lambda/amplify-coralreefsite-crv*` log groups Amplify's own custom-resource functions leave behind (they
-  are created on first use, so no stack owns them). The key waits KMS's 7 days before it goes. On the sandbox an
+  are created on first use, so no stack owns them). The key waits KMS's 7 days before it goes. Then move
+  `.amplify/artifacts` out of the way: CDK's hotswap cache in it remembers the deleted stacks, and the next
+  `ampx sandbox --once` fails with "Stack with id ... does not exist" until it is gone. On the sandbox an
   uninvited AdminCreateUser was refused with `NOT_INVITED` through the whole chain (trigger, AppSync with IAM,
-  crv-access) in about 3.5 s cold, under Cognito's 5-second trigger limit.
+  crv-access). Measured cold on 2026-10-05, each trigger takes about 2 s of Cognito's 5-second limit (init 0.7 s plus
+  1.3 s with crv-access also cold); pre token generation after a warm crv-access takes 1.4 s.
   defineAuth always replaces the Cognito domain prefix with a hash, so `backend.ts` sets the fixed one on the domain
   resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
   project with the branch.

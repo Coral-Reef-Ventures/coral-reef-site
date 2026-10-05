@@ -36,9 +36,10 @@ const text = (value: unknown): string => (typeof value === "string" ? value : ""
 
 /**
  * The address the per-source limits are keyed on: the last entry of AppSync's `sourceIp`. AppSync lists the
- * addresses from the caller's `X-Forwarded-For` header first and appends the TCP connection's address, and nothing
- * sits in front of AppSync here, so every entry but the last is whatever the caller chose to write. Keying on the
- * first would give a caller a fresh source, and fresh limits, with every request.
+ * addresses from the caller's `X-Forwarded-For` header first, in order and unchecked, and appends the TCP connection's
+ * address (seen on the agent sandbox, 2026-10-05: `X-Forwarded-For: 198.51.100.77, 203.0.113.5` arrived as those two
+ * and then the peer). Nothing sits in front of AppSync here, so every entry but the last is whatever the caller chose
+ * to write. Keying on the first would give a caller a fresh source, and fresh limits, with every request.
  */
 export const sourceAddress = (identity: InterestEvent["identity"]): string => identity?.sourceIp?.at(-1) ?? "unknown";
 
