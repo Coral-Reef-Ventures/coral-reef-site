@@ -9,7 +9,7 @@ export default defineConfig({
       {
         test: {
           name: "web",
-          include: ["packages/**/*.test.ts", "apps/**/*.test.{ts,tsx}"],
+          include: ["packages/**/*.test.ts", "apps/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
           exclude: ["**/node_modules/**", "**/.next/**", "**/out/**"],
         },
       },

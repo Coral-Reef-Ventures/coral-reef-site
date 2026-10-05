@@ -91,20 +91,21 @@ Public launch checklist: confirm product statements against actual releases, con
 
 ---
 
-# Proposed: the door, its privacy page and the invitation (2026-10-04)
+# The door, its privacy page and the invitation (approved 2026-10-05)
 
-**Status: proposed.** Nothing below is approved yet. Gary approves it, with the retention periods and the requirement
-changes in `website-requirements.md` v0.2, before coralreefventures.com moves to the app (plan step P8, ahead of the
-Phase 2b cutover). Until then the sections above stay the approved record. The cutover came first, on 2026-10-05, so
-the app serves this copy on coralreefventures.com while it awaits approval, and GitHub Pages, without the domain, still
-serves the sections above until 2026-10-19.
+**Status: approved.** Gary approved the door copy, the privacy page with its retention periods (plan decision D3) and
+the invitation text on 2026-10-05 (plan step P8), after reading them live on coralreefventures.com and receiving a test
+invitation. They were proposed on 2026-10-04; the cutover came first, on 2026-10-05, so the app served them for a few
+hours before the approval. The Get involved page is the door's own two sections on a page of their own, with their
+words unchanged, and was approved with them. GitHub Pages, without the domain, still serves the sections above until
+2026-10-19. A change to anything below is proposed copy again until Gary approves it.
 The decision behind this copy is [ADR 0001](../decisions/0001-the-door-and-the-app.md).
 
 This file is the source. The app's three content files are copied into it verbatim, below, and
 `apps/web/lib/content.test.ts` fails if any of them differs from its block here. Change the copy here first and the
 content file in the same commit.
 
-## Door (proposed, 2026-10-04)
+## Door (approved 2026-10-05)
 
 **Page order:** header → thesis/hero → the four product cards, with the independence note beneath them → closing
 statement and contact address → footer. The approved hero, section, closing and footer copy is unchanged. "Get
@@ -163,7 +164,7 @@ We are building tools that make software work easier to understand, maintain, an
 Get in touch at [hello@coralreefventures.com](mailto:hello@coralreefventures.com).
 ```
 
-## Get involved page (proposed, 2026-10-05)
+## Get involved page (approved 2026-10-05)
 
 **Moved 2026-10-05, at Gary's request:** "Get involved" (the interest form) and "Have an invitation?" (the Google
 sign-in) left the door page for a page of their own at `/get-involved/`, with their words unchanged. "Get involved" is
@@ -220,6 +221,7 @@ Sign in with the Google account your invitation went to.
 | Moment | Copy |
 |---|---|
 | Signed out | Button: Sign in with Google |
+| Signed out, arriving from a locked site (`?site=<id>`) | The site's name alone, above the button: Streamlane or Driftline. No sentence naming it is approved yet, so none is shown. |
 | No invitation for that account | There is no invitation for that Google account yet. You can tell us about yourself in the form above. |
 | A site's ticket was refused | That sign-in did not work. Please sign in again. |
 | Working | Checking your sign-in… · Opening Google… · Opening the door… |
@@ -229,11 +231,11 @@ Sign in with the Google account your invitation went to.
 | Sign out (`/signout/`) | Heading: Sign out. Signing you out… then You are signed out. On failure: Signing out did not finish. Close this browser window to end the session, or write to hello@coralreefventures.com. Link: Back to the door |
 | Signed out (`/signout/done/`) | Heading: Signed out. Signing you out of the sites… then You are signed out of the door. The sites clear their own session within the hour. Without scripting: Your sign-in is ended. Each site clears its own session within the hour; back to the door. |
 
-## Privacy (proposed, 2026-10-04)
+## Privacy (approved 2026-10-05)
 
 The page at `/privacy/`, which Google's consent screen links to. Its periods are the plan's retention table (§2.3a),
-which Gary confirms at the same time (plan decision D3); once the backend exists they are constants in
-`amplify/areas/retention.ts`, and a test holds the page to them.
+which Gary confirmed with the page on 2026-10-05 (plan decision D3). They are constants in `amplify/areas/retention.ts`,
+and a test holds the page to them, so a changed period changes this page and needs Gary's approval again.
 
 ```markdown file=apps/web/content/privacy.md
 ---
@@ -279,7 +281,7 @@ To see, correct or erase what we hold about you, or about an address someone els
 Google's consent screen shows the address of our sign-in service and links to this page. Google's own privacy policy governs what Google does with your sign-in.
 ```
 
-## Invitation text (proposed, 2026-10-04)
+## Invitation text (approved 2026-10-05)
 
 What "Copy invitation" in the admin view prepares, for Gary to send from his own mail; the app sends nothing itself
 until it has SES (ADR 0001). *site list* is the invited sites by name ("Streamlane", "Driftline" or "Streamlane and
@@ -297,3 +299,18 @@ Driftline"), *address* is the invited email, and *door* is `https://coralreefven
 > If anything does not work, reply to this message or write to hello@coralreefventures.com.
 >
 > Coral Reef Ventures
+
+## The locked sites' coming-soon page (approved 2026-10-05)
+
+Not this app's page: reef's gate (`@coralreefventures/site-tools`) serves it on streamlane.app and driftline.app to a
+page load without a session, in place of any of the site. It is recorded here because it is the door's words on the
+products' domains. Gary chose it on 2026-10-05, asked what an uninvited visitor should see, with the sign-in itself on
+coralreefventures.com. *Product* is the site's name.
+
+| Part | Copy |
+|---|---|
+| Lockup | The product's mark and name |
+| Heading | *Product* is coming soon. |
+| Lead | Open for now to invited guests. |
+| Button | Have an invitation? Sign in (to the gate's `/_door/signin`, which sends the visitor to the door with the page they asked for) |
+| Link | Get involved (to `https://coralreefventures.com/get-involved/?site=<id>`) |

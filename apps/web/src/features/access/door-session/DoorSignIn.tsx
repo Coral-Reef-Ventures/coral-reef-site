@@ -7,7 +7,7 @@ import classes from "./DoorSignIn.module.css";
 import { decodeRequest, type DoorRequest, enter, encodeRequest, readDoorRequest } from "./enter.ts";
 import { getInvolvedPath } from "./forward.ts";
 import { postTicket } from "./postTicket.ts";
-import type { LockedSite } from "./sites.ts";
+import { type LockedSite, siteById } from "./sites.ts";
 
 type View =
   | { kind: "working"; label: string }
@@ -29,14 +29,16 @@ const noticeFor = (search: string): string | null => {
 };
 
 /**
- * The invitation sign-in (CRV-010). On `/get-involved/` it offers Google; with a site's request in the query and a live session it
- * silently fetches a ticket and posts it (renewal); with a session and no request it lists the sites to continue to.
+ * The invitation sign-in (CRV-010). On `/get-involved/` it offers Google, naming the site when the query names a locked
+ * one (`?site=`, from a gate's sign-in redirect or its coming-soon page's "Get involved" link); with that request and a live session it silently fetches a ticket and posts it (renewal); with a
+ * session and no request it lists the sites to continue to.
  * On `/signed-in/` (`completing`) it first waits for Google's return to finish, then does the same. A person with no
  * invitation is sent back to `/get-involved/` with `?error=NOT_INVITED`, where the form is waiting.
  */
 export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => {
   const [view, setView] = useState<View>({ kind: "working", label: "Checking your sign-in…" });
   const [request, setRequest] = useState<DoorRequest | null>(null);
+  const [destination, setDestination] = useState<LockedSite | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -64,6 +66,7 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
       const search = window.location.search;
       const asked = readDoorRequest(search);
       setRequest(asked);
+      setDestination(asked?.site ?? siteById(new URLSearchParams(search).get("site")) ?? null);
 
       if (completing) {
         if (/NOT_INVITED/.test(search)) {
@@ -110,6 +113,12 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
       {view.kind === "working" && <p role="status">{view.label}</p>}
       {view.kind === "signin" && (
         <>
+          {destination && (
+            // The site the visitor is going to, by name only: no approved sentence names it yet (site-copy.md).
+            <p className={classes.destination} data-site={destination.id}>
+              {destination.name}
+            </p>
+          )}
           {view.notice && (
             <p role="status" className={classes.notice}>
               {view.notice}
