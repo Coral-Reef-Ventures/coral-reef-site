@@ -14,7 +14,7 @@ const values = (over: Partial<FormValues> = {}): FormValues => ({
 });
 
 describe("validate", () => {
-  it("trims, joins the interests and names the site", () => {
+  it("trims, lists the interests in the schema's values and names the site", () => {
     const result = validate(values());
     expect(result).toEqual({
       ok: true,
@@ -22,7 +22,7 @@ describe("validate", () => {
         name: "Ada",
         email: "ada@example.com",
         organization: "",
-        interests: "funding,advisor",
+        interests: ["funding", "advisor"],
         message: "Hello",
         site: "driftline",
       },
@@ -37,6 +37,10 @@ describe("validate", () => {
   ] as const)("refuses %j", (over, field, message) => {
     expect(validate(values(over))).toEqual({ ok: false, invalid: { field, message } });
   });
+  it("sends each known interest once, in the form's order, and drops one the schema does not know", () => {
+    const result = validate(values({ interests: ["advisor", "x", "funding", "advisor"] }));
+    expect(result.ok && result.body.interests).toEqual(["funding", "advisor"]);
+  });
   it("sends crv for a site it does not know", () => {
     const result = validate(values({ site: "<script>" }));
     expect(result.ok && result.body.site).toBe("crv");
@@ -48,7 +52,7 @@ describe("submit", () => {
     const api = { submitInterest: vi.fn().mockResolvedValue({ ok: true }) };
     expect(await submit(api, values())).toEqual({ kind: "sent" });
     expect(api.submitInterest).toHaveBeenCalledTimes(1);
-    expect(api.submitInterest.mock.calls[0]?.[0]).toMatchObject({ interests: "funding,advisor", website: "" });
+    expect(api.submitInterest.mock.calls[0]?.[0]).toMatchObject({ interests: ["funding", "advisor"], website: "" });
   });
   it("answers a filled honeypot as a success without sending", async () => {
     const api = { submitInterest: vi.fn() };

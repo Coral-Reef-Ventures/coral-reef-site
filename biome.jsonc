@@ -4,6 +4,9 @@
     "includes": [
       "**",
       "!**/node_modules",
+      // Amplify's generated files and the outputs a sandbox writes.
+      "!**/.amplify",
+      "!**/amplify_outputs.json",
       "!**/dist",
       "!dist.staging-*",
       "!dist.previous-*",

@@ -1,10 +1,20 @@
 packages:
   - apps/*
   - packages/*
+  - amplify
 
 minimumReleaseAge: 3
 
 allowBuilds:
+  "@parcel/watcher": true
+  core-js: false
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+overrides:
+  # As in Streamlane: Amplify's backend-deployer pins toolkit-lib 1.32.0, whose hotswap fallback forces CloudFormation
+  # Express mode on every full sandbox deploy (an Express-mode Cognito update then fails and strands the stack) and
+  # cannot create a new stack. 1.42.0 falls back to an ordinary deploy. Remove once backend-deployer depends on a fixed
+  # release.
+  "@aws-cdk/toolkit-lib": 1.42.0

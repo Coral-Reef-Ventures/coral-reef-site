@@ -28,7 +28,7 @@ intentset:
       - kind: source
         path: apps/web/src/features/access/invitations/**
       - kind: backend
-        path: amplify/areas/access/**
+        path: amplify/areas/access/schema.ts
       - kind: backend
         path: amplify/auth/pre-token-generation/**
       - kind: verification

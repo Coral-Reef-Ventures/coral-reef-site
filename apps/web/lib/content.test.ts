@@ -56,7 +56,7 @@ describe("the door's content", () => {
 describe("the privacy page", () => {
   const privacy = text("privacy.md");
 
-  // The retention periods (plan §2.3a). 1.3 adds amplify/areas/retention.ts and ties these to its constants.
+  // The retention periods (plan §2.3a). amplify/areas/retention.test.ts ties each sentence to its constant.
   it.each(["12 months", "90 days", "24 hours", "10 minutes", "1 month", "35 days", "within a few days"])(
     "states %s",
     (period) => {

@@ -55,7 +55,12 @@ function Detail({ submission, reload }: { submission: Submission; reload: () => 
     setError(undefined);
     setSaved(false);
     try {
-      await getAdminApi().updateSubmission({ id: submission.id, status, notes });
+      // Only what changed: a status sent back unchanged from a stale form could otherwise undo what another tab did.
+      await getAdminApi().updateSubmission({
+        id: submission.id,
+        ...(status !== submission.status ? { status } : {}),
+        ...(notes !== submission.notes ? { notes } : {}),
+      });
       setSaved(true);
       reload();
     } catch (e) {

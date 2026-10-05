@@ -29,6 +29,8 @@ intentset:
         path: apps/web/src/features/people/activity/**
       - kind: backend
         path: amplify/areas/people/**
+      - kind: backend
+        path: amplify/functions/retention/**
     usesResources: []
 ---
 

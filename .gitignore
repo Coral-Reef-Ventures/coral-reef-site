@@ -12,3 +12,6 @@ apps/web/next-env.d.ts
 apps/web/amplify_outputs.json
 apps/web/.e2e-out/
 apps/web/.e2e-admin-out/
+# Amplify: the sandbox's and pipeline's generated files and outputs.
+.amplify/
+amplify_outputs.json

@@ -15,9 +15,30 @@ sourceRoots:
 # The regions outside the slices (VSA §1). The one corner of the app that knows Amplify is infrastructure: the door's
 # view of the backend and of sign-in (DoorApi) and the admin views' (AdminApi). The admin shell is shared presentation
 # with no product behavior, and the route files are composition.
+#
+# In the backend (PR 1.3): the store, logging and ids every function uses, the retention periods, the model rule, the
+# site registry and the synth-time settings are shared; backend.ts, the data resource, the auth resource, and the synth
+# tests and fixtures are composition. The slices claim their schema, their functions and their triggers.
 shared:
   - apps/web/src/features/admin/shell/**
+  - amplify/functions/shared/**
+  - amplify/areas/access/sites.ts
+  - amplify/areas/retention.ts
+  - amplify/areas/retention.test.ts
+  - amplify/areas/rules.ts
+  - amplify/auth/auth-config.ts
+  - amplify/auth/settings.ts
+  - amplify/auth/settings.test.ts
 infrastructure:
   - apps/web/src/infrastructure/**
 composition:
   - apps/web/app/**
+  - amplify/backend.ts
+  - amplify/backend.test.ts
+  - amplify/data/**
+  - amplify/auth/resource.ts
+  - amplify/auth/wiring.test.ts
+  - amplify/stack-limits.ts
+  - amplify/stack-limits.test.ts
+  - amplify/test/**
+  - amplify/vitest.config.ts
