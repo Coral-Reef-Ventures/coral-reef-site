@@ -137,3 +137,12 @@ test("the build leaves no placeholder behind", () => {
   assert.doesNotMatch(html, /\{\{\w+\}\}/);
   assert.doesNotMatch(html, /example\.(com|org)|lorem|TODO/i);
 });
+
+test("hosting: CNAME is the host of package.json's homepage, which is what tells Pages the custom domain", async () => {
+  const pkg = JSON.parse(await readFile(join(import.meta.dirname, "..", "package.json"), "utf8")) as {
+    homepage: string;
+  };
+  const cname = await readFile(join(dir, "dist", "CNAME"), "utf8");
+  assert.equal(cname, `${new URL(pkg.homepage).host}\n`);
+  assert.equal(cname, "coralreefventures.com\n");
+});

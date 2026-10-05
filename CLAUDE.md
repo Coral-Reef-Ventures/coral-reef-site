@@ -38,12 +38,16 @@ Pages workflow. Read `docs/requirements/` before changing anything: `site-copy.m
   the ink tile in light and the light tile in dark, as that guide says; Driftline's drawn 2026-10-03 for this page, until
   Driftline has a repository to own it); refresh them there when a product's mark changes.
 
+## Hosting
+
+Decided 2026-10-04: GitHub Pages, like markset.org and intentset.org. `homepage` in `package.json` (the canonical URL)
+is `https://coralreefventures.com/`, and the build writes `dist/CNAME` from its host, which is what tells Pages the
+custom domain, so moving the site is one string (a test holds it). DNS is set at the registrar, not in this repository.
+
 ## Open launch decisions
 
 From the requirements' launch gates, not yet settled:
 
-- Hosting destination. `homepage` in `package.json` (the canonical URL) is `https://coralreefventures.com/`, assumed from
-  the company email domain. No CNAME is written; a custom domain is set in the repository's Pages settings.
 - Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
 - Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
   Intentset `Open source · Early release`.
