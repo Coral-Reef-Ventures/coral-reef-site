@@ -40,6 +40,26 @@ export const decodeRequest = (customState: string | undefined): DoorRequest | nu
   }
 };
 
+/**
+ * An admin page the sign-in started from, which the return page goes back to. Only the admin views' own paths, so a
+ * state carried through Google can never send the visitor anywhere else: `/admin/`, `/admin/invitations/`,
+ * `/admin/activity/` and `/admin/submission/?id=<id>`.
+ */
+const adminPath = /^\/admin\/(?:[a-z]+\/)?(?:\?id=[A-Za-z0-9_-]{1,64})?$/;
+
+export const encodeAdminReturn = (path: string): string =>
+  JSON.stringify({ admin: adminPath.test(path) ? path : "/admin/" });
+
+export const decodeAdminReturn = (customState: string | undefined): string | null => {
+  if (!customState) return null;
+  try {
+    const value = (JSON.parse(customState) as Record<string, unknown> | null)?.admin;
+    return typeof value === "string" && adminPath.test(value) ? value : null;
+  } catch {
+    return null;
+  }
+};
+
 export type Ticket = { action: string; ticket: string; next: string };
 
 export type Entered =

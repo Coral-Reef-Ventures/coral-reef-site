@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { doorApi } from "../../../infrastructure/amplify/client.ts";
 import classes from "./DoorSignIn.module.css";
-import { decodeRequest, type DoorRequest, enter, encodeRequest, readDoorRequest } from "./enter.ts";
+import { decodeAdminReturn, decodeRequest, type DoorRequest, enter, encodeRequest, readDoorRequest } from "./enter.ts";
 import { getInvolvedPath } from "./forward.ts";
 import { postTicket } from "./postTicket.ts";
 import { type LockedSite, siteById } from "./sites.ts";
@@ -32,8 +32,9 @@ const noticeFor = (search: string): string | null => {
  * The invitation sign-in (CRV-010). On `/get-involved/` it offers Google, naming the site when the query names a locked
  * one (`?site=`, from a gate's sign-in redirect or its coming-soon page's "Get involved" link); with that request and a live session it silently fetches a ticket and posts it (renewal); with a
  * session and no request it lists the sites to continue to.
- * On `/signed-in/` (`completing`) it first waits for Google's return to finish, then does the same. A person with no
- * invitation is sent back to `/get-involved/` with `?error=NOT_INVITED`, where the form is waiting.
+ * On `/signed-in/` (`completing`) it first waits for Google's return to finish, then does the same, or, when the sign-in
+ * started on an admin page, goes back to it. A person with no invitation is sent back to `/get-involved/` with
+ * `?error=NOT_INVITED`, where the form is waiting.
  */
 export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => {
   const [view, setView] = useState<View>({ kind: "working", label: "Checking your sign-in…" });
@@ -44,12 +45,15 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
     let live = true;
     const show = (next: View) => live && setView(next);
 
-    const proceed = async (asked: DoorRequest | null) => {
+    // `back` is the admin page a sign-in started from: once the door has let the visitor in, it goes back there.
+    const proceed = async (asked: DoorRequest | null, back: string | null = null) => {
       show({ kind: "working", label: "Opening the door…" });
       try {
         const entered = await enter(doorApi, asked);
         if (entered.kind === "ticket") {
           postTicket(entered.ticket);
+        } else if (entered.kind === "continue" && back) {
+          window.location.replace(back);
         } else if (entered.kind === "continue") {
           show({ kind: "continue", grants: entered.grants, admin: entered.admin });
         } else {
@@ -82,7 +86,7 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
           show({ kind: "failed" });
           return;
         }
-        await proceed(decodeRequest(outcome.customState) ?? asked);
+        await proceed(decodeRequest(outcome.customState) ?? asked, decodeAdminReturn(outcome.customState));
         return;
       }
 

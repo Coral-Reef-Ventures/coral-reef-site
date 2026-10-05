@@ -85,3 +85,10 @@ export interface AdminApi {
   eraseEmail(email: string): Promise<void>;
   listActivity(query?: ActivityQuery): Promise<Activity[]>;
 }
+
+/**
+ * What the admin pages may show, decided before a view loads: `ready` (a backend is bound: the stub, or the deployed one
+ * for a session in the `admins` group), `signed-out` and `not-admin` (the deployed backend, without an admin session),
+ * and `no-backend` (a build with neither, whose views then say so).
+ */
+export type AdminAccess = "ready" | "signed-out" | "not-admin" | "no-backend";

@@ -1,3 +1,4 @@
+export { AdminGate, type GateAccess } from "./AdminGate.tsx";
 export { AdminShell, ADMIN_LINKS, ErrorNotice, ScrollRow } from "./AdminShell.tsx";
 export { ConfirmButton } from "./ConfirmButton.tsx";
 export { formatWhen, titleCase } from "./format.ts";

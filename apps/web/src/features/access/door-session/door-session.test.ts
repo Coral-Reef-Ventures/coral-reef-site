@@ -1,7 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { DoorApi } from "../../../infrastructure/amplify/types.ts";
-import { decodeRequest, encodeRequest, enter, isDoorAction, readDoorRequest } from "./enter.ts";
+import {
+  decodeAdminReturn,
+  decodeRequest,
+  encodeAdminReturn,
+  encodeRequest,
+  enter,
+  isDoorAction,
+  readDoorRequest,
+} from "./enter.ts";
 import { canonicalNext } from "./next.ts";
 import { postTicket } from "./postTicket.ts";
 import { signoutChainStart } from "./sites.ts";
@@ -119,6 +127,35 @@ describe("enter", () => {
       issueSiteTicket: async () => ({ action: "https://streamlane.app/_door", ticket: "t" }),
     });
     await expect(enter(wrong, request)).rejects.toThrow();
+  });
+});
+
+describe("the admin page a sign-in returns to", () => {
+  it.each(["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/submission/?id=01K6ABCDEF"])(
+    "carries %s through Google and back",
+    (path) => expect(decodeAdminReturn(encodeAdminReturn(path))).toBe(path),
+  );
+
+  it.each([
+    "//evil.example/",
+    "https://evil.example/admin/",
+    "/admin/../signout/",
+    "/admin//evil",
+    "/x/",
+    "/admin/a?next=//e",
+  ])("never carries %j, only the admin views' own paths", (path) => {
+    expect(decodeAdminReturn(encodeAdminReturn(path))).toBe("/admin/");
+    expect(decodeAdminReturn(JSON.stringify({ admin: path }))).toBeNull();
+  });
+
+  it("is not a site's request, and a site's request is not one", () => {
+    expect(decodeRequest(encodeAdminReturn("/admin/"))).toBeNull();
+    expect(
+      decodeAdminReturn(JSON.stringify({ site: "driftline", host: "driftline.app", next: "/", state })),
+    ).toBeNull();
+    expect(decodeAdminReturn(undefined)).toBeNull();
+    expect(decodeAdminReturn("not json")).toBeNull();
+    expect(decodeAdminReturn("null")).toBeNull();
   });
 });
 
