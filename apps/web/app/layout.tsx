@@ -7,7 +7,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { rootMetadata, rootViewport, SiteFooter, SiteHeader } from "../lib/site.tsx";
-import { SchemeControl, schemeScript } from "../lib/scheme.tsx";
+import { schemeScript } from "../lib/scheme.tsx";
 
 export const metadata: Metadata = rootMetadata();
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = rootMetadata();
 export const viewport: Viewport = { ...rootViewport(), colorScheme: "light dark" };
 
 /**
- * The frame every page shares: the skip link, the header, the scheme control, the page, the footer. System fonts only:
+ * The frame every page shares: the skip link, the header (with the scheme control in its bar), the page, the footer. System fonts only:
  * nothing loads from another origin. The theme's variables are a generated stylesheet (app/theme.css), so no page needs a provider or a
  * script to have them, and the scheme script is the only script the frame carries.
  */
@@ -28,9 +28,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Skip to content
         </a>
         <SiteHeader />
-        <div className="door-tools">
-          <SchemeControl />
-        </div>
         <main id="main" tabIndex={-1}>
           {children}
         </main>

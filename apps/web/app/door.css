@@ -13,7 +13,6 @@ body {
   --ms-font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --ms-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ms-measure: 42rem;
-  --ms-measure-wide: 72.5rem;
   --ms-radius: 4px;
 
   --ms-fg: light-dark(#2e3836, #ece7dc);
@@ -48,11 +47,7 @@ body {
   --mantine-primary-color-filled-hover: var(--crv-focus);
   --mantine-primary-color-0: var(--ms-surface);
 
-  --crv-gutter: 2rem;
   line-height: 1.65;
-}
-@media (max-width: 47.5rem) {
-  body { --crv-gutter: 1.25rem; }
 }
 
 /* ---- shell ------------------------------------------------------------------- */
@@ -75,7 +70,13 @@ main:focus { outline: none; }
  * scheme is one property. The shell's one script carries the choice across a
  * reload through data-scheme on <body>; with it blocked, these rules still
  * work for the visit. Collapsed, the control shows only the scheme in force
- * and opens on hover or focus. */
+ * and opens on hover or focus. It sits in the header's bar (reef's
+ * headerTools), in a slot the size of the collapsed pill: the open pill is laid
+ * over the bar, growing leftward from the slot's right edge, so opening it
+ * moves nothing and never pushes the menu button off a phone's screen. Its
+ * border and ground are the header's own (--ms-border, --ms-bg). */
+.door-scheme-slot { position: relative; display: block; flex: none; width: calc(1.65rem + 6px); height: calc(1.65rem + 6px); }
+.door-scheme-slot > .site-scheme { position: absolute; top: 0; right: 0; box-sizing: border-box; height: 100%; }
 body:has(#ms-scheme-light:checked) { color-scheme: light; }
 body:has(#ms-scheme-dark:checked) { color-scheme: dark; }
 .site-scheme { display: flex; align-items: center; gap: 1px; padding: 2px; border: 1px solid var(--ms-border); border-radius: 999px; background: var(--ms-bg); }
@@ -92,13 +93,12 @@ body:has(#ms-scheme-dark:checked) { color-scheme: dark; }
 .site-icon { display: block; width: 1.05rem; height: 1.05rem; }
 
 
-/* The scheme control's row, between the header and the page, at the page's own width. */
-.door-tools { box-sizing: border-box; display: flex; justify-content: flex-end; max-width: var(--ms-measure-wide); margin-inline: auto; padding: 0.75rem var(--crv-gutter) 0; }
-
 /* ---- document ---------------------------------------------------------------- */
-/* A page is a stack of Markset documents with the form and the sign-in between them. */
+/* A page is a stack of Markset documents with the form and the sign-in between them. The column is the shell's own
+ * (--site-max-width and --site-gutter, from @coralreefventures/site/base.css), so the text starts where the lockup
+ * does and ends where the header's last item does, at every width; --ms-measure still sets the reading width inside it. */
 .door { padding-block: 3rem 3rem; }
-.door-slot, .ms-document { box-sizing: border-box; width: 100%; max-width: var(--ms-measure-wide); margin-inline: auto; padding-inline: var(--crv-gutter); }
+.door-slot, .ms-document { box-sizing: border-box; width: 100%; max-width: var(--site-max-width); margin-inline: auto; padding-inline: var(--site-gutter); }
 .ms-document { position: relative; padding-block: 0; }
 .ms-document:first-child { padding-top: 2rem; }
 .door-slot { padding-block: 0; }
@@ -166,7 +166,7 @@ body:has(#ms-scheme-dark:checked) { color-scheme: dark; }
     content: "";
     position: absolute;
     margin-top: -1.6rem;
-    right: var(--crv-gutter);
+    right: var(--site-gutter);
     width: 24rem;
     height: 15rem;
     pointer-events: none;
@@ -273,6 +273,6 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 
 /* ---- print ------------------------------------------------------------------------ */
 @media print {
-  .skip-link, .ms-document::before, .site-scheme, .door-tools { display: none; }
+  .skip-link, .ms-document::before, .site-scheme, .door-scheme-slot { display: none; }
   .cta a::after { content: " (" attr(href) ")"; font-weight: 400; }
 }

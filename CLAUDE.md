@@ -36,6 +36,11 @@ CRV-014 and supersedes CRV-007).
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest.
+- **The frame lines up with the shell.** The color-scheme control is in the header's bar, after the nav and before the
+  folded menu's button, through reef's `headerTools` (`@coralreefventures/site` 0.3.0, `lib/site.tsx`); its slot keeps
+  the collapsed pill's size so the open pill grows leftward over the bar and a phone's row never overflows. Every page's
+  column, the admin views' included, is the shell's (`--site-max-width`, `--site-gutter`), so the h1 starts where the
+  lockup does and nothing runs past the header's right edge. `e2e/door.spec.ts` holds both, at 390 to 1440px.
 - **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
   The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives

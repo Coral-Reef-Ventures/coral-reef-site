@@ -48,31 +48,129 @@ for (const path of pages) {
   }
 }
 
-test("the keyboard reaches every link, control and the scheme control in order, each with a visible focus ring", async ({
+test("the keyboard reaches the header, its scheme control and then the page in order, each with a visible focus ring", async ({
   page,
 }) => {
   await open(page, "/get-involved/", 1440, "light");
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelector("a")?.textContent)).toBe("Skip to content");
   const rings: string[] = [];
+  const stops: string[] = [];
   for (let i = 0; i < 80; i++) {
     await page.keyboard.press("Tab");
-    const ring = await page.evaluate(() => {
+    const stop = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement;
-      if (el === document.body) return "END";
+      if (el === document.body) return null;
       const ringed =
         el instanceof HTMLInputElement && el.type === "radio" ? (el.nextElementSibling as HTMLElement) : el;
       const style = getComputedStyle(ringed);
-      return `${el.tagName}:${style.outlineStyle}:${style.outlineWidth}`;
+      const where = el.closest("header") ? "header" : el.closest("main") ? "main" : "other";
+      return { ring: `${el.tagName}:${style.outlineStyle}:${style.outlineWidth}`, at: `${where}:${el.tagName}` };
     });
-    if (ring === "END") break;
-    rings.push(ring);
+    if (stop === null) break;
+    rings.push(stop.ring);
+    stops.push(stop.at);
   }
+  // The skip link, then the header in reading order: the lockup, the one nav link, the scheme control (the checked
+  // radio is its one stop), and then the page. The control is in the bar now, not a row of its own below it.
+  expect(stops.slice(0, 4)).toEqual(["other:A", "header:A", "header:A", "header:INPUT"]);
+  expect(stops[4]).toMatch(/^main:/);
   expect(rings.length, "the page's stops").toBeGreaterThan(10);
   expect(rings.length, "tabbing ended").toBeLessThan(80);
   for (const ring of rings) expect(ring, "a focus stop has no ring").toMatch(/:(solid|auto):(3px|2px|1px)/);
   expect(rings[0]).toContain("A:");
 });
+
+/** The header's inner row and the things in it, measured in the page. */
+const headerBox = (page: Page) =>
+  page.evaluate(() => {
+    const box = (el: Element | null) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width };
+    };
+    const header = document.querySelector("header") as HTMLElement;
+    const inner = header.firstElementChild as HTMLElement;
+    const style = getComputedStyle(inner);
+    const row = inner.getBoundingClientRect();
+    const summary = header.querySelector("summary");
+    return {
+      content: {
+        left: row.left + Number.parseFloat(style.paddingLeft),
+        right: row.right - Number.parseFloat(style.paddingRight),
+        middle: row.top + row.height / 2,
+      },
+      lockup: box(header.querySelector("a[href='/']")),
+      control: box(header.querySelector(".site-scheme")),
+      menu: summary && getComputedStyle(summary).display !== "none" && summary.offsetParent ? box(summary) : null,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+
+for (const path of ["/", "/get-involved/", "/admin/"]) {
+  for (const width of [390, 1440]) {
+    test(`${path}: the scheme control is in the header's bar at ${width}px, centered and at its right end`, async ({
+      page,
+    }) => {
+      await open(page, path, width, "light");
+      await page.waitForTimeout(300);
+      await expect(page.locator("header .site-scheme")).toHaveCount(1);
+      await expect(page.locator(".site-scheme")).toHaveCount(1);
+      const at = await headerBox(page);
+      if (!at.control) throw new Error("no control");
+      expect(Math.abs((at.control.top + at.control.bottom) / 2 - at.content.middle)).toBeLessThanOrEqual(1);
+      if (width === 390) {
+        // A phone: the lockup, the control and the menu button, in that order, inside the row.
+        if (!at.menu || !at.lockup) throw new Error("no menu button or lockup");
+        expect(at.lockup.right).toBeLessThanOrEqual(at.control.left);
+        expect(at.control.right).toBeLessThanOrEqual(at.menu.left);
+        expect(Math.abs(at.menu.right - at.content.right)).toBeLessThanOrEqual(1);
+      } else {
+        expect(at.menu).toBeNull();
+        expect(Math.abs(at.control.right - at.content.right)).toBeLessThanOrEqual(1);
+      }
+      expect(at.scrollWidth).toBeLessThanOrEqual(width);
+    });
+  }
+}
+
+test("opening the scheme control on a phone moves nothing and stays on screen", async ({ page }) => {
+  await open(page, "/", 390, "light");
+  await page.waitForTimeout(300);
+  const before = await headerBox(page);
+  await page.locator("#ms-scheme-auto").focus();
+  const after = await headerBox(page);
+  if (!after.control || !before.control) throw new Error("no control");
+  expect(after.control.width).toBeGreaterThan(before.control.width * 2);
+  expect(after.control.left).toBeGreaterThanOrEqual(0);
+  expect(after.control.right).toBe(before.control.right);
+  expect(after.menu).toEqual(before.menu);
+  expect(after.scrollWidth).toBeLessThanOrEqual(390);
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("body")).toHaveAttribute("data-scheme", "light");
+});
+
+for (const path of ["/", "/get-involved/", "/privacy/"]) {
+  for (const width of [390, 1024, 1200, 1440]) {
+    test(`${path}: the page's column lines up with the header at ${width}px`, async ({ page }) => {
+      await open(page, path, width, "light");
+      await page.waitForTimeout(300);
+      const at = await headerBox(page);
+      const content = await page.evaluate(() => {
+        const h1 = (document.querySelector("main h1") as HTMLElement).getBoundingClientRect();
+        const blocks = [...document.querySelectorAll("main .ms-document > *, main .door-slot > *")]
+          .map((el) => ({ el: el.outerHTML.slice(0, 60), right: el.getBoundingClientRect().right }))
+          .filter((b) => b.right > 0);
+        return { h1Left: h1.left, blocks };
+      });
+      if (!at.lockup) throw new Error("no lockup");
+      expect(Math.abs(content.h1Left - at.lockup.left), "the h1 starts where the lockup does").toBeLessThanOrEqual(1);
+      expect(Math.abs(at.lockup.left - at.content.left)).toBeLessThanOrEqual(1);
+      const past = content.blocks.filter((b) => b.right > at.content.right + 1).map((b) => b.el);
+      expect(past, "a block runs past the header's right edge").toEqual([]);
+    });
+  }
+}
 
 test("the skip link moves focus into the main content", async ({ page }) => {
   await open(page, "/", 390, "light");

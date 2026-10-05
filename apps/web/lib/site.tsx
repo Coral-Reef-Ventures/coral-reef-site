@@ -1,5 +1,7 @@
 import { createSite } from "@coralreefventures/site";
 
+import { SchemeControl } from "./scheme.tsx";
+
 export const siteUrl = "https://coralreefventures.com";
 export const contactEmail = "hello@coralreefventures.com";
 
@@ -23,6 +25,13 @@ export const site = createSite({
   nav: [{ key: "involved", label: "Get involved", href: "/get-involved/" }],
   lockup: <Lockup />,
   actions: [],
+  // In the bar at every width, after the nav and before the folded menu's button (reef 0.3.0). The slot keeps the
+  // collapsed pill's size, so the pill opens leftward over the bar instead of pushing the menu button off a phone.
+  headerTools: (
+    <span className="door-scheme-slot">
+      <SchemeControl />
+    </span>
+  ),
   footer: {
     maker: (
       <>

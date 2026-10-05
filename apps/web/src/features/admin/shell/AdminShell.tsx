@@ -20,7 +20,8 @@ export const ADMIN_LINKS = [
 export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <MantineProvider theme={theme} defaultColorScheme="auto">
-      <Container size="lg" py="md">
+      {/* The shell's column (--site-max-width, --site-gutter), so the views line up with the header's lockup and its right edge. */}
+      <Container size="var(--site-max-width)" px="var(--site-gutter)" py="md">
         <Group component="nav" aria-label="Admin" gap="md" mb="md">
           {ADMIN_LINKS.map((link) => (
             <Anchor key={link.href} component={Link} href={link.href}>
