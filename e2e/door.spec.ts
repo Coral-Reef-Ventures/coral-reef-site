@@ -87,7 +87,7 @@ const headerBox = (page: Page) =>
     const box = (el: Element | null) => {
       if (!el) return null;
       const r = el.getBoundingClientRect();
-      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width };
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
     };
     const header = document.querySelector("header") as HTMLElement;
     const inner = header.firstElementChild as HTMLElement;
@@ -107,8 +107,11 @@ const headerBox = (page: Page) =>
     };
   });
 
+// 320 is WCAG 1.4.10's reflow width; 360, 375 and 390 are the common phones.
+const phones = [320, 360, 375, 390];
+
 for (const path of ["/", "/get-involved/", "/admin/"]) {
-  for (const width of [390, 1440]) {
+  for (const width of [...phones, 1440]) {
     test(`${path}: the scheme control is in the header's bar at ${width}px, centered and at its right end`, async ({
       page,
     }) => {
@@ -119,7 +122,7 @@ for (const path of ["/", "/get-involved/", "/admin/"]) {
       const at = await headerBox(page);
       if (!at.control) throw new Error("no control");
       expect(Math.abs((at.control.top + at.control.bottom) / 2 - at.content.middle)).toBeLessThanOrEqual(1);
-      if (width === 390) {
+      if (width < 1000) {
         // A phone: the lockup, the control and the menu button, in that order, inside the row.
         if (!at.menu || !at.lockup) throw new Error("no menu button or lockup");
         expect(at.lockup.right).toBeLessThanOrEqual(at.control.left);
@@ -134,20 +137,41 @@ for (const path of ["/", "/get-involved/", "/admin/"]) {
   }
 }
 
-test("opening the scheme control on a phone moves nothing and stays on screen", async ({ page }) => {
-  await open(page, "/", 390, "light");
+for (const width of phones) {
+  test(`opening the scheme control at ${width}px moves nothing, covers nothing in the bar and stays on screen`, async ({
+    page,
+  }) => {
+    await open(page, "/", width, "light");
+    await page.waitForTimeout(300);
+    const before = await headerBox(page);
+    await page.locator("#ms-scheme-auto").focus();
+    const after = await headerBox(page);
+    if (!after.control || !before.control || !after.lockup) throw new Error("no control or lockup");
+    // On a phone the pill opens downward, under the bar: it grows taller, keeps its corner and never reaches the lockup.
+    expect(after.control.height).toBeGreaterThan(before.control.height * 2);
+    expect(after.control.top).toBe(before.control.top);
+    expect(after.control.right).toBe(before.control.right);
+    expect(after.control.left).toBeGreaterThanOrEqual(after.lockup.right);
+    expect(after.menu).toEqual(before.menu);
+    expect(after.scrollWidth).toBeLessThanOrEqual(width);
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator("body")).toHaveAttribute("data-scheme", "light");
+  });
+}
+
+test("opening the scheme control on a wide screen grows it leftward over the bar and moves nothing", async ({
+  page,
+}) => {
+  await open(page, "/", 1440, "light");
   await page.waitForTimeout(300);
   const before = await headerBox(page);
   await page.locator("#ms-scheme-auto").focus();
   const after = await headerBox(page);
-  if (!after.control || !before.control) throw new Error("no control");
+  if (!after.control || !before.control || !after.lockup) throw new Error("no control or lockup");
   expect(after.control.width).toBeGreaterThan(before.control.width * 2);
-  expect(after.control.left).toBeGreaterThanOrEqual(0);
   expect(after.control.right).toBe(before.control.right);
-  expect(after.menu).toEqual(before.menu);
-  expect(after.scrollWidth).toBeLessThanOrEqual(390);
-  await page.keyboard.press("ArrowRight");
-  await expect(page.locator("body")).toHaveAttribute("data-scheme", "light");
+  expect(after.control.left).toBeGreaterThanOrEqual(after.lockup.right);
+  expect(after.scrollWidth).toBeLessThanOrEqual(1440);
 });
 
 for (const path of ["/", "/get-involved/", "/privacy/"]) {
@@ -179,12 +203,16 @@ test("the skip link moves focus into the main content", async ({ page }) => {
   await expect(page.locator("main")).toBeFocused();
 });
 
+// The admin pages are held to it in the header and their own nav only: Mantine draws their views, and its dark alert
+// and segmented control are known to fall short (a follow-up), but the shell and the nav are this site's.
+const contrastScopes: Record<string, string> = { "/admin/": "header, footer, nav[aria-label='Admin']" };
+
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/get-involved/", "/privacy/"]) {
+  for (const path of ["/", "/get-involved/", "/privacy/", "/admin/"]) {
     test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
       await open(page, path, 1440, scheme);
       await page.waitForTimeout(300);
-      const failures = await page.evaluate(() => {
+      const failures = await page.evaluate((scope) => {
         const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
         const lum = ([r, g, b]: number[]) => {
           const f = (v: number) => {
@@ -210,6 +238,7 @@ for (const scheme of ["light", "dark"] as const) {
         for (let n = walker.nextNode(); n; n = walker.nextNode()) {
           const el = n.parentElement;
           if (!el || !n.textContent?.trim() || el.closest(".skip-link, noscript, script, style")) continue;
+          if (scope && !el.closest(scope)) continue;
           const style = getComputedStyle(el);
           const size = Number.parseFloat(style.fontSize);
           const large = size >= 24 || (size >= 18.66 && Number(style.fontWeight) >= 700);
@@ -217,7 +246,7 @@ for (const scheme of ["light", "dark"] as const) {
           if (r < (large ? 3 : 4.5)) out.push(`${n.textContent.trim().slice(0, 40)}: ${r.toFixed(2)}`);
         }
         return out;
-      });
+      }, contrastScopes[path] ?? "");
       expect(failures).toEqual([]);
     });
   }

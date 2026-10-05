@@ -7,10 +7,10 @@ export const contactEmail = "hello@coralreefventures.com";
 
 /** The mark and the name: the way home. A plain image, so the header ships no client code. */
 const Lockup = () => (
-  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", fontWeight: 750, fontSize: "1.15rem" }}>
+  <span className="door-lockup">
     {/* biome-ignore lint/performance/noImgElement: a static export has no image optimizer, and the mark is a 2 KB SVG. */}
     <img src="/icon.svg" alt="" width={28} height={28} style={{ borderRadius: "0.4rem" }} />
-    Coral Reef Ventures
+    <span className="door-lockup-name">Coral Reef Ventures</span>
   </span>
 );
 
@@ -26,7 +26,8 @@ export const site = createSite({
   lockup: <Lockup />,
   actions: [],
   // In the bar at every width, after the nav and before the folded menu's button (reef 0.3.0). The slot keeps the
-  // collapsed pill's size, so the pill opens leftward over the bar instead of pushing the menu button off a phone.
+  // collapsed pill's size, so opening the pill moves nothing: leftward over the bar on a wide screen, downward under
+  // it on a phone, where leftward would cover the lockup.
   headerTools: (
     <span className="door-scheme-slot">
       <SchemeControl />

@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { InvitationStatus } from "../../../infrastructure/amplify/api.ts";
 import { INVITATION_STATUSES } from "../../../infrastructure/amplify/api.ts";
 import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
-import { ConfirmButton, ErrorNotice, messageOf, titleCase, useLoad } from "../../admin/shell/index.ts";
+import { ConfirmButton, ErrorNotice, messageOf, ScrollRow, titleCase, useLoad } from "../../admin/shell/index.ts";
 import { InviteForm } from "./InviteForm.tsx";
 import { InvitationsTable, type InvitationActions } from "./InvitationsTable.tsx";
 
@@ -45,13 +45,14 @@ export function InvitationsView() {
         <Title order={2} size="h3" mb="xs">
           Invitations
         </Title>
-        <SegmentedControl
-          aria-label="Status"
-          mb="md"
-          value={status}
-          onChange={(value) => setStatus(value as InvitationStatus)}
-          data={INVITATION_STATUSES.map((s) => ({ value: s, label: titleCase(s) }))}
-        />
+        <ScrollRow>
+          <SegmentedControl
+            aria-label="Status"
+            value={status}
+            onChange={(value) => setStatus(value as InvitationStatus)}
+            data={INVITATION_STATUSES.map((s) => ({ value: s, label: titleCase(s) }))}
+          />
+        </ScrollRow>
         {error ? <ErrorNotice message={error} /> : null}
         {result.state === "error" ? <ErrorNotice message={result.message} /> : null}
         {result.state === "ready" ? <InvitationsTable rows={result.data} actions={actions} /> : null}

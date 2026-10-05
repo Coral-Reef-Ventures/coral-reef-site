@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Anchor, Container, createTheme, Group, MantineProvider, Title } from "@mantine/core";
+import { Alert, Anchor, Box, Container, createTheme, Group, MantineProvider, Title } from "@mantine/core";
 import "@mantine/core/styles.css";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -24,7 +24,7 @@ export function AdminShell({ title, children }: { title: string; children: React
       <Container size="var(--site-max-width)" px="var(--site-gutter)" py="md">
         <Group component="nav" aria-label="Admin" gap="md" mb="md">
           {ADMIN_LINKS.map((link) => (
-            <Anchor key={link.href} component={Link} href={link.href}>
+            <Anchor key={link.href} component={Link} href={link.href} c="var(--ms-fg)">
               {link.label}
             </Anchor>
           ))}
@@ -35,6 +35,18 @@ export function AdminShell({ title, children }: { title: string; children: React
         {children}
       </Container>
     </MantineProvider>
+  );
+}
+
+/**
+ * A row that may be wider than a phone, a SegmentedControl of statuses say: it scrolls inside itself, so the page
+ * never scrolls sideways (five labels need about 430px, and a phone has 390 or less).
+ */
+export function ScrollRow({ children }: { children: ReactNode }) {
+  return (
+    <Box mb="md" maw="100%" style={{ overflowX: "auto" }}>
+      {children}
+    </Box>
   );
 }
 

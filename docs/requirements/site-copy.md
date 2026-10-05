@@ -99,7 +99,7 @@ Phase 2b cutover). Until then the sections above stay the approved record, and t
 The decision behind this copy is [ADR 0001](../decisions/0001-the-door-and-the-app.md).
 
 This file is the source. The app's three content files are copied into it verbatim, below, and
-`apps/web/lib/content.test.ts` fails if either one differs from its block here. Change the copy here first and the
+`apps/web/lib/content.test.ts` fails if any of them differs from its block here. Change the copy here first and the
 content file in the same commit.
 
 ## Door (proposed, 2026-10-04)
