@@ -59,8 +59,12 @@ export const memoryStore = (keys: Record<string, string[]>): MemoryStore => {
     if ("put" in write) {
       table(write.put.table).set(keyOf(keyFromItem(write.put.table, write.put.item)), structuredClone(write.put.item));
     } else if ("update" in write) {
-      const { table: name, key, set = {}, remove = [] } = write.update;
-      const current = { ...(table(name).get(keyOf(key)) ?? key), ...structuredClone(set) };
+      const { table: name, key, set = {}, append = {}, remove = [] } = write.update;
+      const current: Item = { ...(table(name).get(keyOf(key)) ?? key), ...structuredClone(set) };
+      for (const [field, values] of Object.entries(append)) {
+        const list = Array.isArray(current[field]) ? (current[field] as unknown[]) : [];
+        current[field] = [...list, ...structuredClone(values)];
+      }
       for (const field of remove) delete current[field];
       table(name).set(keyOf(key), current);
     } else {

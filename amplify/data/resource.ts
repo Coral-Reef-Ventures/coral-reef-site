@@ -21,12 +21,13 @@ export const dataFunctions = { crvAccess, crvInterest };
 
 const schema = a
   .schema({ ...people, ...interest, ...access })
-  // The functions that call the API with their own IAM role: the two triggers (checkAdmission, admitSignIn) and the
-  // retention sweep (Invitation.byStatus, deletePerson). Amplify creates each policy in the data stack and attaches it
-  // to the function's role, so the edge points from data to auth (plan §2.2). crv-access and crv-interest write their
-  // tables directly and never call the API, so they get no rule here.
+  // The functions that call the API with their own IAM role: the two triggers (checkAdmission, admitSignIn, both
+  // mutations, so neither trigger can read a model) and the retention sweep (Invitation.byStatus, deletePerson).
+  // Amplify creates each policy in the data stack and attaches it to the function's role, so the edge points from data
+  // to auth (plan §2.2). crv-access and crv-interest write their tables directly and never call the API, so they get no
+  // rule here.
   .authorization((allow) => [
-    allow.resource(preSignUp).to(["query"]),
+    allow.resource(preSignUp).to(["mutate"]),
     allow.resource(preTokenGeneration).to(["mutate"]),
     allow.resource(crvRetention).to(["query", "mutate"]),
   ]);

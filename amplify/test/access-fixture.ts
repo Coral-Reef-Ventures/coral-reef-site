@@ -33,6 +33,7 @@ export const fixture = (config: Partial<AccessConfig> = {}): Fixture => {
     disable: vi.fn(async () => {}),
     enable: vi.fn(async () => {}),
     addToAdmins: vi.fn(async () => {}),
+    removeFromAdmins: vi.fn(async () => {}),
     remove: vi.fn(async () => {}),
   };
   let now = new Date("2026-10-05T12:00:00.000Z");
@@ -94,7 +95,23 @@ export const guestIdentity = () => ({
   sourceIp: ["203.0.113.9"],
 });
 
-/** Invites `email` as an admin and binds it to `sub` through admitSignIn, as a first sign-in does. */
+/** Pre sign-up's checkAdmission for the Google identity `sub`, as its first sign-in asks it. */
+export const signUp = (f: Fixture, email: string, sub: string) =>
+  f.call(
+    "checkAdmission",
+    { email, userName: `Google_${sub}`, triggerSource: "PreSignUp_ExternalProvider" },
+    roleIdentity(roles.preSignUp),
+  );
+
+/** Pre token generation's admitSignIn for the Google identity `sub`. */
+export const signIn = (f: Fixture, email: string, sub: string, inAdmins?: boolean) =>
+  f.call(
+    "admitSignIn",
+    { userName: `Google_${sub}`, sub, googleSub: `g-${sub}`, email, ...(inAdmins === undefined ? {} : { inAdmins }) },
+    roleIdentity(roles.preTokenGeneration),
+  );
+
+/** Invites `email` as an admin and binds it to `sub` as a first sign-in does: pre sign-up, then admitSignIn. */
 export const invitedAndBound = async (
   f: Fixture,
   email: string,
@@ -102,11 +119,8 @@ export const invitedAndBound = async (
   sites: string[] = ["streamlane", "driftline"],
 ) => {
   await f.call("invite", { email, sites }, adminIdentity());
-  const result = await f.call(
-    "admitSignIn",
-    { userName: `Google_${sub}`, sub, googleSub: `g-${sub}`, email },
-    roleIdentity(roles.preTokenGeneration),
-  );
+  await signUp(f, email, sub);
+  const result = await signIn(f, email, sub);
   f.directory.emails.set(`Google_${sub}`, email);
   return result;
 };

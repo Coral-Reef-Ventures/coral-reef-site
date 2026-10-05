@@ -47,8 +47,25 @@ export const sourceAddress = (identity: InterestEvent["identity"]): string => id
  * nothing back. A filled honeypot is answered as if it worked and goes nowhere. Over a limit, it answers with
  * `retryAfter` and writes nothing else. Otherwise it stores first and notifies second, so a failed notice never loses a
  * submission. It logs an event kind, the submission's id and a status, never a field's value.
+ *
+ * An invalid field reaches the guest as its code; any other failure, a DynamoDB or SNS error included, as `INTERNAL`
+ * alone, as crv-access answers. An SDK error's message can carry a table name, a key or an attribute's value, and a
+ * guest is the last caller that should see one; thrown out of the handler, the runtime would also log it whole.
  */
-export const createInterest =
+export const createInterest = (deps: InterestDeps) => {
+  const submit = submitWith(deps);
+  return async (event: InterestEvent): Promise<InterestAnswer> => {
+    try {
+      return await submit(event);
+    } catch (error) {
+      if (error instanceof Invalid) throw error;
+      log("interest.failed", { status: "INTERNAL", error: errorName(error) });
+      throw new Error("INTERNAL");
+    }
+  };
+};
+
+const submitWith =
   (deps: InterestDeps) =>
   async (event: InterestEvent): Promise<InterestAnswer> => {
     const args = event.arguments ?? {};

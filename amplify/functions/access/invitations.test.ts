@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { adminIdentity, fixture, invitedAndBound, roleIdentity, roles } from "../../test/access-fixture.ts";
+import {
+  adminIdentity,
+  fixture,
+  invitedAndBound,
+  roleIdentity,
+  roles,
+  signIn,
+  signUp,
+} from "../../test/access-fixture.ts";
 import { row } from "../shared/models.ts";
 
 const admin = adminIdentity();
@@ -103,6 +111,15 @@ describe("invite", () => {
     expect(again.invitation).toMatchObject({ status: "pending", sites: ["driftline.app"] });
     expect(f.store.all("Person")).toHaveLength(1);
   });
+
+  it("keeps the usernames pre sign-up admitted under the invitation it replaces, for erasure", async () => {
+    const f = fixture();
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"] }, admin);
+    await signUp(f, "ada@example.com", "sub-1");
+    await f.call("revokeInvitation", { email: "ada@example.com" }, admin);
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"] }, admin);
+    expect(f.store.all("Invitation")[0]?.admittedUsernames).toEqual(["Google_sub-1"]);
+  });
 });
 
 describe("revokeInvitation and restoreInvitation", () => {
@@ -167,22 +184,43 @@ describe("rebindInvitation", () => {
     ).toMatchObject({ admitted: true });
   });
 
-  it("without one clears the binding, disables the old user, and lets the next first sign-in bind afresh", async () => {
+  it("without one deletes the old user, clears the binding, and lets the next first sign-in bind afresh", async () => {
     const f = fixture();
     await invitedAndBound(f, "ada@example.com", "sub-1");
     const view = await f.call("rebindInvitation", { email: "ada@example.com" }, admin);
     expect(view).toMatchObject({ status: "pending", bound: false });
     expect(f.store.all("Person")[0]?.cognitoSub).toBeUndefined();
     expect(f.directory.signOut).toHaveBeenCalledWith("Google_sub-1");
-    expect(f.directory.disable).toHaveBeenCalledWith("Google_sub-1");
-    expect(
-      await f.call(
-        "admitSignIn",
-        { userName: "Google_sub-2", sub: "sub-2", googleSub: "g-2", email: "ada@example.com" },
-        roleIdentity(roles.preTokenGeneration),
-      ),
-    ).toMatchObject({ admitted: true });
+    expect(f.directory.remove).toHaveBeenCalledWith("Google_sub-1");
+    expect(f.directory.disable).not.toHaveBeenCalled();
+    await signUp(f, "ada@example.com", "sub-2");
+    expect(await signIn(f, "ada@example.com", "sub-2")).toMatchObject({ admitted: true });
     expect(f.store.all("Invitation")[0]?.cognitoSub).toBe("sub-2");
+  });
+
+  it("deletes the old user before clearing the binding, so a failure leaves the binding that names it", async () => {
+    const f = fixture();
+    await invitedAndBound(f, "ada@example.com", "sub-1");
+    f.directory.remove.mockRejectedValueOnce(new Error("throttled"));
+    await expect(f.call("rebindInvitation", { email: "ada@example.com" }, admin)).rejects.toThrow("INTERNAL");
+    expect(f.store.all("Invitation")[0]).toMatchObject({ status: "accepted", cognitoUsername: "Google_sub-1" });
+  });
+
+  it("without one leaves a revoked invitation revoked, until restoreInvitation reopens it as pending", async () => {
+    const f = fixture();
+    await invitedAndBound(f, "ada@example.com", "sub-1");
+    await f.call("revokeInvitation", { email: "ada@example.com" }, admin);
+    const revoked = f.store.all("Invitation")[0];
+    const view = await f.call("rebindInvitation", { email: "ada@example.com" }, admin);
+    expect(view).toMatchObject({ status: "revoked", bound: false, sites: [] });
+    expect(f.store.all("Invitation")[0]).toMatchObject({ statusAt: revoked?.statusAt, revokedAt: revoked?.revokedAt });
+    // Nobody can sign up or bind against it meanwhile.
+    expect(await signUp(f, "ada@example.com", "sub-2")).toMatchObject({ admitted: false, reason: "REVOKED" });
+    expect(await signIn(f, "ada@example.com", "sub-2")).toMatchObject({ admitted: false, reason: "REVOKED" });
+    expect(await f.call("restoreInvitation", { email: "ada@example.com" }, admin)).toMatchObject({
+      status: "pending",
+      sites: ["streamlane.app", "driftline.app"],
+    });
   });
 
   it("refuses an invitation that is not bound", async () => {
@@ -221,6 +259,60 @@ describe("updateSubmission", () => {
     const reopened = await f.call("updateSubmission", { id: "SUB1", status: "reviewing" }, admin);
     expect((reopened as { expiresAt?: number }).expiresAt).toBeUndefined();
     for (const activity of f.store.all("Activity")) expect(activity.expiresAt).toBeUndefined();
+  });
+
+  it("never moves a submission out of invited, nor into it: invite sets that, with an invitation", async () => {
+    const f = fixture();
+    await submission(f, "SUB1", "ada@example.com");
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"], submissionId: "SUB1" }, admin);
+    const before = await f.store.get("Submission", { id: "SUB1" });
+    // A tab left open from before the invite sends the status it had.
+    await expect(f.call("updateSubmission", { id: "SUB1", status: "declined" }, admin)).rejects.toThrow("INVITED");
+    await expect(f.call("updateSubmission", { id: "SUB1", status: "new", notes: "x" }, admin)).rejects.toThrow(
+      "INVITED",
+    );
+    expect(await f.store.get("Submission", { id: "SUB1" })).toEqual(before);
+    // Notes on an invited submission are still the admin's, and sending `invited` back unchanged is no change.
+    expect(await f.call("updateSubmission", { id: "SUB1", status: "invited", notes: "Met" }, admin)).toMatchObject({
+      status: "invited",
+      notes: "Met",
+    });
+    await submission(f, "SUB2", "bea@example.com");
+    await expect(f.call("updateSubmission", { id: "SUB2", status: "invited" }, admin)).rejects.toThrow(
+      "INVITE_REQUIRED",
+    );
+  });
+
+  it("writes only what changed, and nothing at all when nothing did", async () => {
+    const f = fixture();
+    await submission(f, "SUB1", "ada@example.com", { notes: "Keep" });
+    const before = await f.store.get("Submission", { id: "SUB1" });
+    expect(await f.call("updateSubmission", { id: "SUB1", status: "new", notes: " Keep " }, admin)).toEqual(before);
+    expect(await f.store.get("Submission", { id: "SUB1" })).toEqual(before);
+    expect(f.store.all("Activity")).toEqual([]);
+
+    f.at("2026-10-06T00:00:00.000Z");
+    const noted = await f.call("updateSubmission", { id: "SUB1", status: "new", notes: "Called" }, admin);
+    expect(noted).toMatchObject({ status: "new", statusAt: before?.statusAt, notes: "Called" });
+    expect((noted as Record<string, unknown>).reviewedBy).toBeUndefined();
+    expect(f.store.all("Activity").map((a) => a.kind)).toEqual(["interest.note_added"]);
+  });
+
+  it("refuses to overwrite a status changed since it was read", async () => {
+    const f = fixture();
+    await submission(f, "SUB1", "ada@example.com");
+    const read = f.store.get.bind(f.store);
+    // The invite lands between updateSubmission's read and its write.
+    f.store.get = async (table, key) => {
+      const item = await read(table, key);
+      if (table === "Submission") {
+        await f.store.write({ update: { table: "Submission", key: { id: "SUB1" }, set: { status: "invited" } } });
+      }
+      return item;
+    };
+    await expect(f.call("updateSubmission", { id: "SUB1", status: "declined" }, admin)).rejects.toThrow("CONFLICT");
+    f.store.get = read;
+    expect((await f.store.get("Submission", { id: "SUB1" }))?.status).toBe("invited");
   });
 
   it("refuses a missing submission, an unknown status and over-long notes", async () => {

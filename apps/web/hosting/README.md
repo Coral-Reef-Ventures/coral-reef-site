@@ -130,5 +130,8 @@ that `amplify_outputs.json` lands at `apps/web/amplify_outputs.json`, and that `
 ## Rollback
 
 Delete the Amplify app (`aws amplify delete-app --app-id "$APP_ID"`) and the backend stacks it deployed. Until
-Phase 2 nothing public depends on it: `coralreefventures.com` is on GitHub Pages. The KMS key is retained when its
-stack is deleted, by design; schedule its deletion deliberately if it is no longer wanted.
+Phase 2 nothing public depends on it: `coralreefventures.com` is on GitHub Pages. The KMS key and the six model tables
+(people, addresses, Activity, submissions, invitations and grants) are retained when the stack is deleted, by design,
+and the tables keep deletion protection. To remove them too, turn deletion protection off on each table
+(`aws dynamodb update-table --table-name <name> --no-deletion-protection-enabled`), delete it, and schedule the key's
+deletion, deliberately.

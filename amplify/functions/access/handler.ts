@@ -6,6 +6,7 @@ import {
   AdminDisableUserCommand,
   AdminEnableUserCommand,
   AdminGetUserCommand,
+  AdminRemoveUserFromGroupCommand,
   AdminUserGlobalSignOutCommand,
   CognitoIdentityProviderClient,
 } from "@aws-sdk/client-cognito-identity-provider";
@@ -52,6 +53,12 @@ const directory: Directory = {
   addToAdmins: async (username) => {
     await cognito.send(new AdminAddUserToGroupCommand({ UserPoolId: pool(), Username: username, GroupName: "admins" }));
   },
+  removeFromAdmins: (username) =>
+    unlessGone(() =>
+      cognito.send(
+        new AdminRemoveUserFromGroupCommand({ UserPoolId: pool(), Username: username, GroupName: "admins" }),
+      ),
+    ),
   remove: (username) =>
     unlessGone(() => cognito.send(new AdminDeleteUserCommand({ UserPoolId: pool(), Username: username }))),
 };

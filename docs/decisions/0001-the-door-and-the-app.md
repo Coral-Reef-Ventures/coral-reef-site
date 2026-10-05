@@ -61,7 +61,8 @@ Three facts found on 2026-10-04 shaped the choices:
 - There is no post confirmation trigger. Cognito does not document it for federated or admin-created users, which is
   every door user.
 - A changed Google address, or an address reissued to someone else, is refused until an admin rebinds the invitation:
-  either to the new address with the same identity, or cleared so the next first sign-in binds afresh.
+  either to the new address with the same identity, or cleared so the next first sign-in binds afresh. Clearing
+  deletes the old Cognito user, and leaves a revoked invitation revoked until it is restored.
 
 The triggers sit in Amplify's `auth` resource group and reach data only through `allow.resource` and the data client,
 calling trigger-only operations on the access function. Amplify creates that access policy in the data stack and passes
@@ -133,6 +134,14 @@ base64 DER to a JWK, failing unless the key is P-256. Each product build fetches
   that also deletes their Cognito user. Ticket records go after 90 days and sign-in records after 12 months. A refused
   sign-in is never stored with an address. Logs are kept for one month and never hold a body, an address, a cookie or a
   token. Admins can delete a person, or erase every record of an address someone else submitted.
+- Erasure reaches every Cognito user the app created for an address. Pre sign-up records each username it admits on
+  the invitation before Cognito creates the user, and erasure and the sweep delete each one. The access function also
+  deletes at once an unbound user that pre token generation refuses, such as the losing identity of two that share an
+  address.
+- The `admins` group follows `CRV_ADMIN_EMAILS`: pre token generation leaves it out of the token of an address taken
+  off the list, and crv-access takes that user out of the group.
+- On the branch, every model table is retained, with deletion protection, so removing the branch's backend leaves
+  production data in place. A sandbox's tables go with it.
 
 **The interest form** is a guest mutation on the app's AppSync API, through the identity pool's unauthenticated role,
 behind a regional WAF web ACL in us-east-2 with per-IP rate rules. The handler also limits each source and each address

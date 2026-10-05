@@ -1,4 +1,4 @@
-import { log } from "../../shared/log.ts";
+import { errorName, log } from "../../shared/log.ts";
 import { changes, row } from "../../shared/models.ts";
 import { ConditionFailed, type Item, type Write } from "../../shared/store.ts";
 import { activity, type Deps } from "../context.ts";
@@ -23,13 +23,46 @@ const breakGlass = (operation: string): Admission => {
 
 const lower = (value: unknown): string => (typeof value === "string" ? value.trim().toLowerCase() : "");
 
+/** The Cognito usernames pre sign-up has admitted for an invitation, bound or not. */
+export const admittedUsernames = (invitation: Item | undefined): string[] =>
+  Array.isArray(invitation?.admittedUsernames)
+    ? invitation.admittedUsernames.filter((name): name is string => typeof name === "string" && name !== "")
+    : [];
+
+/**
+ * Notes on the pending invitation that pre sign-up is about to let Cognito create this user, before it exists. A user
+ * that never binds (the losing identity of two that share an address, or one whose pre token generation never ran) is
+ * otherwise recorded nowhere, and erasure and the retention sweep could not reach it. The name is appended atomically,
+ * so two sign-ups at once each keep theirs; it returns false when the invitation stopped being pending in the meantime.
+ */
+const recordSignUp = async (deps: Deps, invitation: Item, userName: string): Promise<boolean> => {
+  if (admittedUsernames(invitation).includes(userName)) return true;
+  try {
+    await deps.store.write({
+      update: {
+        table: "Invitation",
+        key: { email: String(invitation.email) },
+        set: { updatedAt: deps.now().toISOString() },
+        append: { admittedUsernames: [userName] },
+        when: { and: [{ eq: ["status", "pending"] }, { notExists: "cognitoSub" }] },
+      },
+    });
+    return true;
+  } catch (error) {
+    if (error instanceof ConditionFailed) return false;
+    throw error;
+  }
+};
+
 /**
  * Pre sign-up's question: may this verified address get a Cognito user? Only if its Invitation is `pending` (an
- * `accepted` one already belongs to an identity), or if it is an admin address with no invitation at all.
+ * `accepted` one already belongs to an identity), or if it is an admin address with no invitation at all. Admitting an
+ * invitee records the username Cognito is about to create on the invitation, so erasure can always find it.
  */
-export const checkAdmission = async (deps: Deps, args: { email?: unknown }): Promise<Admission> => {
+export const checkAdmission = async (deps: Deps, args: { email?: unknown; userName?: unknown }): Promise<Admission> => {
   const email = lower(args.email);
-  if (!email) return refused("NOT_INVITED");
+  const userName = typeof args.userName === "string" ? args.userName : "";
+  if (!email || !userName) return refused("NOT_INVITED");
   const admin = deps.config.adminEmails.includes(email);
   let invitation: Item | undefined;
   try {
@@ -39,16 +72,65 @@ export const checkAdmission = async (deps: Deps, args: { email?: unknown }): Pro
     throw error;
   }
   if (invitation === undefined) return admin ? { admitted: true, admin } : refused("NOT_INVITED");
-  if (invitation.status === "pending" && invitation.cognitoSub === undefined) return { admitted: true, admin };
+  if (invitation.status === "pending" && invitation.cognitoSub === undefined) {
+    let recorded: boolean;
+    try {
+      recorded = await recordSignUp(deps, invitation, userName);
+    } catch (error) {
+      if (admin) return breakGlass("checkAdmission");
+      throw error;
+    }
+    return recorded ? { admitted: true, admin } : refused("NOT_INVITED");
+  }
   return refused(invitation.status === "revoked" ? "REVOKED" : "NOT_INVITED");
 };
 
-export type SignIn = { userName?: unknown; sub?: unknown; googleSub?: unknown; email?: unknown };
+export type SignIn = { userName?: unknown; sub?: unknown; googleSub?: unknown; email?: unknown; inAdmins?: unknown };
+
+/**
+ * Deletes a Cognito user pre token generation is refusing and that no invitation is bound to: the losing identity of two
+ * that share an address, or one whose invitation was revoked or erased between pre sign-up and now. Nothing would ever
+ * let it sign in, and it holds a Google name, address and id that erasure could not otherwise reach. A failure is
+ * logged and the refusal stands; the username is also on the invitation pre sign-up admitted it for. A bound identity
+ * is never deleted here: revoking and rebinding one are the admin's.
+ */
+const discardUnbound = async (deps: Deps, sub: string, userName: string, reason: string): Promise<Admission> => {
+  try {
+    // Asked once more before anything is deleted: the bySub index is eventually consistent, so an identity bound a
+    // moment ago (or moved to a new address by rebindInvitation) can look unbound. Refusing it costs one retry;
+    // deleting it would lock a real invitee out.
+    if (await boundInvitation(deps, sub)) {
+      log("access.unbound_user_kept", { status: reason, error: "BOUND" });
+      return refused(reason);
+    }
+    await deps.directory.remove(userName);
+    log("access.unbound_user_deleted", { status: reason });
+  } catch (error) {
+    log("access.unbound_user_kept", { status: reason, error: errorName(error) });
+  }
+  return refused(reason);
+};
+
+/**
+ * Keeps the `admins` group in step with CRV_ADMIN_EMAILS for a bound identity, from the groups its token is being issued
+ * with (`inAdmins`, absent when the trigger did not say). The trigger itself already leaves `admins` out of the token of
+ * an address no longer on the list, so a failure here is logged and costs nothing but a stale group.
+ */
+const syncAdmins = async (deps: Deps, userName: string, admin: boolean, inAdmins: unknown) => {
+  if (typeof inAdmins !== "boolean" || inAdmins === admin) return;
+  try {
+    if (admin) await deps.directory.addToAdmins(userName);
+    else await deps.directory.removeFromAdmins(userName);
+    log("access.admins_synced", { status: admin ? "added" : "removed" });
+  } catch (error) {
+    log("access.admins_sync_failed", { status: admin ? "add" : "remove", error: errorName(error) });
+  }
+};
 
 /**
  * Pre token generation's question, on every trigger source, refresh included. Bound: admit only that identity, only
  * while accepted, only with the bound email. Not bound: bind the address's pending invitation, or bootstrap an admin
- * address that has none. Anything else is refused.
+ * address that has none. Anything else is refused, and an unbound identity that is refused is deleted.
  */
 export const admitSignIn = async (deps: Deps, args: SignIn): Promise<Admission> => {
   const email = lower(args.email);
@@ -68,9 +150,12 @@ export const admitSignIn = async (deps: Deps, args: SignIn): Promise<Admission> 
     throw error;
   }
 
+  // The address's invitation is read consistently, so it can show a binding to this identity the index does not yet.
+  if (!bound && invitation?.cognitoSub === sub) bound = invitation;
   if (bound) {
     if (bound.status !== "accepted") return refused("REVOKED");
     if (bound.email !== email) return refused("EMAIL_CHANGED");
+    await syncAdmins(deps, userName, admin, args.inAdmins);
     return { admitted: true, admin };
   }
 
@@ -78,17 +163,22 @@ export const admitSignIn = async (deps: Deps, args: SignIn): Promise<Admission> 
   try {
     if (invitation) {
       if (invitation.status !== "pending" || invitation.cognitoSub !== undefined) {
-        return refused(invitation.status === "revoked" ? "REVOKED" : "NOT_INVITED");
+        return discardUnbound(deps, sub, userName, invitation.status === "revoked" ? "REVOKED" : "NOT_INVITED");
       }
       await deps.store.transact(await bindWrites(deps, invitation, identity, admin));
     } else if (admin) {
       await deps.store.transact(bootstrapWrites(deps, email, identity));
     } else {
-      return refused("NOT_INVITED");
+      return discardUnbound(deps, sub, userName, "NOT_INVITED");
     }
   } catch (error) {
     // Another identity bound the address first: exactly one wins, and this one never gets a token.
-    if (error instanceof ConditionFailed) return refused("NOT_INVITED");
+    // The same identity in two sign-ins at once binds once: the one that lost reads the binding it would have made.
+    if (error instanceof ConditionFailed) {
+      const current = await deps.store.get("Invitation", { email });
+      if (current?.cognitoSub === sub && current.status === "accepted") return { admitted: true, admin };
+      return discardUnbound(deps, sub, userName, "NOT_INVITED");
+    }
     throw error;
   }
   if (admin) await deps.directory.addToAdmins(userName);

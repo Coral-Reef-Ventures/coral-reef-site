@@ -69,9 +69,13 @@ export const writeInput = (write: Write, tableName: (model: string) => string) =
     };
   }
   if ("update" in write) {
-    const { table, key, set = {}, remove = [], when } = write.update;
+    const { table, key, set = {}, append = {}, remove = [], when } = write.update;
     const parts: string[] = [];
     const sets = Object.entries(set).map(([name, value]) => `${e.name(name)} = ${e.value(value)}`);
+    for (const [name, values] of Object.entries(append)) {
+      const n = e.name(name);
+      sets.push(`${n} = list_append(if_not_exists(${n}, ${e.value([])}), ${e.value(values)})`);
+    }
     if (sets.length) parts.push(`SET ${sets.join(", ")}`);
     if (remove.length) parts.push(`REMOVE ${remove.map((name) => e.name(name)).join(", ")}`);
     const condition = when ? e.condition(when) : undefined;

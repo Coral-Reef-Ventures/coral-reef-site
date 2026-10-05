@@ -27,6 +27,23 @@ describe("the model tables", () => {
     }
   });
 
+  it("are retained and protected from deletion on the branch, so removing its backend keeps production data", () => {
+    for (const model of models) {
+      const table = named(model);
+      expect(table?.DeletionPolicy, model).toBe("Retain");
+      expect(props(table).deletionProtectionEnabled, model).toBe(true);
+    }
+  });
+
+  it("go with a sandbox, so the agent's sandbox can be deleted whole", () => {
+    const sandbox = ofType("sandbox", "Custom::AmplifyDynamoDBTable");
+    expect(sandbox).toHaveLength(models.length);
+    for (const [id, table] of sandbox) {
+      expect(table.DeletionPolicy, id).toBe("Delete");
+      expect(props(table).deletionProtectionEnabled, id).toBe(false);
+    }
+  });
+
   it("expire Submission and Activity rows by expiresAt, and nothing else", () => {
     for (const model of models) {
       const ttl = props(named(model)).timeToLiveSpecification;
@@ -156,6 +173,43 @@ describe("the functions", () => {
     for (const [id, group] of groups) expect(props(group).RetentionInDays, id).toBe(30);
     for (const [id, fn] of functions("branch")) {
       expect((props(fn).LoggingConfig as { LogFormat?: string })?.LogFormat, id).toBe("JSON");
+    }
+  });
+
+  it("let crv-access sign out, disable, enable, read, delete and move between groups the pool's users, and no more", () => {
+    const data = nested("branch", "data");
+    const actions = resourcesOf(data, "AWS::IAM::Policy")
+      .filter(([id]) => id.startsWith("crvaccess"))
+      .flatMap(([, policy]) =>
+        (props(policy).PolicyDocument as { Statement: { Action: string | string[] }[] }).Statement.flatMap((s) =>
+          [s.Action].flat(),
+        ),
+      )
+      .filter((action) => action.startsWith("cognito-idp:"));
+    expect(new Set(actions)).toEqual(
+      new Set([
+        "cognito-idp:AdminUserGlobalSignOut",
+        "cognito-idp:AdminDisableUser",
+        "cognito-idp:AdminEnableUser",
+        "cognito-idp:AdminGetUser",
+        "cognito-idp:AdminAddUserToGroup",
+        "cognito-idp:AdminRemoveUserFromGroup",
+        "cognito-idp:AdminDeleteUser",
+      ]),
+    );
+  });
+
+  it("let the triggers call mutations only, so neither can read a model through the API", () => {
+    const data = nested("branch", "data");
+    const graphql = (role: string) =>
+      resourcesOf(data, "AWS::IAM::Policy")
+        .filter(([, policy]) => JSON.stringify(props(policy).Roles).includes(role))
+        .flatMap(([, policy]) => (props(policy).PolicyDocument as { Statement: object[] }).Statement)
+        .filter((statement) => JSON.stringify(statement).includes("appsync:GraphQL"));
+    for (const role of ["crvpresignup", "crvpretokengeneration"]) {
+      const statements = JSON.stringify(graphql(role));
+      expect(statements, role).toContain("/types/Mutation/*");
+      expect(statements, role).not.toContain("/types/Query/");
     }
   });
 

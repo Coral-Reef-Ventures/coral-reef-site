@@ -11,6 +11,9 @@ export type Directory = {
   disable(username: string): Promise<void>;
   enable(username: string): Promise<void>;
   addToAdmins(username: string): Promise<void>;
+  /** Takes the user out of `admins`, for an address no longer in CRV_ADMIN_EMAILS. */
+  removeFromAdmins(username: string): Promise<void>;
+  /** Deletes the user, and with it the Google name, address and id Cognito holds. Nothing to do if it is gone. */
   remove(username: string): Promise<void>;
 };
 

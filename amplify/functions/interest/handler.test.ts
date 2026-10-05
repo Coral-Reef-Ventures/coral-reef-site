@@ -177,6 +177,24 @@ describe("submitInterest", () => {
     expect(await t.handler(event())).toEqual({ ok: true });
     expect(t.store.all("Submission")).toHaveLength(1);
   });
+
+  it("answers INTERNAL alone when the store fails, at the limits or at the write, never the SDK's message", async () => {
+    // What DynamoDB says can carry a table name, a key or a value: none of it is the guest's to read.
+    const sdk = () =>
+      Object.assign(new Error("Item {email: ada@example.com} in Submission-abc-NONE failed"), {
+        name: "ProvisionedThroughputExceededException",
+      });
+    const t = setup();
+    t.store.failNext("transact", sdk());
+    await expect(t.handler(event())).rejects.toThrow(/^INTERNAL$/);
+    const limited = setup();
+    const add = limited.store.add.bind(limited.store);
+    limited.store.add = async () => Promise.reject(sdk());
+    await expect(limited.handler(event())).rejects.toThrow(/^INTERNAL$/);
+    limited.store.add = add;
+    // An invalid field still says which field.
+    await expect(setup().handler(event({ site: "elsewhere" }))).rejects.toThrow("INVALID_SITE");
+  });
 });
 
 describe("the notice", () => {
@@ -228,7 +246,11 @@ describe("logging (plan §2.3a)", () => {
     await t.handler(event()); // limited
     await t.handler(event({ website: "spam" }));
     await t.handler(event({ email: "bad" })).catch(() => {});
+    const failing = setup();
+    failing.store.failNext("transact", new Error("Item {email: ada@example.com, name: Ada} rejected"));
+    await failing.handler(event({}, "198.51.100.7")).catch(() => {});
     expect(lines.length).toBeGreaterThan(3);
+    expect(lines.join("\n")).toContain('"kind":"interest.failed"');
     const output = lines.join("\n");
     for (const value of ["Ada", "ada@example.com", "Ada@Example.com", "I would like to help.", "203.0.113.9", "spam"]) {
       expect(output).not.toContain(value);

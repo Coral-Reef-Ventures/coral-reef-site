@@ -37,6 +37,7 @@ describe("crv-pre-token-generation", () => {
         sub: "sub-1",
         googleSub: "1234",
         email: "ada@example.com",
+        inAdmins: false,
       });
     },
   );
@@ -58,6 +59,18 @@ describe("crv-pre-token-generation", () => {
       event("TokenGeneration_HostedAuth"),
     );
     expect(invitee.response.claimsOverrideDetails?.groupOverrideDetails).toBeUndefined();
+  });
+
+  it("leaves admins out of the token of an address crv-access no longer calls an admin, and says it had the group", async () => {
+    quiet();
+    const admit = vi.fn(async () => ({ admitted: true, admin: false }));
+    const removed = await createPreTokenGeneration(admit)(event("TokenGeneration_RefreshTokens", ["admins", "other"]));
+    expect(admit).toHaveBeenCalledWith(expect.objectContaining({ inAdmins: true }));
+    expect(removed.response.claimsOverrideDetails?.groupOverrideDetails?.groupsToOverride).toEqual(["other"]);
+    const kept = await createPreTokenGeneration(async () => ({ admitted: true, admin: true }))(
+      event("TokenGeneration_RefreshTokens", ["admins"]),
+    );
+    expect(kept.response.claimsOverrideDetails?.groupOverrideDetails).toBeUndefined();
   });
 
   it("reads the Google id from the identities attribute, and nothing from anything else", () => {

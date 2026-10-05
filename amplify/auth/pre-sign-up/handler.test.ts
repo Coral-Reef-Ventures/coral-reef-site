@@ -43,7 +43,8 @@ describe("crv-pre-sign-up", () => {
     const check = vi.fn(async () => ({ admitted: true }));
     const e = event("PreSignUp_ExternalProvider", { email: " Ada@Example.COM ", email_verified: "true" });
     expect(await createPreSignUp(check)(e)).toBe(e);
-    expect(check).toHaveBeenCalledWith("ada@example.com", "PreSignUp_ExternalProvider");
+    // With the username Cognito is about to create, which crv-access records on the invitation for erasure.
+    expect(check).toHaveBeenCalledWith("ada@example.com", "Google_1", "PreSignUp_ExternalProvider");
   });
 
   it("refuses an address checkAdmission does not admit (an accepted invitation, or none)", async () => {
@@ -58,7 +59,7 @@ describe("crv-pre-sign-up", () => {
     quiet();
     const check = vi.fn(async () => ({ admitted: true }));
     await createPreSignUp(check)(event("PreSignUp_AdminCreateUser", { email: "e2e@example.com" }));
-    expect(check).toHaveBeenCalledWith("e2e@example.com", "PreSignUp_AdminCreateUser");
+    expect(check).toHaveBeenCalledWith("e2e@example.com", "Google_1", "PreSignUp_AdminCreateUser");
   });
 
   it("counts a refusal as a metric and logs no address", async () => {

@@ -24,6 +24,8 @@ export type Update = {
   table: string;
   key: Key;
   set?: Record<string, unknown>;
+  /** Adds values to the end of a list attribute, creating it if absent, atomically: two appends at once keep both. */
+  append?: Record<string, unknown[]>;
   remove?: string[];
   when?: Cond;
 };

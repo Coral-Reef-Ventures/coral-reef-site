@@ -59,8 +59,15 @@ domain.node.defaultChild.addPropertyOverride("Domain", authConfig.domainPrefix);
 
 // The model tables: point-in-time recovery on every one, for the 35 days the privacy page states (Amplify accepts a
 // shorter period, but changing it changes approved copy, decision D3), and TTL where a row expires (plan §2.3a).
+// Every one holds people, their access or what they sent, so on the branch each is retained and protected from
+// deletion, like the door key: removing the branch's backend, or a change that would replace a table, must not delete
+// production data. A sandbox keeps Amplify's defaults, so the agent's sandbox can still be deleted whole.
 const tables = backend.data.resources.tables;
 for (const [name, table] of Object.entries(backend.data.resources.cfnResources.amplifyDynamoDbTables)) {
+  if (branch) {
+    table.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    table.deletionProtectionEnabled = true;
+  }
   table.pointInTimeRecoverySpecification = { pointInTimeRecoveryEnabled: true, recoveryPeriodInDays: backupDays };
   if (name === "Submission" || name === "Activity") {
     table.timeToLiveAttribute = { attributeName: "expiresAt", enabled: true };
@@ -130,6 +137,7 @@ access.addToRolePolicy(
       "cognito-idp:AdminEnableUser",
       "cognito-idp:AdminGetUser",
       "cognito-idp:AdminAddUserToGroup",
+      "cognito-idp:AdminRemoveUserFromGroup",
       "cognito-idp:AdminDeleteUser",
     ],
     resources: [userPool.userPoolArn],

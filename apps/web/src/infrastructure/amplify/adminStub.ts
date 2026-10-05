@@ -139,6 +139,10 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
     async updateSubmission({ id, status, notes }) {
       const s = submissions.find((x) => x.id === id);
       if (!s) throw new Error("NOT_FOUND");
+      // As the backend: `invited` is set by an invitation and never left through a status change.
+      if (status && status !== s.status && (s.status === "invited" || status === "invited")) {
+        throw new Error(s.status === "invited" ? "INVITED" : "INVITE_REQUIRED");
+      }
       if (status && status !== s.status) {
         s.status = status;
         s.statusAt = stamp();

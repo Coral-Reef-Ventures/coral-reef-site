@@ -54,6 +54,14 @@ describe("the stub backend", () => {
     expect((await api.listActivity({ area: "people" })).map((a) => a.kind)).toEqual(["people.deleted"]);
   });
 
+  it("refuses moving a submission out of invited, or into it, as the backend does", async () => {
+    const api = createStubApi(fixed);
+    await expect(api.updateSubmission({ id: "01STUB-S1", status: "invited" })).rejects.toThrow("INVITE_REQUIRED");
+    await api.invite({ email: "ada@example.com", sites: ["streamlane.app"], submissionId: "01STUB-S1" });
+    await expect(api.updateSubmission({ id: "01STUB-S1", status: "declined" })).rejects.toThrow("INVITED");
+    expect((await api.getSubmission("01STUB-S1"))?.status).toBe("invited");
+  });
+
   it("records status and note changes as Activity", async () => {
     const api = createStubApi(fixed);
     await api.updateSubmission({ id: "01STUB-S1", status: "reviewing", notes: "Call booked" });

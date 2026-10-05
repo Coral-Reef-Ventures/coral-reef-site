@@ -33,6 +33,25 @@ describe("the DynamoDB store", () => {
     });
   });
 
+  it("appends to a list with list_append, creating it if absent, beside the other sets", () => {
+    const { input } = writeInput(
+      {
+        update: {
+          table: "Invitation",
+          key: { email: "a@b.co" },
+          set: { updatedAt: "t" },
+          append: { admittedUsernames: ["Google_1"] },
+        },
+      },
+      name,
+    );
+    expect(input).toMatchObject({
+      UpdateExpression: "SET #n0 = :v1, #n2 = list_append(if_not_exists(#n2, :v3), :v4)",
+      ExpressionAttributeNames: { "#n0": "updatedAt", "#n2": "admittedUsernames" },
+      ExpressionAttributeValues: { ":v1": "t", ":v3": [], ":v4": ["Google_1"] },
+    });
+  });
+
   it("writes or, exists and lt, and leaves out empty attribute maps", () => {
     const put = writeInput(
       { put: { table: "T", item: { pk: "x" }, when: { or: [{ exists: "pk" }, { lt: ["n", 3] }] } } },

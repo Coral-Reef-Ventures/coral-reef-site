@@ -6,6 +6,8 @@ import {
   invitedAndBound,
   roleIdentity,
   roles,
+  signIn,
+  signUp,
   userIdentity,
 } from "../../test/access-fixture.ts";
 import { row } from "../shared/models.ts";
@@ -90,6 +92,67 @@ describe("deletePerson", () => {
     await f.store.write({ put: { table: "PersonEmail", item: { email: "ada@example.com", personId: "SOMEONE" } } });
     await f.call("deletePerson", { personId }, admin);
     expect(f.store.all("PersonEmail")).toEqual([{ email: "ada@example.com", personId: "SOMEONE" }]);
+  });
+});
+
+describe("every Cognito user the app created reaches erasure", () => {
+  it("deletePerson after a cleared rebind: the old user went at the rebind, the new one goes now", async () => {
+    const f = fixture();
+    await invitedAndBound(f, "ada@example.com", "sub-1");
+    await f.call("rebindInvitation", { email: "ada@example.com" }, admin);
+    await signUp(f, "ada@example.com", "sub-2");
+    await signIn(f, "ada@example.com", "sub-2");
+    const personId = String(f.store.all("Person")[0]?.id);
+    await f.call("deletePerson", { personId }, admin);
+    const removed = new Set(f.directory.remove.mock.calls.map(([username]) => username));
+    expect(removed).toEqual(new Set(["Google_sub-1", "Google_sub-2"]));
+    expect(f.store.all("Invitation")).toEqual([]);
+  });
+
+  it("a user pre sign-up created that never bound, the loser of two identities: deleted when it is refused", async () => {
+    const f = fixture();
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"] }, admin);
+    await signUp(f, "ada@example.com", "sub-1");
+    await signUp(f, "ada@example.com", "sub-2");
+    await signIn(f, "ada@example.com", "sub-1");
+    expect(await signIn(f, "ada@example.com", "sub-2")).toMatchObject({ admitted: false });
+    expect(f.directory.remove.mock.calls).toEqual([["Google_sub-2"]]);
+    // And again, by name, when the person is erased, whether or not that first deletion worked.
+    await f.call("eraseEmail", { email: "ada@example.com" }, admin);
+    expect(new Set(f.directory.remove.mock.calls.slice(1).map(([u]) => u))).toEqual(
+      new Set(["Google_sub-1", "Google_sub-2"]),
+    );
+  });
+
+  it("a user whose pre token generation never ran, its invitation then revoked: the retention sweep deletes it", async () => {
+    const f = fixture();
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"] }, admin);
+    await signUp(f, "ada@example.com", "sub-1");
+    await f.call("revokeInvitation", { email: "ada@example.com" }, admin);
+    const personId = String(f.store.all("Person")[0]?.id);
+    await f.call("deletePerson", { personId }, roleIdentity(roles.retention));
+    expect(f.directory.remove).toHaveBeenCalledWith("Google_sub-1");
+  });
+
+  it("eraseEmail reaches a never-bound user on an invitation whose Person is gone", async () => {
+    const f = fixture();
+    await f.call("invite", { email: "ada@example.com", sites: ["driftline"] }, admin);
+    await signUp(f, "ada@example.com", "sub-1");
+    await f.store.write({ delete: { table: "PersonEmail", key: { email: "ada@example.com" } } });
+    await f.call("eraseEmail", { email: "ada@example.com" }, admin);
+    expect(f.directory.remove).toHaveBeenCalledWith("Google_sub-1");
+    expect(f.store.all("Invitation")).toEqual([]);
+  });
+
+  it("deletes the users before the rows that name them, so a failure can be retried", async () => {
+    const f = fixture();
+    await invitedAndBound(f, "ada@example.com", "sub-1");
+    const personId = String(f.store.all("Person")[0]?.id);
+    f.directory.remove.mockRejectedValueOnce(new Error("throttled"));
+    await expect(f.call("deletePerson", { personId }, admin)).rejects.toThrow("INTERNAL");
+    expect(f.store.all("Invitation")[0]?.cognitoUsername).toBe("Google_sub-1");
+    expect(await f.call("deletePerson", { personId }, admin)).toEqual({ ok: true });
+    expect(f.directory.remove).toHaveBeenLastCalledWith("Google_sub-1");
   });
 });
 

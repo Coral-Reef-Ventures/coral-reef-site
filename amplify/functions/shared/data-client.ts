@@ -62,8 +62,8 @@ export const graphql = async <T>(query: string, variables: object): Promise<T> =
 /** The documents the triggers and the sweep send. */
 export const documents = {
   checkAdmission: /* GraphQL */ `
-    query CheckAdmission($email: String!, $triggerSource: String!) {
-      checkAdmission(email: $email, triggerSource: $triggerSource) {
+    mutation CheckAdmission($email: String!, $userName: String!, $triggerSource: String!) {
+      checkAdmission(email: $email, userName: $userName, triggerSource: $triggerSource) {
         admitted
         reason
         admin
@@ -71,8 +71,8 @@ export const documents = {
     }
   `,
   admitSignIn: /* GraphQL */ `
-    mutation AdmitSignIn($userName: String!, $sub: String!, $googleSub: String!, $email: String!) {
-      admitSignIn(userName: $userName, sub: $sub, googleSub: $googleSub, email: $email) {
+    mutation AdmitSignIn($userName: String!, $sub: String!, $googleSub: String!, $email: String!, $inAdmins: Boolean) {
+      admitSignIn(userName: $userName, sub: $sub, googleSub: $googleSub, email: $email, inAdmins: $inAdmins) {
         admitted
         reason
         admin

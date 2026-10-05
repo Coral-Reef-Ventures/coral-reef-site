@@ -2,6 +2,7 @@ import { indexes, row } from "../../shared/models.ts";
 import { ConditionFailed, type Item, type Write } from "../../shared/store.ts";
 import type { Caller } from "../caller.ts";
 import { activity, type Deps, Refusal } from "../context.ts";
+import { admittedUsernames } from "./admission.ts";
 import {
   activeSites,
   actorId,
@@ -94,7 +95,18 @@ export const invite = async (deps: Deps, caller: Caller, args: InviteArgs) => {
         table: "Invitation",
         item: row(
           "Invitation",
-          { email, personId, submissionId, status: "pending", statusAt: at, invitedBy: actor, invitedAt: at, note },
+          {
+            email,
+            personId,
+            submissionId,
+            status: "pending",
+            statusAt: at,
+            invitedBy: actor,
+            invitedAt: at,
+            note,
+            // Users pre sign-up admitted under the invitation this replaces: erasure still has to reach them.
+            admittedUsernames: admittedUsernames(existing).length ? admittedUsernames(existing) : undefined,
+          },
           now,
         ),
         when: { notExists: "cognitoSub" },
@@ -266,8 +278,9 @@ const identityFields = ["cognitoUsername", "cognitoSub", "googleSub"];
 /**
  * The admin's answer to EMAIL_CHANGED (plan §2.2). With `newEmail`: the same person has a changed address, so the
  * Invitation and the address claim move to it and the identity stays. Without: the address now belongs to someone
- * else, so the binding is cleared, the old Cognito user is signed out and disabled, and the next first sign-in with the
- * address binds afresh.
+ * else, so the old Cognito user is signed out and deleted, the binding is cleared, and the next first sign-in with the
+ * address binds afresh. Deleted rather than disabled, because once the binding is cleared nothing would name that user
+ * again and erasure could never reach it. A revoked invitation stays revoked: only restoreInvitation reopens it.
  */
 export const rebindInvitation = async (deps: Deps, caller: Caller, args: { email?: unknown; newEmail?: unknown }) => {
   const email = normalEmail(args.email);
@@ -306,12 +319,18 @@ export const rebindInvitation = async (deps: Deps, caller: Caller, args: { email
     return invitationView(deps, await requireInvitation(deps, newEmail));
   }
 
+  // The user first, while the binding still names it: if the commit below then fails, a retry finds it gone and goes on.
+  if (typeof invitation.cognitoUsername === "string" && invitation.cognitoUsername) {
+    await deps.directory.signOut(invitation.cognitoUsername);
+    await deps.directory.remove(invitation.cognitoUsername);
+  }
+  const revoked = invitation.status === "revoked";
   await commit(deps, [
     {
       update: {
         table: "Invitation",
         key: { email },
-        set: { status: "pending", statusAt: at, updatedAt: at },
+        set: revoked ? { updatedAt: at } : { status: "pending", statusAt: at, updatedAt: at },
         remove: [...identityFields, "acceptedAt"],
         when: { eq: ["cognitoSub", invitation.cognitoSub] },
       },
@@ -326,9 +345,5 @@ export const rebindInvitation = async (deps: Deps, caller: Caller, args: { email
       detail: { mode: "cleared" },
     }),
   ]);
-  if (typeof invitation.cognitoUsername === "string") {
-    await deps.directory.signOut(invitation.cognitoUsername);
-    await deps.directory.disable(invitation.cognitoUsername);
-  }
   return invitationView(deps, await requireInvitation(deps, email));
 };

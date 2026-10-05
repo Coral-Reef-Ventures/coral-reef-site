@@ -2,6 +2,7 @@ import { indexes } from "../../shared/models.ts";
 import { ConditionFailed, type Item } from "../../shared/store.ts";
 import type { Caller } from "../caller.ts";
 import { activity, type Deps, Refusal } from "../context.ts";
+import { admittedUsernames } from "./admission.ts";
 import { actorId, grantsOf, normalEmail } from "./common.ts";
 
 /**
@@ -32,8 +33,17 @@ const eraseSubmissions = async (deps: Deps, email: string): Promise<number> => {
   return submissions.length;
 };
 
-const removeUser = async (deps: Deps, username: unknown) => {
-  if (typeof username === "string" && username) await deps.directory.remove(username);
+/**
+ * Every Cognito user the app created for an invitation or a person: the bound one, and each one pre sign-up admitted for
+ * the address, which includes any that never bound. Each is deleted; one already gone needs nothing.
+ */
+const removeUsers = async (deps: Deps, ...sources: (Item | undefined)[]) => {
+  const usernames = new Set<string>();
+  for (const source of sources) {
+    if (typeof source?.cognitoUsername === "string" && source.cognitoUsername) usernames.add(source.cognitoUsername);
+    for (const name of admittedUsernames(source)) usernames.add(name);
+  }
+  for (const username of usernames) await deps.directory.remove(username);
 };
 
 const erasePerson = async (deps: Deps, personId: string): Promise<{ found: boolean; submissions: number }> => {
@@ -42,6 +52,8 @@ const erasePerson = async (deps: Deps, personId: string): Promise<{ found: boole
   const email = String(person.email);
   const invitation = await deps.store.get("Invitation", { email });
   const ownInvitation = invitation?.personId === personId ? invitation : undefined;
+  // The Cognito users first: the rows below are the only record of their usernames, so a failure here must leave them.
+  await removeUsers(deps, ownInvitation, person);
 
   for (const item of await queryAll(deps, indexes.activityByPerson, personId)) {
     await deps.store.write({ delete: { table: "Activity", key: { id: String(item.id) } } });
@@ -58,7 +70,6 @@ const erasePerson = async (deps: Deps, personId: string): Promise<{ found: boole
     if (!(error instanceof ConditionFailed)) throw error;
   }
   await deps.store.write({ delete: { table: "Person", key: { id: personId } } });
-  await removeUser(deps, (ownInvitation as Item | undefined)?.cognitoUsername ?? person.cognitoUsername);
   return { found: true, submissions };
 };
 
@@ -92,8 +103,8 @@ export const eraseEmail = async (deps: Deps, caller: Caller, args: { email?: unk
   }
   const invitation = await deps.store.get("Invitation", { email });
   if (invitation) {
+    await removeUsers(deps, invitation);
     await deps.store.write({ delete: { table: "Invitation", key: { email } } });
-    await removeUser(deps, invitation.cognitoUsername);
   }
   await deps.store.write(
     activity(deps, {

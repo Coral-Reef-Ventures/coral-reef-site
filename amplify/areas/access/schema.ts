@@ -35,6 +35,8 @@ export const access = {
       cognitoUsername: a.string(),
       cognitoSub: a.string(),
       googleSub: a.string(),
+      // Every Cognito username pre sign-up admitted for this address, bound or not, so erasure reaches each one.
+      admittedUsernames: a.string().required().array(),
       invitedBy: a.string().required(),
       invitedAt: a.datetime().required(),
       sentAt: a.datetime(),
@@ -177,9 +179,14 @@ export const access = {
     .authorization(admins),
 
   // Trigger-only: reachable through the schema-level allow.resource rules, and crv-access admits only the named role.
+  // A mutation because admitting an invitee records the username Cognito is about to create (erasure reads it).
   checkAdmission: a
-    .query()
-    .arguments({ email: a.string().required(), triggerSource: a.string().required() })
+    .mutation()
+    .arguments({
+      email: a.string().required(),
+      userName: a.string().required(),
+      triggerSource: a.string().required(),
+    })
     .returns(a.ref("Admission").required())
     .handler(accessHandler())
     .authorization((allow) => [allow.group(TRIGGERS_ONLY)]),
@@ -190,6 +197,9 @@ export const access = {
       sub: a.string().required(),
       googleSub: a.string().required(),
       email: a.string().required(),
+      // Whether the token is being issued with the `admins` group, so crv-access keeps the group in step with
+      // CRV_ADMIN_EMAILS.
+      inAdmins: a.boolean(),
     })
     .returns(a.ref("Admission").required())
     .handler(accessHandler())
