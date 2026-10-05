@@ -158,7 +158,8 @@ sent from Gary's own mail, using text the admin view prepares, until the app sen
 **DNS.** coralreefventures.com moves from dnsowl (NameSilo) to a Route 53 zone in the project, with every existing
 record copied, including Google Workspace mail. NameSilo has no ALIAS record, and the apex carries MX and SPF, so it
 can't be a CNAME. Amplify then manages the apex and `www`. streamlane.app and driftline.app are already delegated to
-Route 53 in the project and need no change.
+Route 53 in the project and need no change. Done 2026-10-05: the zone is `Z1017162VVBRZ8PDRIQ3`, and the app has served
+coralreefventures.com since 10:47 CDT that day.
 
 **Requirements.** CRV-001 and CRV-003 are amended. CRV-007 is superseded by:
 
@@ -222,6 +223,6 @@ and requests every file of each locked site on every host with no cookie, with a
 - **Gary is the door's only admin, through `CRV_ADMIN_EMAILS`.** If the invitation records break, that address still
   gets in.
 - **coral-reef-site gains a workspace, a backend and dependencies** (approved by Gary on 2026-10-04). Its "one script,
-  no form" rule now applies only to the retired Pages page, which is deleted 14 days after the cutover.
+  no form" rule now applies only to the retired Pages page, which is deleted 14 days after the cutover (2026-10-05), on 2026-10-19.
 - **New offerings join by configuration.** A locked offering added later is one entry in the door's site registry and
   one `reef-door-bundle` line in its build. An open one needs neither.
