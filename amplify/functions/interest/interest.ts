@@ -35,6 +35,14 @@ export class Invalid extends Error {
 const text = (value: unknown): string => (typeof value === "string" ? value : "");
 
 /**
+ * The address the per-source limits are keyed on: the last entry of AppSync's `sourceIp`. AppSync lists the
+ * addresses from the caller's `X-Forwarded-For` header first and appends the TCP connection's address, and nothing
+ * sits in front of AppSync here, so every entry but the last is whatever the caller chose to write. Keying on the
+ * first would give a caller a fresh source, and fresh limits, with every request.
+ */
+export const sourceAddress = (identity: InterestEvent["identity"]): string => identity?.sourceIp?.at(-1) ?? "unknown";
+
+/**
  * The resolver for submitInterest, a guest mutation (plan §2.4). It answers only `{ ok, retryAfter? }` and reads
  * nothing back. A filled honeypot is answered as if it worked and goes nowhere. Over a limit, it answers with
  * `retryAfter` and writes nothing else. Otherwise it stores first and notifies second, so a failed notice never loses a
@@ -68,7 +76,7 @@ export const createInterest =
 
     const now = deps.now();
     const email = parsed.email.toLowerCase();
-    const verdict = await deps.limits.check(event.identity?.sourceIp?.[0] ?? "unknown", email, now);
+    const verdict = await deps.limits.check(sourceAddress(event.identity), email, now);
     if (!verdict.ok) {
       log("interest.limited", { status: "limited", retryAfter: verdict.retryAfter });
       return { ok: false, retryAfter: verdict.retryAfter };

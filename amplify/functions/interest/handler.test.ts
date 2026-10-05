@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { memoryStore } from "../../test/memory-store.ts";
 import { ulid } from "../shared/ids.ts";
 import { modelKeys } from "../shared/models.ts";
-import { createInterest, type InterestEvent } from "./interest.ts";
+import { createInterest, type InterestEvent, sourceAddress } from "./interest.ts";
 import { createLimits, rateTable } from "./limits.ts";
 import { clean, noticeText, pausedText } from "./notice.ts";
 
@@ -107,6 +107,21 @@ describe("submitInterest", () => {
     expect(t.store.all("Submission")).toHaveLength(3);
     // Another source is not limited by it.
     expect(await t.handler(event({ email: "q@example.com" }, "198.51.100.1"))).toEqual({ ok: true });
+  });
+
+  it("keys a source on the TCP peer AppSync appends, not on the X-Forwarded-For entries a caller writes", async () => {
+    const t = setup();
+    const spoofed = (n: number, forwarded: string[]): InterestEvent => ({
+      arguments: body({ email: `s${n}@example.com` }),
+      identity: { sourceIp: [...forwarded, "203.0.113.9"] },
+    });
+    expect(await t.handler(spoofed(1, ["192.0.2.1"]))).toEqual({ ok: true });
+    expect(await t.handler(spoofed(2, ["192.0.2.2", "10.0.0.2"]))).toEqual({ ok: true });
+    expect(await t.handler(event({ email: "s3@example.com" }))).toEqual({ ok: true });
+    expect(await t.handler(spoofed(4, ["192.0.2.4", "10.0.0.4", "172.16.0.4"]))).toEqual({
+      ok: false,
+      retryAfter: 3600,
+    });
   });
 
   it("allows 10 a day from one source", async () => {
@@ -218,5 +233,15 @@ describe("logging (plan §2.3a)", () => {
     for (const value of ["Ada", "ada@example.com", "Ada@Example.com", "I would like to help.", "203.0.113.9", "spam"]) {
       expect(output).not.toContain(value);
     }
+  });
+});
+
+describe("the source address", () => {
+  it("is the last entry of sourceIp, whatever comes before it, and unknown when AppSync sends none", () => {
+    expect(sourceAddress({ sourceIp: ["203.0.113.9"] })).toBe("203.0.113.9");
+    expect(sourceAddress({ sourceIp: ["1.1.1.1", "8.8.8.8", "203.0.113.9"] })).toBe("203.0.113.9");
+    expect(sourceAddress({ sourceIp: [] })).toBe("unknown");
+    expect(sourceAddress({})).toBe("unknown");
+    expect(sourceAddress(null)).toBe("unknown");
   });
 });
