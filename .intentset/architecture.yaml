@@ -1,0 +1,14 @@
+# Intentset VSA checks at L2. Every slice is a draft whose entrypoint and claims are planned paths, which VSA §3
+# reports as warnings until the slice leaves draft. The paths are the layout in the plan: feature folders in
+# apps/web/src/features/<area>/<slice>, and the backend in amplify/.
+#
+# `areas` (the TypeScript + Amplify Gen 2 profile, §9) is not declared. Areas are folders and slice domains inside
+# one Amplify backend for now (ADR-AREAS): each would be a backend of its own with its own schema, which nothing needs
+# yet. They are declared when the backend nears its stack limits and an area becomes its own backend behind a Merged
+# API.
+scope:
+  - apps/web/**
+  - amplify/**
+sourceRoots:
+  - apps/web/src/**
+  - amplify/**
