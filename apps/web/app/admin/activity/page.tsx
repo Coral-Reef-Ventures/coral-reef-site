@@ -1,10 +1,10 @@
-import { AdminShell } from "../../../src/features/admin/shell/index.ts";
+import { AdminFrame } from "../AdminFrame.tsx";
 import { ActivityView } from "../../../src/features/people/activity/index.ts";
 
 export default function Page() {
   return (
-    <AdminShell title="Activity">
+    <AdminFrame title="Activity">
       <ActivityView />
-    </AdminShell>
+    </AdminFrame>
   );
 }

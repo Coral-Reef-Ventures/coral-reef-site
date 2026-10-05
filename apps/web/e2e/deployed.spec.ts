@@ -7,9 +7,9 @@ import { expect, test } from "@playwright/test";
  *
  *   NEXT_PUBLIC_CRV_ADMIN_STUB=1 pnpm web:build
  *   (cd apps/web/out && python3 -m http.server 4173) &
- *   CRV_ADMIN_URL=http://localhost:4173 pnpm exec playwright test e2e/deployed.spec.ts
+ *   cd apps/web && CRV_ADMIN_URL=http://localhost:4173 pnpm exec playwright test
  *
- * It skips when CRV_ADMIN_URL is not set, so the Pages page's run is unaffected. Once the backend is bound and the
+ * It skips when CRV_ADMIN_URL is not set, so CI, which does not run this config, is unaffected. Once the backend is bound and the
  * app is deployed, the door flows join this file; an admin session is then needed and these flows run signed in.
  */
 const base = process.env.CRV_ADMIN_URL;

@@ -12,3 +12,11 @@ scope:
 sourceRoots:
   - apps/web/src/**
   - amplify/**
+# The regions the admin views need (VSA §1): the shell is shared presentation with no product behavior, the backend seam
+# is infrastructure, and the route files are composition.
+shared:
+  - apps/web/src/features/admin/shell/**
+infrastructure:
+  - apps/web/src/infrastructure/**
+composition:
+  - apps/web/app/**

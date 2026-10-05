@@ -3,8 +3,7 @@
 import { Alert, Anchor, Container, createTheme, Group, MantineProvider, Title } from "@mantine/core";
 import "@mantine/core/styles.css";
 import Link from "next/link";
-import { type ReactNode, useEffect, useState } from "react";
-import { prepareAdminApi } from "../../../infrastructure/amplify/client.ts";
+import type { ReactNode } from "react";
 
 const theme = createTheme({
   fontFamily: "ui-sans-serif, system-ui, sans-serif",
@@ -19,11 +18,6 @@ export const ADMIN_LINKS = [
 
 /** The admin pages' frame: Mantine's provider, the three views and nothing that loads from another origin. */
 export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
-  // The views ask for the backend as they mount, so they wait until it has been prepared.
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    prepareAdminApi().finally(() => setReady(true));
-  }, []);
   return (
     <MantineProvider theme={theme} defaultColorScheme="auto">
       <Container size="lg" py="md">
@@ -37,7 +31,7 @@ export function AdminShell({ title, children }: { title: string; children: React
         <Title order={1} size="h2" mb="md">
           {title}
         </Title>
-        {ready ? children : null}
+        {children}
       </Container>
     </MantineProvider>
   );
