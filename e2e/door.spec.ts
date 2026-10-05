@@ -174,6 +174,35 @@ test("opening the scheme control on a wide screen grows it leftward over the bar
   expect(after.scrollWidth).toBeLessThanOrEqual(1440);
 });
 
+// The nav sits at the bar's right as on markset.org and intentset.org, not in its middle: its last link ends a fixed,
+// generous distance before the collapsed control (the inner row's gap plus the open pill's reserved width), and the
+// open pill stays clear of it.
+for (const width of [1100, 1440]) {
+  test(`the nav is right-aligned before the scheme control at ${width}px, and the open control stays clear of it`, async ({
+    page,
+  }) => {
+    await open(page, "/", width, "light");
+    await page.waitForTimeout(300);
+    const link = async () =>
+      page.evaluate(() => {
+        const links = [...document.querySelectorAll("header > div > nav[aria-label='Main'] > a")];
+        const last = links.at(-1)?.getBoundingClientRect();
+        return last ? { left: last.left, right: last.right } : null;
+      });
+    const before = await headerBox(page);
+    const nav = await link();
+    if (!nav || !before.control || !before.lockup) throw new Error("no nav link, control or lockup");
+    const gap = before.control.left - nav.right;
+    expect(gap).toBeGreaterThanOrEqual(64);
+    expect(gap).toBeLessThanOrEqual(100);
+    await page.locator("#ms-scheme-auto").focus();
+    const after = await headerBox(page);
+    if (!after.control) throw new Error("no control");
+    expect(after.control.left).toBeGreaterThanOrEqual(nav.right + 8);
+    expect(await link()).toEqual(nav);
+  });
+}
+
 for (const path of ["/", "/get-involved/", "/privacy/"]) {
   for (const width of [390, 1024, 1200, 1440]) {
     test(`${path}: the page's column lines up with the header at ${width}px`, async ({ page }) => {
