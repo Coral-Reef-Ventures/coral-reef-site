@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/privacy/", "/signout/"];
+const pages = ["/", "/get-involved/", "/privacy/", "/signout/"];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });
@@ -48,31 +48,153 @@ for (const path of pages) {
   }
 }
 
-test("the keyboard reaches every link, control and the scheme control in order, each with a visible focus ring", async ({
+test("the keyboard reaches the header, its scheme control and then the page in order, each with a visible focus ring", async ({
   page,
 }) => {
-  await open(page, "/", 1440, "light");
+  await open(page, "/get-involved/", 1440, "light");
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelector("a")?.textContent)).toBe("Skip to content");
   const rings: string[] = [];
+  const stops: string[] = [];
   for (let i = 0; i < 80; i++) {
     await page.keyboard.press("Tab");
-    const ring = await page.evaluate(() => {
+    const stop = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement;
-      if (el === document.body) return "END";
+      if (el === document.body) return null;
       const ringed =
         el instanceof HTMLInputElement && el.type === "radio" ? (el.nextElementSibling as HTMLElement) : el;
       const style = getComputedStyle(ringed);
-      return `${el.tagName}:${style.outlineStyle}:${style.outlineWidth}`;
+      const where = el.closest("header") ? "header" : el.closest("main") ? "main" : "other";
+      return { ring: `${el.tagName}:${style.outlineStyle}:${style.outlineWidth}`, at: `${where}:${el.tagName}` };
     });
-    if (ring === "END") break;
-    rings.push(ring);
+    if (stop === null) break;
+    rings.push(stop.ring);
+    stops.push(stop.at);
   }
+  // The skip link, then the header in reading order: the lockup, the one nav link, the scheme control (the checked
+  // radio is its one stop), and then the page. The control is in the bar now, not a row of its own below it.
+  expect(stops.slice(0, 4)).toEqual(["other:A", "header:A", "header:A", "header:INPUT"]);
+  expect(stops[4]).toMatch(/^main:/);
   expect(rings.length, "the page's stops").toBeGreaterThan(10);
   expect(rings.length, "tabbing ended").toBeLessThan(80);
   for (const ring of rings) expect(ring, "a focus stop has no ring").toMatch(/:(solid|auto):(3px|2px|1px)/);
   expect(rings[0]).toContain("A:");
 });
+
+/** The header's inner row and the things in it, measured in the page. */
+const headerBox = (page: Page) =>
+  page.evaluate(() => {
+    const box = (el: Element | null) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+    };
+    const header = document.querySelector("header") as HTMLElement;
+    const inner = header.firstElementChild as HTMLElement;
+    const style = getComputedStyle(inner);
+    const row = inner.getBoundingClientRect();
+    const summary = header.querySelector("summary");
+    return {
+      content: {
+        left: row.left + Number.parseFloat(style.paddingLeft),
+        right: row.right - Number.parseFloat(style.paddingRight),
+        middle: row.top + row.height / 2,
+      },
+      lockup: box(header.querySelector("a[href='/']")),
+      control: box(header.querySelector(".site-scheme")),
+      menu: summary && getComputedStyle(summary).display !== "none" && summary.offsetParent ? box(summary) : null,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+
+// 320 is WCAG 1.4.10's reflow width; 360, 375 and 390 are the common phones.
+const phones = [320, 360, 375, 390];
+
+for (const path of ["/", "/get-involved/", "/admin/"]) {
+  for (const width of [...phones, 1440]) {
+    test(`${path}: the scheme control is in the header's bar at ${width}px, centered and at its right end`, async ({
+      page,
+    }) => {
+      await open(page, path, width, "light");
+      await page.waitForTimeout(300);
+      await expect(page.locator("header .site-scheme")).toHaveCount(1);
+      await expect(page.locator(".site-scheme")).toHaveCount(1);
+      const at = await headerBox(page);
+      if (!at.control) throw new Error("no control");
+      expect(Math.abs((at.control.top + at.control.bottom) / 2 - at.content.middle)).toBeLessThanOrEqual(1);
+      if (width < 1000) {
+        // A phone: the lockup, the control and the menu button, in that order, inside the row.
+        if (!at.menu || !at.lockup) throw new Error("no menu button or lockup");
+        expect(at.lockup.right).toBeLessThanOrEqual(at.control.left);
+        expect(at.control.right).toBeLessThanOrEqual(at.menu.left);
+        expect(Math.abs(at.menu.right - at.content.right)).toBeLessThanOrEqual(1);
+      } else {
+        expect(at.menu).toBeNull();
+        expect(Math.abs(at.control.right - at.content.right)).toBeLessThanOrEqual(1);
+      }
+      expect(at.scrollWidth).toBeLessThanOrEqual(width);
+    });
+  }
+}
+
+for (const width of phones) {
+  test(`opening the scheme control at ${width}px moves nothing, covers nothing in the bar and stays on screen`, async ({
+    page,
+  }) => {
+    await open(page, "/", width, "light");
+    await page.waitForTimeout(300);
+    const before = await headerBox(page);
+    await page.locator("#ms-scheme-auto").focus();
+    const after = await headerBox(page);
+    if (!after.control || !before.control || !after.lockup) throw new Error("no control or lockup");
+    // On a phone the pill opens downward, under the bar: it grows taller, keeps its corner and never reaches the lockup.
+    expect(after.control.height).toBeGreaterThan(before.control.height * 2);
+    expect(after.control.top).toBe(before.control.top);
+    expect(after.control.right).toBe(before.control.right);
+    expect(after.control.left).toBeGreaterThanOrEqual(after.lockup.right);
+    expect(after.menu).toEqual(before.menu);
+    expect(after.scrollWidth).toBeLessThanOrEqual(width);
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator("body")).toHaveAttribute("data-scheme", "light");
+  });
+}
+
+test("opening the scheme control on a wide screen grows it leftward over the bar and moves nothing", async ({
+  page,
+}) => {
+  await open(page, "/", 1440, "light");
+  await page.waitForTimeout(300);
+  const before = await headerBox(page);
+  await page.locator("#ms-scheme-auto").focus();
+  const after = await headerBox(page);
+  if (!after.control || !before.control || !after.lockup) throw new Error("no control or lockup");
+  expect(after.control.width).toBeGreaterThan(before.control.width * 2);
+  expect(after.control.right).toBe(before.control.right);
+  expect(after.control.left).toBeGreaterThanOrEqual(after.lockup.right);
+  expect(after.scrollWidth).toBeLessThanOrEqual(1440);
+});
+
+for (const path of ["/", "/get-involved/", "/privacy/"]) {
+  for (const width of [390, 1024, 1200, 1440]) {
+    test(`${path}: the page's column lines up with the header at ${width}px`, async ({ page }) => {
+      await open(page, path, width, "light");
+      await page.waitForTimeout(300);
+      const at = await headerBox(page);
+      const content = await page.evaluate(() => {
+        const h1 = (document.querySelector("main h1") as HTMLElement).getBoundingClientRect();
+        const blocks = [...document.querySelectorAll("main .ms-document > *, main .door-slot > *")]
+          .map((el) => ({ el: el.outerHTML.slice(0, 60), right: el.getBoundingClientRect().right }))
+          .filter((b) => b.right > 0);
+        return { h1Left: h1.left, blocks };
+      });
+      if (!at.lockup) throw new Error("no lockup");
+      expect(Math.abs(content.h1Left - at.lockup.left), "the h1 starts where the lockup does").toBeLessThanOrEqual(1);
+      expect(Math.abs(at.lockup.left - at.content.left)).toBeLessThanOrEqual(1);
+      const past = content.blocks.filter((b) => b.right > at.content.right + 1).map((b) => b.el);
+      expect(past, "a block runs past the header's right edge").toEqual([]);
+    });
+  }
+}
 
 test("the skip link moves focus into the main content", async ({ page }) => {
   await open(page, "/", 390, "light");
@@ -81,12 +203,16 @@ test("the skip link moves focus into the main content", async ({ page }) => {
   await expect(page.locator("main")).toBeFocused();
 });
 
+// The admin pages are held to it in the header and their own nav only: Mantine draws their views, and its dark alert
+// and segmented control are known to fall short (a follow-up), but the shell and the nav are this site's.
+const contrastScopes: Record<string, string> = { "/admin/": "header, footer, nav[aria-label='Admin']" };
+
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/privacy/"]) {
+  for (const path of ["/", "/get-involved/", "/privacy/", "/admin/"]) {
     test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
       await open(page, path, 1440, scheme);
       await page.waitForTimeout(300);
-      const failures = await page.evaluate(() => {
+      const failures = await page.evaluate((scope) => {
         const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
         const lum = ([r, g, b]: number[]) => {
           const f = (v: number) => {
@@ -112,6 +238,7 @@ for (const scheme of ["light", "dark"] as const) {
         for (let n = walker.nextNode(); n; n = walker.nextNode()) {
           const el = n.parentElement;
           if (!el || !n.textContent?.trim() || el.closest(".skip-link, noscript, script, style")) continue;
+          if (scope && !el.closest(scope)) continue;
           const style = getComputedStyle(el);
           const size = Number.parseFloat(style.fontSize);
           const large = size >= 24 || (size >= 18.66 && Number(style.fontWeight) >= 700);
@@ -119,22 +246,55 @@ for (const scheme of ["light", "dark"] as const) {
           if (r < (large ? 3 : 4.5)) out.push(`${n.textContent.trim().slice(0, 40)}: ${r.toFixed(2)}`);
         }
         return out;
-      });
+      }, contrastScopes[path] ?? "");
       expect(failures).toEqual([]);
     });
   }
 }
 
+test("the home page has one h1 and neither the form nor the sign-in; the Get involved page has one h1 and both", async ({
+  page,
+}) => {
+  await page.goto(`${base()}/`);
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Get involved" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Have an invitation?" })).toHaveCount(0);
+  await expect(page.locator("form")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Main" }).first().getByRole("link")).toHaveText(["Get involved"]);
+
+  await page.goto(`${base()}/get-involved/`);
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.getByRole("heading", { level: 1, name: "Get involved" })).toHaveAttribute("id", "involved");
+  await expect(page.getByRole("heading", { level: 2, name: "Have an invitation?" })).toHaveAttribute("id", "invited");
+  await expect(page.getByRole("form", { name: "Get involved" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await expect(page).toHaveTitle(/^Get involved/);
+});
+
+test("a locked site's request to the door's origin, and an old link to a moved section, reach the Get involved page", async ({
+  page,
+}) => {
+  const query = `?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${"A".repeat(22)}`;
+  await page.goto(`${base()}/${query}`);
+  await page.waitForURL(`${base()}/get-involved/${query}`);
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await page.goto(`${base()}/#invited`);
+  await page.waitForURL(`${base()}/get-involved/#invited`);
+  await page.goto(`${base()}/?error=NOT_INVITED`);
+  await page.waitForURL(`${base()}/get-involved/?error=NOT_INVITED`);
+});
+
 test("the invitation sign-in offers Google, and carries what a site asked for through it", async ({ page }) => {
   const state = "A".repeat(22);
-  await page.goto(`${base()}/?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${state}`);
+  await page.goto(`${base()}/get-involved/?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${state}`);
   await page.getByRole("button", { name: "Sign in with Google" }).click();
   const carried = await page.evaluate(() => (window as unknown as { __crvSignIn?: string }).__crvSignIn);
   expect(JSON.parse(carried ?? "{}")).toEqual({ site: "driftline", host: "driftline.app", next: "/docs/", state });
 });
 
 test("a refused sign-in says there is no invitation and starts the form with that", async ({ page }) => {
-  await page.goto(`${base()}/?error=NOT_INVITED`);
+  await page.goto(`${base()}/get-involved/?error=NOT_INVITED`);
   await expect(page.getByText("There is no invitation for that Google account yet.")).toBeVisible();
   await expect(page.getByLabel("Message")).toHaveValue(/no invitation for that account/);
 });
@@ -162,7 +322,7 @@ test("a signed-in stranger is sent back to the door with the form", async ({ pag
     }
   });
   await page.goto(`${base()}/signed-in/`);
-  await page.waitForURL(/\/\?error=NOT_INVITED/);
+  await page.waitForURL(/\/get-involved\/\?error=NOT_INVITED/);
   await expect(page.getByText("There is no invitation for that Google account yet.")).toBeVisible();
 });
 

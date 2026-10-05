@@ -26,10 +26,21 @@ CRV-014 and supersedes CRV-007).
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
 - **New copy is drafted in `site-copy.md`, marked proposed, and Gary approves it before it goes live.** The door, its
   privacy page and the invitation text are proposed (2026-10-04) and go live only at the cutover, after Gary approves
-  them (plan step P8). `site-copy.md` is the source of the app's content files: `apps/web/content/door.md` and
-  `privacy.md` are copied into it verbatim, and `apps/web/lib/content.test.ts` fails if either differs. Change the copy
-  there first and the content file in the same commit. The form's and sign-in's words are listed there too; keep the
-  components' strings in step with it.
+  them (plan step P8). `site-copy.md` is the source of the app's content files: `apps/web/content/door.md`,
+  `get-involved.md` and `privacy.md` are copied into it verbatim, and `apps/web/lib/content.test.ts` fails if any
+  differs. Change the copy there first and the content file in the same commit. The form's and sign-in's words are
+  listed there too; keep the components' strings in step with it.
+- **The app's pages.** `/` is the door: the story, the four product cards and the closing statement. `/get-involved/`
+  holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
+  Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with
+  its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
+  the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/privacy/`, `/signed-in/`,
+  `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest.
+- **The frame lines up with the shell.** The color-scheme control is in the header's bar, after the nav and before the
+  folded menu's button, through reef's `headerTools` (`@coralreefventures/site` 0.3.0, `lib/site.tsx`); its slot keeps
+  the collapsed pill's size so the open pill grows leftward over the bar and a phone's row never overflows. Every page's
+  column, the admin views' included, is the shell's (`--site-max-width`, `--site-gutter`), so the h1 starts where the
+  lockup does and nothing runs past the header's right edge. `e2e/door.spec.ts` holds both, at 390 to 1440px.
 - **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
   The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives

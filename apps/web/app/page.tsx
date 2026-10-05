@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import { DoorDocument } from "../lib/page.tsx";
-import { InterestForm } from "../src/features/interest/interest-form/index.ts";
-import { DoorSignIn } from "../src/features/access/door-session/index.ts";
+import { DoorForward } from "../src/features/access/door-session/index.ts";
 
 const title = "Coral Reef Ventures · Documents. Intent. Work. Usage.";
 const description = "Open foundations and focused tools for creating software with humans and AI working together.";
@@ -15,29 +14,15 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title, description },
 };
 
-/** The door: the story, the form for anyone, the sign-in for an invitee. */
+/**
+ * The door: the story and the four offerings. The form and the sign-in are on /get-involved/, and DoorForward sends a
+ * visit meant for them there, since a locked site's gate still redirects to `/`.
+ */
 export default function Page() {
   return (
-    <DoorDocument
-      file="door.md"
-      slots={{
-        "interest-form": (
-          <>
-            <noscript>
-              <p>The form needs scripting. Write to hello@coralreefventures.com instead.</p>
-            </noscript>
-            <InterestForm />
-          </>
-        ),
-        "sign-in": (
-          <>
-            <noscript>
-              <p>Signing in needs scripting.</p>
-            </noscript>
-            <DoorSignIn />
-          </>
-        ),
-      }}
-    />
+    <>
+      <DoorForward />
+      <DoorDocument file="door.md" />
+    </>
   );
 }

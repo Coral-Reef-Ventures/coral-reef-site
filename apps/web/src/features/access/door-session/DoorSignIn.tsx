@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { doorApi } from "../../../infrastructure/amplify/client.ts";
 import classes from "./DoorSignIn.module.css";
 import { decodeRequest, type DoorRequest, enter, encodeRequest, readDoorRequest } from "./enter.ts";
+import { getInvolvedPath } from "./forward.ts";
 import { postTicket } from "./postTicket.ts";
 import type { LockedSite } from "./sites.ts";
 
@@ -28,10 +29,10 @@ const noticeFor = (search: string): string | null => {
 };
 
 /**
- * The invitation sign-in (CRV-010). On `/` it offers Google; with a site's request in the query and a live session it
+ * The invitation sign-in (CRV-010). On `/get-involved/` it offers Google; with a site's request in the query and a live session it
  * silently fetches a ticket and posts it (renewal); with a session and no request it lists the sites to continue to.
  * On `/signed-in/` (`completing`) it first waits for Google's return to finish, then does the same. A person with no
- * invitation is sent back to `/` with `?error=NOT_INVITED`, where the form is waiting.
+ * invitation is sent back to `/get-involved/` with `?error=NOT_INVITED`, where the form is waiting.
  */
 export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => {
   const [view, setView] = useState<View>({ kind: "working", label: "Checking your sign-in…" });
@@ -52,7 +53,7 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
         } else {
           // Signed in, but not by an invitation this door recognizes: end that session and offer the form.
           await doorApi.signOut().catch(() => undefined);
-          window.location.replace("/?error=NOT_INVITED");
+          window.location.replace(`${getInvolvedPath}?error=NOT_INVITED`);
         }
       } catch {
         show({ kind: "failed" });
@@ -66,13 +67,13 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
 
       if (completing) {
         if (/NOT_INVITED/.test(search)) {
-          window.location.replace("/?error=NOT_INVITED");
+          window.location.replace(`${getInvolvedPath}?error=NOT_INVITED`);
           return;
         }
         const outcome = await doorApi.completeRedirect();
         if (outcome.error !== undefined) {
           if (outcome.error.includes("NOT_INVITED")) {
-            window.location.replace("/?error=NOT_INVITED");
+            window.location.replace(`${getInvolvedPath}?error=NOT_INVITED`);
             return;
           }
           show({ kind: "failed" });
@@ -149,7 +150,7 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
             Sign-in did not work. Please try again, or write to {contact}.
           </p>
           <p>
-            <a href="/#invited">Try again</a>
+            <a href={`${getInvolvedPath}#invited`}>Try again</a>
           </p>
         </>
       )}

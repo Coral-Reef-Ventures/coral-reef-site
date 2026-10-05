@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@coralreefventures/contact": "0.1.1",
-    "@coralreefventures/site": "0.1.1",
+    "@coralreefventures/site": "0.3.0",
     "@coralreefventures/theme": "0.1.1",
     "@crv/brand": "workspace:*",
     "@mantine/core": "9.6.3",

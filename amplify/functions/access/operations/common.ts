@@ -162,7 +162,7 @@ export const invitationText = (sites: readonly DoorSite[], email: string, door: 
     text: [
       "Hello,",
       `You are invited to ${names}, open for now only to invited guests.`,
-      `To come in, go to ${door}/#invited and sign in with Google using this address, ${email}. The invitation belongs to the first Google account that signs in with it, so use the account this message came to.`,
+      `To come in, go to ${door}/get-involved/#invited and sign in with Google using this address, ${email}. The invitation belongs to the first Google account that signs in with it, so use the account this message came to.`,
       "If anything does not work, reply to this message or write to hello@coralreefventures.com.",
       "Coral Reef Ventures",
     ].join("\n\n"),

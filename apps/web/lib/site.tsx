@@ -1,31 +1,38 @@
 import { createSite } from "@coralreefventures/site";
 
+import { SchemeControl } from "./scheme.tsx";
+
 export const siteUrl = "https://coralreefventures.com";
 export const contactEmail = "hello@coralreefventures.com";
 
 /** The mark and the name: the way home. A plain image, so the header ships no client code. */
 const Lockup = () => (
-  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", fontWeight: 750, fontSize: "1.15rem" }}>
+  <span className="door-lockup">
     {/* biome-ignore lint/performance/noImgElement: a static export has no image optimizer, and the mark is a 2 KB SVG. */}
     <img src="/icon.svg" alt="" width={28} height={28} style={{ borderRadius: "0.4rem" }} />
-    Coral Reef Ventures
+    <span className="door-lockup-name">Coral Reef Ventures</span>
   </span>
 );
 
 /**
- * The shell, bound to Coral Reef Ventures. The door has two sections to reach and no social cards: the card builder
+ * The shell, bound to Coral Reef Ventures. The door has one page to reach, where the form and the sign-in are, and no social cards: the card builder
  * fetches a web font at build time, and this site loads nothing from another origin.
  */
 export const site = createSite({
   name: "Coral Reef Ventures",
   url: siteUrl,
   description: "Open foundations and focused tools for creating software with humans and AI working together.",
-  nav: [
-    { key: "involved", label: "Get involved", href: "/#involved" },
-    { key: "invited", label: "Have an invitation?", href: "/#invited" },
-  ],
+  nav: [{ key: "involved", label: "Get involved", href: "/get-involved/" }],
   lockup: <Lockup />,
   actions: [],
+  // In the bar at every width, after the nav and before the folded menu's button (reef 0.3.0). The slot keeps the
+  // collapsed pill's size, so opening the pill moves nothing: leftward over the bar on a wide screen, downward under
+  // it on a phone, where leftward would cover the lockup.
+  headerTools: (
+    <span className="door-scheme-slot">
+      <SchemeControl />
+    </span>
+  ),
   footer: {
     maker: (
       <>

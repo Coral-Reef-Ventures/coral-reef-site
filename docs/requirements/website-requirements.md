@@ -16,7 +16,7 @@ destinations. This is a concise company site, not a combined product application
 
 | ID | Requirement | Acceptance |
 |---|---|---|
-| CRV-001 | Build the door page: header, hero, product cards with the independence note, "Get involved" (the interest form), "Have an invitation?" (Google sign-in), closing contact address, footer. *Amended in v0.2; v0.1 was one page without the form and the sign-in.* | All approved copy sections are present in a meaningful reading order |
+| CRV-001 | Build the door page: header, hero, product cards with the independence note, closing contact address, footer; and a Get involved page at `/get-involved/`: "Get involved" (the interest form), then "Have an invitation?" (Google sign-in), reached from the header. *Amended in v0.2; v0.1 was one page without the form and the sign-in. Amended 2026-10-05 at Gary's request: the form and the sign-in moved from the door page to their own page.* | All approved copy sections are present in a meaningful reading order, on the page the copy assigns them |
 | CRV-002 | Present Markset, Intentset, Streamlane, and Driftline as distinct offerings | Separate names, descriptions, maturity labels, and independently configured destinations |
 | CRV-003 | Use real status and destinations. *Amended in v0.2.* | Markset points to markset.org and Intentset to intentset.org, both open. Streamlane and Driftline read "Open to invited guests" and link to no product URL for a visitor without an invitation; a signed-in invitee sees "Continue to *product*" for each active grant |
 | CRV-004 | Keep independent adoption explicit | Page states that the products need not be adopted together |

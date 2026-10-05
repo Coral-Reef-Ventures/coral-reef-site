@@ -63,7 +63,7 @@ describe("invite", () => {
     expect(result.subject).toBe("Your invitation to Streamlane and Driftline");
     expect(result.text).toContain("You are invited to Streamlane and Driftline, open for now only to invited guests.");
     expect(result.text).toContain(
-      "go to https://main.d1example.amplifyapp.com/#invited and sign in with Google using this address, ada@example.com.",
+      "go to https://main.d1example.amplifyapp.com/get-involved/#invited and sign in with Google using this address, ada@example.com.",
     );
     const [activity] = f.store.all("Activity");
     expect(activity).toMatchObject({ kind: "access.invited", subjectType: "Person", subjectId: person?.id });
