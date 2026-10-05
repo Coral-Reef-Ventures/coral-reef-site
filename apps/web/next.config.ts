@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   transpilePackages: ["@crv/brand"],
+  // Always defined, so a build without the admin stub folds the branch away and ships none of its sample data.
+  env: { NEXT_PUBLIC_CRV_ADMIN_STUB: process.env.NEXT_PUBLIC_CRV_ADMIN_STUB ?? "" },
 };
 
 export default nextConfig;
