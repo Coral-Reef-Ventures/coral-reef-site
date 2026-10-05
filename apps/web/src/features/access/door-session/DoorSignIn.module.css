@@ -9,6 +9,11 @@
   margin: 0;
 }
 
+.destination {
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
 .google {
   min-height: 3rem;
   padding: 0.65rem 1.5rem;

@@ -12,8 +12,8 @@ Two things live here, one replacing the other (ADR 0001, `docs/decisions/0001-th
   Gen 2, with the door's copy in Markset (`apps/web/content/`).
 
 Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
-`website-requirements.md` holds the CRV requirements the tests are named after (v0.2, proposed, adds CRV-009 to
-CRV-014 and supersedes CRV-007).
+`website-requirements.md` holds the CRV requirements the tests are named after (v0.2, adds CRV-009 to CRV-014 and
+supersedes CRV-007; its copy approved, its requirement text still recorded as proposed).
 
 ## Rules
 
@@ -25,8 +25,9 @@ CRV-014 and supersedes CRV-007).
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
 - **New copy is drafted in `site-copy.md`, marked proposed, and Gary approves it before it goes live.** The door, its
-  privacy page and the invitation text are proposed (2026-10-04) and await Gary's approval (plan step P8); the app
-  has served them on coralreefventures.com since the cutover, 2026-10-05. `site-copy.md` is the source of the app's
+  privacy page with its retention periods, and the invitation text were approved by Gary on 2026-10-05 (plan step P8),
+  as was the locked sites' coming-soon page, which reef's gate serves. A change to any of them is proposed again until
+  he approves it. `site-copy.md` is the source of the app's
   content files: `apps/web/content/door.md`, `get-involved.md` and `privacy.md` are copied into it verbatim, and
   `apps/web/lib/content.test.ts` fails if any differs. Change the copy there first and the content file in the same commit. The form's and sign-in's words are
   listed there too; keep the components' strings in step with it.
@@ -62,6 +63,11 @@ CRV-014 and supersedes CRV-007).
   function logs an event kind, ids and a status, and a test per function holds it.
 - **Every stored field has a retention period** (plan §2.3a), kept as constants the privacy page quotes. A changed
   period changes the privacy copy, which is proposed copy again until Gary approves it.
+- **The leak check proves the lock** (CRV-014): `scripts/leak-check.ts`, daily in `.github/workflows/leak-check.yml`
+  (a workflow of its own, so a locked site never fails a pull request) and by hand after every product deploy. It
+  checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip.
+  Its session is a temporary invitee it creates and erases itself; `apps/web/hosting/README.md`, "The leak check", has
+  how, and the IAM role CI needs, which does not exist yet.
 - **Unlocking a locked site is a recorded decision** (`door.unlocked` in Activity, with a reason), never a silent
   rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
@@ -136,12 +142,9 @@ Its custom domain is removed once `www`'s old cached records expire. Phase 2c th
 
 From the requirements' launch gates, not yet settled:
 
-- The door copy, the privacy page with its retention periods, the invitation text and requirements v0.2, all proposed
-  in `docs/requirements/` (P8). The cutover went ahead on 2026-10-05 without it; the copy is live and still Gary's to
-  approve.
+- Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
+  privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.
 - Phase 2c, on or after 2026-10-19: delete the Pages page and its workflow and disable Pages.
-- Whether the product repositories stay public (plan decision D1, before the lock): the door locks the sites, not the
-  source.
 - Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
 - Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
   Intentset `Open source · Early release`.

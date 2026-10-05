@@ -314,17 +314,33 @@ test("a locked site's request to the door's origin, and an old link to a moved s
   await page.waitForURL(`${base()}/get-involved/?error=NOT_INVITED`);
 });
 
-test("the invitation sign-in offers Google, and carries what a site asked for through it", async ({ page }) => {
+test("the invitation sign-in names the site that asked, offers Google, and carries the request through it", async ({
+  page,
+}) => {
   const state = "A".repeat(22);
   await page.goto(`${base()}/get-involved/?site=driftline&host=driftline.app&next=%2Fdocs%2F&state=${state}`);
+  await expect(page.locator("[data-site]")).toHaveText("Driftline");
+  await expect(page.locator("[data-site]")).toBeVisible();
   await page.getByRole("button", { name: "Sign in with Google" }).click();
   const carried = await page.evaluate(() => (window as unknown as { __crvSignIn?: string }).__crvSignIn);
   expect(JSON.parse(carried ?? "{}")).toEqual({ site: "driftline", host: "driftline.app", next: "/docs/", state });
 });
 
+test("a coming-soon page's Get involved link names its site at the sign-in, and an unknown site names none", async ({
+  page,
+}) => {
+  await page.goto(`${base()}/get-involved/?site=streamlane`);
+  await expect(page.locator("[data-site]")).toHaveText("Streamlane");
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await page.goto(`${base()}/get-involved/?site=evil`);
+  await expect(page.getByRole("button", { name: "Sign in with Google" })).toBeVisible();
+  await expect(page.locator("[data-site]")).toHaveCount(0);
+});
+
 test("a refused sign-in says there is no invitation and starts the form with that", async ({ page }) => {
   await page.goto(`${base()}/get-involved/?error=NOT_INVITED`);
   await expect(page.getByText("There is no invitation for that Google account yet.")).toBeVisible();
+  await expect(page.locator("[data-site]")).toHaveCount(0);
   await expect(page.getByLabel("Message")).toHaveValue(/no invitation for that account/);
 });
 

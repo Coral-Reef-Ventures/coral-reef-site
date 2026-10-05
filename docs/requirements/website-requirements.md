@@ -1,7 +1,8 @@
 # Coral Reef Ventures website requirements v0.2
 
-**Status:** v0.2 is proposed (2026-10-04). Gary approves it with the door copy in `site-copy.md` (plan step P8) before
-coralreefventures.com moves to the app. The decision behind it is
+**Status:** v0.2 was proposed on 2026-10-04, to be approved with the door copy in `site-copy.md` (plan step P8). Gary
+approved the door copy, the privacy page with its retention periods and the invitation text on 2026-10-05; his approval
+named that copy, and this file's requirement text is recorded as proposed until he confirms it too. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
 2026-10-05. The GitHub Pages page (`site/`) still meets v0.1, CRV-007 included, and its tests keep checking it until it
 and they are deleted on 2026-10-19, 14 days after the cutover.
@@ -30,7 +31,7 @@ destinations. This is a concise company site, not a combined product application
 | CRV-011 | No tracking, no external font, no third-party script. *New in v0.2.* | Nothing loads from another origin except the AWS endpoints the form and sign-in need; storage only for sign-in tokens, the form's guest identity id and the scheme word; a /privacy/ page says what is stored, why, and for how long, and how to have it erased |
 | CRV-012 | Admin views. *New in v0.2.* | Admins (Cognito group) review submissions by status, add notes, invite from a submission with site checkboxes, list, revoke, restore and rebind invitations, delete a person or erase an address, and see Activity |
 | CRV-013 | Notification. *New in v0.2.* | Each submission notifies hello@coralreefventures.com with a link to it in the admin view, at most 10 a day, in plain text with the visitor's words marked as unverified; a failed notice never loses a submission |
-| CRV-014 | The lock. *New in v0.2.* | streamlane.app and driftline.app serve nothing, not even a static asset, to a visitor without a valid door session; the leak check proves it daily on every host |
+| CRV-014 | The lock. *New in v0.2.* | streamlane.app and driftline.app serve nothing, not even a static asset, to a visitor without a valid door session: a page load gets the gate's own coming-soon page, anything else an empty 401, and a host not allowed a 403; the leak check proves it daily on every host |
 
 ## Content authority
 
@@ -45,7 +46,8 @@ Generous whitespace, large readable typography, subtle coral/network suggestion,
 ## Launch gates
 
 Review product claims and availability; confirm outbound links; test responsive behavior and keyboard navigation;
-verify metadata and broken links; approve final copy. Door copy approved; the leak check green on every host.
+verify metadata and broken links; approve final copy. The door copy, privacy page and invitation text were approved on
+2026-10-05 (P8). The leak check (`scripts/leak-check.ts`) green on every host of each locked site, daily.
 
 Hosting is decided by ADR 0001: the app on Amplify in the coral-reef project (us-east-2), serving coralreefventures.com
 since 2026-10-05, with GitHub Pages kept deployed for the v0.1 page until 2026-10-19.
