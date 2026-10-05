@@ -16,7 +16,7 @@ import { hostsOf, parseTestHosts, sites } from "./leak-check/sites.ts";
 
 /**
  * The leak check (plan Phase 3, "CRV side"; CRV-014; RULE-GATED-NO-STORE). For each locked site and each of its hosts
- * it asks for every page and asset without a session, with one minted for a temporary invitee, and without one again,
+ * it asks for every page and asset without a session, with one minted for an existing invitee, and without one again,
  * and fails on any byte of the site given without a session, any gated answer a shared cache could keep, and any host
  * that should be refused and is not.
  *
@@ -27,8 +27,10 @@ import { hostsOf, parseTestHosts, sites } from "./leak-check/sites.ts";
  *   pnpm run leak-check --no-session           no AWS at all: the checks without a session and the host checks
  *
  * With a session it needs AWS credentials for the coral-reef project (by hand, `AWS_PROFILE=coral-reef`, and
- * `AWS_CLI` if `aws` on the path is not the one that reads its login); CRV_DOOR_TEST_HOSTS adds test hosts in the
- * backend's own format. It exits 1 on any finding and prints no secret: findings name a host, a path and a status.
+ * `AWS_CLI` if `aws` on the path is not the one that reads its login) and an invitee an admin has already invited to
+ * the checked sites from /admin/: `crv-check@example.com`, or `--invitee` / `CRV_LEAK_CHECK_INVITEE`. The check sets
+ * that user a fresh password and signs in as it; it never invites, erases or creates anyone (session.ts).
+ * CRV_DOOR_TEST_HOSTS adds test hosts in the backend's own format. It exits 1 on any finding and prints no secret: findings name a host, a path and a status.
  */
 
 const { values } = parseArgs({
@@ -37,6 +39,7 @@ const { values } = parseArgs({
     "test-host": { type: "string", multiple: true },
     "only-test-hosts": { type: "boolean", default: false },
     "no-session": { type: "boolean", default: false },
+    invitee: { type: "string" },
   },
 });
 
@@ -76,15 +79,18 @@ if (onlyTestHosts && gated.length === 0) {
 const findings: Finding[] = [];
 const notes: string[] = [];
 let requests = 0;
-let cleanup: (() => Promise<void>) | undefined;
 
 try {
   let cookies = new Map<string, string>();
   if (!values["no-session"]) {
-    const minted = await mintSessions({ aws: awsCli(), send, hosts: gated });
+    const minted = await mintSessions({
+      aws: awsCli(),
+      send,
+      hosts: gated,
+      invitee: values.invitee || process.env.CRV_LEAK_CHECK_INVITEE,
+    });
     cookies = minted.cookies;
-    cleanup = minted.cleanup;
-    console.log(`Minted a session for ${gated.map((entry) => entry.host).join(", ")} as the temporary invitee.`);
+    console.log(`Minted a session for ${gated.map((entry) => entry.host).join(", ")} as an existing invitee.`);
   }
 
   for (const { site, hosts } of plan) {
@@ -145,17 +151,6 @@ try {
     step: "running the check",
     problem: error instanceof Error ? error.message : "failed",
   });
-} finally {
-  if (cleanup) {
-    await cleanup().catch((error: unknown) => {
-      findings.push({
-        host: "-",
-        target: "-",
-        step: "removing the temporary invitee",
-        problem: error instanceof Error ? error.message : "failed",
-      });
-    });
-  }
 }
 
 for (const note of notes) console.log(`Note: ${note}`);

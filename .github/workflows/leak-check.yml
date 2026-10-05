@@ -3,7 +3,7 @@
 # scripts/leak-check/sites.ts and passes with nothing to do until one is.
 #
 # With the repository variable CRV_LEAK_CHECK_ROLE_ARN set, it assumes that role over GitHub's OIDC and mints a session
-# for a temporary invitee (apps/web/hosting/README.md, "The leak check", has the role's policies). Without it, it runs
+# as an existing invitee an admin invited (apps/web/hosting/README.md, "The leak check", has the role's policy). Without it, it runs
 # every check that needs no session and says so: no byte without a session, the coming-soon page, the empty 401s, the
 # refused hosts and www.
 name: Leak check
@@ -24,7 +24,7 @@ permissions:
   contents: read
   id-token: write
 concurrency:
-  # One temporary invitee at a time: two runs would erase each other's.
+  # One run at a time: each sets the invitee a new password, which would sign the other out mid-run.
   group: leak-check
   cancel-in-progress: false
 jobs:

@@ -2,7 +2,7 @@ import { createHash, createHmac, randomBytes } from "node:crypto";
 
 /**
  * Cognito's USER_SRP_AUTH, the one password flow the door's app client allows (ALLOW_USER_SRP_AUTH; there is no
- * ALLOW_ADMIN_USER_PASSWORD_AUTH and the door shows no password form). The leak check signs its temporary invitee in
+ * ALLOW_ADMIN_USER_PASSWORD_AUTH and the door shows no password form). The leak check signs its existing invitee in
  * with it, so the user goes through pre token generation like any invitee: that is what binds the invitation.
  *
  * Written against node:crypto alone, so the check needs no SDK: InitiateAuth and RespondToAuthChallenge are public

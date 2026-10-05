@@ -159,25 +159,21 @@ icons), and probes (`/404.html`, `/sitemap.xml`, `/index.txt`, a page that does 
 `--site <id>` checks one before that. `--test-host <site>:<host> --only-test-hosts` checks a temporary app alone
 (Phase 3, step 2), and the CRV app's `CRV_DOOR_TEST_HOSTS` must list the same host, or no ticket is issued for it.
 
-**The session.** The check mints one the way an invitee gets one, as a temporary invitee,
-`door-leak-check@coralreefventures.com` (which receives no mail: nothing is sent):
+**The session.** The check mints one the way an invitee gets one, as an invitee that already exists:
+`crv-check@example.com` by default (invited to both sites from /admin/ on 2026-10-05, go-ahead §17b), or `--invitee`
+/ `CRV_LEAK_CHECK_INVITEE`. **Inviting is an admin's job**, done by a person signed in to /admin/: the check makes no
+admin call to the door, never invites, erases or creates anyone, and leaves the user in place afterwards. If the user is
+missing or its invitation does not cover a checked site, the run fails at that step and an admin invites it again.
 
-1. `eraseEmail` on that address and AdminDeleteUser, to clear whatever an interrupted run left.
-2. `invite` it to the sites being checked, by invoking crv-access directly with IAM, as an admin of the door. crv-access
-   trusts the AppSync identity in its event, so the right to invoke the function is the right to call any operation as
-   anyone; that is why the role below is held to one repository branch.
-3. AdminCreateUser (pre sign-up admits it because the invitation is pending, plan §2.2) and a random permanent password,
-   passed to the CLI in a file only the run can read and deleted at once.
-4. USER_SRP_AUTH, the app client's one password flow, so pre token generation binds the invitation like any first
-   sign-in. Measured 2026-10-05 against the live pool: 2.3 s.
-5. `issueSiteTicket` through the API with that user's token, for each gated host; the ticket is posted to the host's
+1. AdminSetUserPassword with a fresh random permanent password, passed to the CLI in a file only the run can read and
+   deleted at once. It is never printed or kept; each run sets a new one.
+2. USER_SRP_AUTH, the app client's one password flow, so pre token generation binds the invitation like any sign-in.
+   Measured 2026-10-05 against the live pool: 2.3 s.
+3. `issueSiteTicket` through the API with that user's token, for each gated host; the ticket is posted to the host's
    `/_door` with a matching state cookie, and the gate's 303 sets the session.
-6. Step 1 again, whatever happened. The invitee's own Activity is erased with it; each erasure leaves one
-   `people.deleted` row (ids only, kept indefinitely, plan §2.3a), so the admin's activity view shows two a day, by
-   `user:leak-check`.
 
-Proved against the live backend on 2026-10-05 up to step 5's ticket (`aud` driftline.app, `next` kept, `st` bound, one
-hour), and cleaned up; the gate's half waits for the first flip.
+Revoking the invitee's invitation and deleting its Cognito user, when the checks no longer need it, are an admin's, from
+/admin/.
 
 **By hand,** after every product deploy and each flip: `AWS_PROFILE=coral-reef AWS_CLI=~/.local/bin/aws pnpm run
 leak-check --site driftline`. `--no-session` needs no AWS at all and runs every check that does not need a session.
@@ -224,17 +220,15 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
          "Resource": "arn:aws:amplify:us-east-2:865000063691:apps/d1fw6blayytium/branches/main" },
        { "Sid": "ReadItsOutputs", "Effect": "Allow", "Action": "cloudformation:DescribeStacks",
          "Resource": "arn:aws:cloudformation:us-east-2:865000063691:stack/amplify-d1fw6blayytium-main-branch-*/*" },
-       { "Sid": "InviteAndEraseTheInvitee", "Effect": "Allow", "Action": "lambda:InvokeFunction",
-         "Resource": "arn:aws:lambda:us-east-2:865000063691:function:amplify-d1fw6blayytium-mai-crvaccesslambda*" },
-       { "Sid": "TheInviteesUser", "Effect": "Allow",
-         "Action": ["cognito-idp:AdminCreateUser", "cognito-idp:AdminSetUserPassword", "cognito-idp:AdminDeleteUser"],
+       { "Sid": "TheInviteesPassword", "Effect": "Allow", "Action": "cognito-idp:AdminSetUserPassword",
          "Resource": "arn:aws:cognito-idp:us-east-2:865000063691:userpool/us-east-2_rKIikq747" }
      ]
    }
    ```
 
-   The sign-in and the ticket need no IAM: they are Cognito's public calls and the API with the invitee's own token. A
-   replaced user pool changes the last ARN.
+   No `lambda:InvokeFunction` on crv-access and no AdminCreateUser or AdminDeleteUser: the role cannot invite,
+   erase or create anyone, which is an admin's job. The sign-in and the ticket need no IAM: they are Cognito's public
+   calls and the API with the invitee's own token. A replaced user pool changes the last ARN.
 4. Set the repository variable (not a secret; it names a role, it grants nothing alone):
    `gh variable set CRV_LEAK_CHECK_ROLE_ARN --repo Coral-Reef-Ventures/coral-reef-site --body arn:aws:iam::865000063691:role/crv-leak-check`,
    then run the workflow by hand once and read its log.
