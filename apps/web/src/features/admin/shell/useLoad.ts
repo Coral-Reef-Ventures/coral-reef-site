@@ -4,6 +4,20 @@ import { useCallback, useEffect, useState } from "react";
 
 export type Loaded<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 
+/**
+ * Runs `load` once and reports what came of it. A load that throws before it has a promise to return (getAdminApi()
+ * does, in a build with no backend) is reported as an error like a rejected one: called bare inside an effect, that
+ * throw would escape React and take the whole page down instead of showing the view's error notice.
+ */
+export function runLoad<T>(load: () => Promise<T>, report: (result: Loaded<T>) => void): Promise<void> {
+  return Promise.resolve()
+    .then(load)
+    .then(
+      (data) => report({ state: "ready", data }),
+      (error: unknown) => report({ state: "error", message: messageOf(error) }),
+    );
+}
+
 /** Runs `load` on mount and whenever `deps` change; `reload` runs it again after a change the view made. */
 export function useLoad<T>(load: () => Promise<T>, deps: readonly unknown[]): [Loaded<T>, () => void] {
   const [result, setResult] = useState<Loaded<T>>({ state: "loading" });
@@ -12,10 +26,9 @@ export function useLoad<T>(load: () => Promise<T>, deps: readonly unknown[]): [L
   useEffect(() => {
     let live = true;
     setResult((r) => (r.state === "ready" ? r : { state: "loading" }));
-    load().then(
-      (data) => live && setResult({ state: "ready", data }),
-      (error: unknown) => live && setResult({ state: "error", message: messageOf(error) }),
-    );
+    void runLoad(load, (next) => {
+      if (live) setResult(next);
+    });
     return () => {
       live = false;
     };
