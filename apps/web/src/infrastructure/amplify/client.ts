@@ -21,6 +21,13 @@ const configure = (): boolean => {
   return true;
 };
 
+/**
+ * The backend's operations, as amplify/areas/*\/schema.ts declares them: submitInterest is a guest mutation (the
+ * identity pool's unauthenticated role) taking the interests as `[Interest!]!` and the site as `SourceSite!`;
+ * enterDoor is a mutation, because it records the sign-in; issueSiteTicket is a mutation for a signed-in user. A refusal
+ * arrives as an error whose message is a code alone (`REVOKED`, `BAD_NEXT`, `INVALID_EMAIL`, ...), never a value.
+ * amplify/data/client-documents.test.ts checks every document here against the schema.
+ */
 type Answer<T> = { data?: T; errors?: { message: string }[] };
 
 /** The one corner of the client's API the door uses: its own types do not unify without a schema, so it is named here. */
@@ -47,7 +54,7 @@ const amplifyApi: DoorApi = {
   async submitInterest(input) {
     const data = await call<{ submitInterest: InterestAnswer }>(
       /* GraphQL */ `
-        mutation SubmitInterest($name: String!, $email: String!, $organization: String, $interests: String!, $message: String!, $site: String!, $website: String) {
+        mutation SubmitInterest($name: String!, $email: String!, $organization: String, $interests: [Interest!]!, $message: String!, $site: SourceSite!, $website: String) {
           submitInterest(name: $name, email: $email, organization: $organization, interests: $interests, message: $message, site: $site, website: $website) {
             ok
             retryAfter
@@ -110,7 +117,7 @@ const amplifyApi: DoorApi = {
   async enterDoor() {
     const data = await call<{ enterDoor: EnterDoorAnswer }>(
       /* GraphQL */ `
-        query EnterDoor {
+        mutation EnterDoor {
           enterDoor {
             invited
             admin

@@ -1,11 +1,18 @@
-/** What the form sends to `submitInterest` (§2.4): one string per field, the interests joined by commas. */
+/** The schema's `Interest` and `SourceSite` enums (amplify/areas/interest/schema.ts). */
+export type Interest = "funding" | "design_partner" | "advisor" | "other";
+export type SourceSite = "crv" | "streamlane" | "driftline";
+
+/**
+ * What the form sends to `submitInterest` (plan §2.4), in the schema's own types: the interests as a list of the
+ * `Interest` enum and the site as a `SourceSite`. `website` is the honeypot, always empty from a person.
+ */
 export type InterestInput = {
   name: string;
   email: string;
   organization: string;
-  interests: string;
+  interests: Interest[];
   message: string;
-  site: string;
+  site: SourceSite;
   website: string;
 };
 

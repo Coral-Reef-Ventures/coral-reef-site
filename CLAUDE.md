@@ -7,7 +7,7 @@ Two things live here, one replacing the other (ADR 0001, `docs/decisions/0001-th
   Markset source rendered by `@markset-lang/parser` and `@markset-lang/render-html`, a TypeScript build script run by
   Node's type stripping, and a Pages workflow. It serves coralreefventures.com until the cutover (plan Phase 2b) and is
   deleted 14 days after it.
-- **The CRV app** (`apps/web`, `packages/brand`, and `amplify/` once the backend lands): the door to Streamlane and
+- **The CRV app** (`apps/web`, `packages/brand` and the backend in `amplify/`): the door to Streamlane and
   Driftline and the company's system of record for interest and access. Next.js static export and Mantine on Amplify
   Gen 2, with the door's copy in Markset (`apps/web/content/`).
 
@@ -64,6 +64,21 @@ CRV-014 and supersedes CRV-007).
 
 ## Toolchain
 
+- **The backend** (`amplify/`, plan §2.1 to §2.4) is Amplify Gen 2 in us-east-2: auth with two triggers in the `auth`
+  group, a schema of three areas (`areas/people`, `areas/interest`, `areas/access`), and three functions in the `data`
+  group (`crv-access`, the named handler for every operation but the form's; `crv-interest`, the form's; `crv-retention`,
+  the daily sweep). Its settings are environment variables read and checked at synth (`auth/settings.ts`). The triggers
+  touch no table: they call `checkAdmission` and `admitSignIn` through `allow.resource` and the data client, so nothing
+  in the auth stack points at the data stack, and `auth/wiring.test.ts` synthesizes the backend to hold that. Every
+  function writes through the `Store` in `functions/shared/store.ts`, whose conditions are data, so the tests run each
+  operation against `test/memory-store.ts` with the same conditions DynamoDB is sent. `amplify/vitest.config.ts`
+  synthesizes the backend twice, as a sandbox and as the branch, before its tests, reading no account.
+  `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`; set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` and
+  placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first); delete it afterwards with
+  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes` and remove the two secrets.
+  defineAuth always replaces the Cognito domain prefix with a hash, so `backend.ts` sets the fixed one on the domain
+  resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
+  project with the branch.
 - Node ≥ 22.18. Erasable TypeScript only (no enums, namespaces, parameter properties); import with `.ts` extensions.
 - pnpm (pinned by `packageManager`; moved from npm 2026-10-04 with the lockfile imported). `pnpm test` builds into a
   temporary directory and checks the output. `pnpm run e2e` is Playwright, as in Streamlane and

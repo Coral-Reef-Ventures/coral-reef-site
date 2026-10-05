@@ -12,20 +12,28 @@
     "web:dev": "pnpm --filter @crv/web dev",
     "web:build": "pnpm --filter @crv/web build",
     "test": "node --test test/*.test.ts && vitest run",
-    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter @crv/web typecheck",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p amplify && pnpm --filter @crv/web typecheck",
     "lint": "biome check .",
     "format": "biome check --write .",
     "e2e": "playwright test",
-    "intentset": "pnpm dlx @intentset/cli@0.5.0 validate --level L2"
+    "intentset": "pnpm dlx @intentset/cli@0.5.0 validate --level L2",
+    "sandbox": "ampx sandbox --identifier crv-agent --profile coral-reef --once"
   },
   "dependencies": {
     "@markset-lang/parser": "^0.3.4",
     "@markset-lang/render-html": "^0.3.4"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "1.24.0",
+    "@aws-amplify/backend-cli": "1.9.0",
     "@biomejs/biome": "2.5.13",
     "@playwright/test": "1.63.0",
+    "@types/aws-lambda": "8.10.163",
     "@types/node": "^26.5.1",
+    "aws-cdk": "2.1139.0",
+    "aws-cdk-lib": "2.266.0",
+    "constructs": "10.8.1",
+    "esbuild": "0.25.12",
     "typescript": "^7.0.2",
     "vitest": "4.1.11"
   },
