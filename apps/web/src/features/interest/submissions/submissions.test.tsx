@@ -2,7 +2,7 @@ import { MantineProvider } from "@mantine/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { Submission } from "../../../infrastructure/amplify/api.ts";
-import { countByStatus, isStale, readSubmissionId } from "./model.ts";
+import { countByStatus, isStale, readSubmissionId, rebaseReview, selectableStatuses } from "./model.ts";
 import { SubmissionsTable } from "./SubmissionsTable.tsx";
 
 const now = new Date("2026-10-05T00:00:00Z");
@@ -38,6 +38,31 @@ describe("submissions model", () => {
     expect(readSubmissionId("?id=01ARZ3")).toBe("01ARZ3");
     expect(readSubmissionId("?id=../x")).toBeUndefined();
     expect(readSubmissionId("")).toBeUndefined();
+  });
+});
+
+describe("the review form after the submission changes under it", () => {
+  it("takes the status an invite set, so Save cannot send the old one back", () => {
+    const base = { status: "new", notes: "" } as const;
+    expect(rebaseReview(base, base, { status: "invited", notes: "" })).toEqual({ status: "invited", notes: "" });
+    // A status picked and not saved before the invite was picked against a submission that no longer holds.
+    expect(rebaseReview({ status: "reviewing", notes: "" }, base, { status: "invited", notes: "" }).status).toBe(
+      "invited",
+    );
+  });
+
+  it("keeps notes the admin typed and has not saved, and follows the server's otherwise", () => {
+    const base = { status: "new", notes: "a" } as const;
+    expect(rebaseReview({ status: "new", notes: "typed" }, base, { status: "invited", notes: "a" }).notes).toBe(
+      "typed",
+    );
+    expect(rebaseReview({ status: "new", notes: "a" }, base, { status: "new", notes: "saved" }).notes).toBe("saved");
+  });
+
+  it("offers invited only to an invited submission, and nothing else to one", () => {
+    expect(selectableStatuses("invited")).toEqual(["invited"]);
+    expect(selectableStatuses("new")).toEqual(["new", "reviewing", "declined", "archived"]);
+    expect(selectableStatuses("declined")).not.toContain("invited");
   });
 });
 

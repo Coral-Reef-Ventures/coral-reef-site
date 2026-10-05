@@ -2,12 +2,12 @@
 
 import { Button, Group, Select, Stack, Text, Textarea, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { SUBMISSION_STATUSES, type Submission, type SubmissionStatus } from "../../../infrastructure/amplify/api.ts";
+import type { Submission, SubmissionStatus } from "../../../infrastructure/amplify/api.ts";
 import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { InviteForm } from "../../access/invitations/index.ts";
 import { ErrorNotice, formatWhen, messageOf, titleCase, useLoad } from "../../admin/shell/index.ts";
 import { ActivityList } from "../../people/activity/index.ts";
-import { readSubmissionId } from "./model.ts";
+import { type Review, readSubmissionId, rebaseReview, selectableStatuses } from "./model.ts";
 
 /**
  * One submission, by `?id=`: what the visitor wrote (shown as text, never as markup), a status and notes, the
@@ -32,6 +32,18 @@ function Loaded({ id }: { id: string }) {
 function Detail({ submission, reload }: { submission: Submission; reload: () => void }) {
   const [status, setStatus] = useState<SubmissionStatus>(submission.status);
   const [notes, setNotes] = useState(submission.notes);
+  // What the form was seeded from. A reload after a save or an invite brings a new submission without remounting
+  // (useLoad keeps the old result on screen while it reloads), so the form is moved onto it here, during render, as
+  // React's "adjusting state when a prop changes" pattern does. Without this the select kept the status from before
+  // an invite, the form read as dirty, and one Save sent that stale status back and undid the invite.
+  const server: Review = { status: submission.status, notes: submission.notes };
+  const [base, setBase] = useState<Review>(server);
+  if (base.status !== server.status || base.notes !== server.notes) {
+    const next = rebaseReview({ status, notes }, base, server);
+    setBase(server);
+    setStatus(next.status);
+    setNotes(next.notes);
+  }
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
   // Decided once: the invite form stays on screen after it succeeds, so the admin can copy the text it shows.
@@ -81,7 +93,9 @@ function Detail({ submission, reload }: { submission: Submission; reload: () => 
             value={status}
             onChange={(value) => value && setStatus(value as SubmissionStatus)}
             allowDeselect={false}
-            data={SUBMISSION_STATUSES.map((s) => ({ value: s, label: titleCase(s) }))}
+            disabled={submission.status === "invited"}
+            description={submission.status === "invited" ? "Set by the invitation." : undefined}
+            data={selectableStatuses(submission.status).map((s) => ({ value: s, label: titleCase(s) }))}
           />
           <Textarea
             label="Notes"
