@@ -9,8 +9,10 @@
   "scripts": {
     "site": "node site/build.ts",
     "site:watch": "node site/serve.ts",
-    "test": "node --test test/*.test.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "web:dev": "pnpm --filter @crv/web dev",
+    "web:build": "pnpm --filter @crv/web build",
+    "test": "node --test test/*.test.ts && vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter @crv/web typecheck",
     "lint": "biome check .",
     "format": "biome check --write .",
     "e2e": "playwright test"
@@ -23,7 +25,8 @@
     "@biomejs/biome": "2.5.13",
     "@playwright/test": "1.63.0",
     "@types/node": "^26.5.1",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "4.1.11"
   },
   "homepage": "https://coralreefventures.com/",
   "packageManager": "pnpm@11.24.0"

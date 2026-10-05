@@ -8,6 +8,10 @@
       "!dist.staging-*",
       "!dist.previous-*",
       "!e2e/.build",
+      "!**/.next",
+      "!**/out",
+      "!**/next-env.d.ts",
+      "!**/*.tsbuildinfo",
       "!test-results",
       "!playwright-report"
     ]
