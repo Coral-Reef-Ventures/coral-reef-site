@@ -24,7 +24,7 @@ An accepted invitation is kept while it is active, or until you ask us to erase 
 
 ## What your browser keeps
 
-Your browser keeps the sign-in tokens, an anonymous identity the form uses to send, and your choice of color scheme. The sites behind the door set one cookie, for one hour, that proves your invitation. Nothing here is used to follow you between sites.
+Your browser keeps the sign-in tokens, an anonymous identity the form uses to send, and your choice of color scheme. The sites behind the door set two cookies of their own: one for 10 minutes when they send you here to sign in, and, once you have signed in with an invitation, one for an hour that proves it. Nothing here is used to follow you between sites.
 
 ## Logs and backups
 
