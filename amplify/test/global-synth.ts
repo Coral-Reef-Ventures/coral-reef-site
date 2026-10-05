@@ -32,9 +32,13 @@ const settings = {
 
 /** Synthesizes the backend the way `ampx` does before a deploy, into `outDir`, reading no account (Streamlane's way). */
 const synth = async (type: keyof typeof settings, outDir: string) => {
+  // The test's own environment, which pnpm (run by CDK's bundler) needs as it was at install, without anything that
+  // could reach an account: a synth reads none.
+  const inherited = Object.fromEntries(
+    Object.entries(process.env).filter(([name]) => !name.startsWith("AWS_") && !name.startsWith("CRV_")),
+  );
   const env: NodeJS.ProcessEnv = {
-    PATH: process.env.PATH,
-    HOME: process.env.HOME,
+    ...inherited,
     CDK_OUTDIR: outDir,
     CDK_CONTEXT_JSON: JSON.stringify({
       "amplify-backend-namespace": "coralreefsite",
