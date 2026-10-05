@@ -5,3 +5,7 @@ dist.previous-*/
 e2e/.build/
 test-results/
 playwright-report/
+apps/web/.next/
+apps/web/out/
+apps/web/next-env.d.ts
+*.tsbuildinfo

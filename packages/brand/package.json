@@ -1,0 +1,11 @@
+{
+  "name": "@crv/brand",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Coral Reef Ventures' mark and color tokens.",
+  "type": "module",
+  "exports": {
+    "./tokens": "./tokens.ts",
+    "./icon.svg": "./icon.svg"
+  }
+}
