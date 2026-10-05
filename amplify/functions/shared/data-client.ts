@@ -33,16 +33,31 @@ const dataClient = () => {
   return client;
 };
 
-/** Runs one document with the function's own IAM role and returns its data, or its first error's code. */
-export const graphql = async <T>(query: string, variables: object): Promise<T> => {
-  const answer = (await (await dataClient()).graphql({ query, variables })) as {
-    data?: T | null;
-    errors?: readonly { message: string }[] | null;
-  };
-  if (answer.errors?.length) throw new Error(answer.errors[0]?.message ?? "request failed");
+type Result<T> = { data?: T | null; errors?: readonly { message?: string }[] | null };
+
+/** The first error's message, which from crv-access is a refusal code and never a value. */
+const firstError = (result: Result<unknown>): string => result.errors?.[0]?.message ?? "request failed";
+
+/**
+ * Runs one document with the function's own IAM role and returns its data, or throws its first error's code. Amplify
+ * throws the whole result, not an Error, when a response carries errors.
+ */
+export const runDocument = async <T>(client: Graphql, query: string, variables: object): Promise<T> => {
+  let answer: Result<T>;
+  try {
+    answer = (await client.graphql({ query, variables })) as Result<T>;
+  } catch (thrown) {
+    if (thrown instanceof Error) throw thrown;
+    throw new Error(firstError(thrown as Result<T>));
+  }
+  if (answer.errors?.length) throw new Error(firstError(answer));
   if (answer.data === undefined || answer.data === null) throw new Error("request returned nothing");
   return answer.data;
 };
+
+/** One document through this container's client. */
+export const graphql = async <T>(query: string, variables: object): Promise<T> =>
+  runDocument<T>(await dataClient(), query, variables);
 
 /** The documents the triggers and the sweep send. */
 export const documents = {

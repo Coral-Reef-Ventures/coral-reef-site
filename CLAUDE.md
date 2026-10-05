@@ -76,7 +76,11 @@ CRV-014 and supersedes CRV-007).
   `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`; set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` and
   placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first, piped from `printf`, not
   `echo`: the client id goes into the identity pool, which refuses its trailing newline); delete it afterwards with
-  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes` and remove the two secrets.
+  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes`, remove the two secrets, and delete
+  the `/aws/lambda/amplify-coralreefsite-crv*` log groups Amplify's own custom-resource functions leave behind (they
+  are created on first use, so no stack owns them). The key waits KMS's 7 days before it goes. On the sandbox an
+  uninvited AdminCreateUser was refused with `NOT_INVITED` through the whole chain (trigger, AppSync with IAM,
+  crv-access) in about 3.5 s cold, under Cognito's 5-second trigger limit.
   defineAuth always replaces the Cognito domain prefix with a hash, so `backend.ts` sets the fixed one on the domain
   resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
   project with the branch.

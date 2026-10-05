@@ -9,7 +9,7 @@ import {
   roles,
   userIdentity,
 } from "../../test/access-fixture.ts";
-import { operations } from "./access.ts";
+import { createAccess, operations } from "./access.ts";
 import { callerOf } from "./caller.ts";
 
 /**
@@ -61,6 +61,16 @@ describe("authorization", () => {
     );
     if (ok) expect(outcome).not.toBe("FORBIDDEN");
     else expect(outcome).toBe("FORBIDDEN");
+  });
+
+  it("reads the operation from the top of the event, where Amplify's invoke step puts it, as well as from info", async () => {
+    const f = fixture();
+    const handler = createAccess(f.deps);
+    const identity = roleIdentity(roles.preSignUp);
+    const args = { email: "nobody@example.com", triggerSource: "PreSignUp_ExternalProvider" };
+    const refused = { admitted: false, reason: "NOT_INVITED", admin: false };
+    expect(await handler({ fieldName: "checkAdmission", arguments: args, identity })).toEqual(refused);
+    expect(await handler({ info: { fieldName: "checkAdmission" }, arguments: args, identity })).toEqual(refused);
   });
 
   it("refuses an operation it does not know", async () => {

@@ -46,9 +46,14 @@ export const operations: Record<string, Operation> = {
   },
 };
 
+/**
+ * The event a named handler receives. Amplify's invoke step puts the field name at the top (`fieldName`, as the
+ * sandbox showed); a direct Lambda resolver puts it under `info`, so both are read, as Streamlane's writer does.
+ */
 export type AppSyncEvent = {
   arguments?: Args;
   identity?: unknown;
+  fieldName?: string;
   info?: { fieldName?: string; parentTypeName?: string };
 };
 
@@ -58,7 +63,7 @@ export type AppSyncEvent = {
  * leaves in an error. The log holds the operation, the outcome and the error's name, nothing more.
  */
 export const createAccess = (deps: Deps) => async (event: AppSyncEvent) => {
-  const name = event.info?.fieldName ?? "";
+  const name = event.fieldName ?? event.info?.fieldName ?? "";
   const operation = Object.hasOwn(operations, name) ? operations[name] : undefined;
   if (!operation) {
     log("access.refused", { operation: "unknown", status: "UNKNOWN_OPERATION" });
