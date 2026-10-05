@@ -1,10 +1,9 @@
 import { MantineProvider } from "@mantine/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import type { AdminAccess } from "../../../infrastructure/amplify/api.ts";
-import { AdminGate } from "./AdminGate.tsx";
+import { AdminGate, type GateAccess } from "./AdminGate.tsx";
 
-const render = (access: AdminAccess | null, problem?: string) =>
+const render = (access: GateAccess | null, problem?: string) =>
   renderToStaticMarkup(
     <MantineProvider>
       <AdminGate access={access} onSignIn={() => {}} problem={problem}>

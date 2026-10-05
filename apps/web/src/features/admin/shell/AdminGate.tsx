@@ -2,8 +2,10 @@
 
 import { Button, Stack, Text } from "@mantine/core";
 import type { ReactNode } from "react";
-import type { AdminAccess } from "../../../infrastructure/amplify/api.ts";
 import { ErrorNotice } from "./AdminShell.tsx";
+
+/** The admin backend's answer before the views load (the binding's AdminAccess, which the shell does not import). */
+export type GateAccess = "ready" | "signed-out" | "not-admin" | "no-backend";
 
 /**
  * What stands before the views: nothing while the session is read; with no session, the door's sign-in; signed in
@@ -16,7 +18,7 @@ export function AdminGate({
   problem,
   children,
 }: {
-  access: AdminAccess | null;
+  access: GateAccess | null;
   onSignIn: () => void;
   problem?: string;
   children: ReactNode;
