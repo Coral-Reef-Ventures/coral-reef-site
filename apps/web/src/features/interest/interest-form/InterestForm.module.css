@@ -1,0 +1,145 @@
+/* Native controls, drawn from the page's own tokens, so the form follows the scheme the reader chose. */
+.form {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  max-width: 38rem;
+  margin-top: 2rem;
+}
+
+.row {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 40rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field label,
+.interests legend {
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--ms-fg-muted);
+}
+
+.field input,
+.field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  color: var(--ms-fg);
+  background: var(--ms-bg);
+  border: 1px solid var(--ms-fg-muted);
+  border-radius: var(--ms-radius);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field [aria-invalid="true"] {
+  border-color: var(--crv-error);
+  border-width: 2px;
+}
+
+.interests {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.interests legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.choice input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--crv-focus);
+}
+
+.trap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.notice {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ms-fg-muted);
+}
+
+.actions {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.send {
+  min-height: 3rem;
+  padding: 0.65rem 1.5rem;
+  font: inherit;
+  font-weight: 650;
+  color: var(--ms-bg);
+  background: var(--ms-fg);
+  border: 1px solid var(--ms-fg);
+  border-radius: var(--ms-radius);
+  cursor: pointer;
+}
+
+.send:hover:not(:disabled) {
+  background: var(--ms-fg-muted);
+}
+
+.send:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.error {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--crv-error);
+}
+
+.sent {
+  max-width: 38rem;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--crv-intentset);
+  background: var(--ms-surface);
+  font-size: 1.1rem;
+}
