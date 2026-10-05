@@ -237,6 +237,10 @@ The page at `/privacy/`, which Google's consent screen links to. Its periods are
 which Gary confirmed with the page on 2026-10-05 (plan decision D3). They are constants in `amplify/areas/retention.ts`,
 and a test holds the page to them, so a changed period changes this page and needs Gary's approval again.
 
+The third-cookie sentence in "What your browser keeps" ("A third, kept for 30 days ...") is Gary's own wording,
+approved on 2026-10-05 when he chose to keep the door's sign-back-in cookie (`__Host-crv_door_seen`, reef 0.4.0). It
+went live before either product site was locked, so the page was accurate when the cookie first could be set.
+
 ```markdown file=apps/web/content/privacy.md
 ---
 markset: 0
@@ -264,7 +268,7 @@ An accepted invitation is kept while it is active, or until you ask us to erase 
 
 ## What your browser keeps
 
-Your browser keeps the sign-in tokens, an anonymous identity the form uses to send, and your choice of color scheme. The sites behind the door set two cookies of their own: one for 10 minutes when they send you here to sign in, and, once you have signed in with an invitation, one for an hour that proves it. Nothing here is used to follow you between sites.
+Your browser keeps the sign-in tokens, an anonymous identity the form uses to send, and your choice of color scheme. The sites behind the door set two cookies of their own: one for 10 minutes when they send you here to sign in, and, once you have signed in with an invitation, one for an hour that proves it. A third, kept for 30 days and holding nothing about who you are, only remembers that this browser has signed in before, so an expired hour can renew without stopping you. Nothing here is used to follow you between sites.
 
 ## Logs and backups
 
