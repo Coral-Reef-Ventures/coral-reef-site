@@ -22,6 +22,14 @@ after the shared vision. The founder introduction is Gary's own text, given 2026
 Before this, the door approved on 2026-10-05 read "Building for software teams in the agentic era." over the four
 cards; it is in the history at `apps/web/content/door.md` before this change.
 
+## The whitepaper, `/whitepaper/` (proposed 2026-10-06)
+
+`apps/web/content/whitepaper.md`, and the PDF it came from at `/coral-reef-whitepaper.pdf` (`apps/web/public/`),
+ungated. Gary's own text, "Keeping Product Intent Connected in Agentic Software Development" (whitepaper draft,
+October 2026), given 2026-10-06, converted to Markset with his leave to reformat. The words are his; what changed is
+form: the title in sentence case, the bracketed citations as links to the sources, the five lifecycle stages as a
+steps list, the two tables as Markset tables, and dates written 2026-10-05.
+
 ## The product cards (approved 2026-10-03 and 2026-10-04)
 
 `apps/web/lib/product-facts.ts`. The cards' taglines match each product's own home page word for word

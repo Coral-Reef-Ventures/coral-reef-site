@@ -33,18 +33,30 @@ The answers sit in the code, the tracker, the test runs and what users report. T
 ***
 
 {.eyebrow}
-The direction we are building toward
+What we build
 
-## One thread, from intent to feedback.
+## Two open foundations. Two products.
 
 {.lead}
-This is where the products are heading, not how they work together today. Markset and Intentset are open source; Streamlane is in development, and Driftline is in planning.
+Markset and Intentset are open foundations: open source, and available today. Streamlane and Driftline are products: focused tools we are still building.
+
+{{products}}
+
+***
+
+{.eyebrow}
+The direction we are building toward
+
+## Where each one fits, from intent to feedback.
+
+{.lead}
+Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience. That is the direction we are building toward, not how the four work together today.
 
 :::steps{.lifecycle}
 1. **Intent.** Write down what the product promises, and who owns each promise. [Intentset]{.kicker .intentset}
 2. **Work.** Plan each change and move it forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
 3. **Verification.** See which promises have a check passing on this commit, and which have no check at all. [Intentset]{.kicker .intentset}
-4. **Release.** Know what each release is meant to do. [Driftline]{.kicker .driftline}
+4. **Release.** Record what each release is meant to do for users, before it ships. [Driftline]{.kicker .driftline}
 5. **Feedback.** Watch real users meet it, ask them why when adoption stalls, and take what you learn back to intent. [Driftline]{.kicker .driftline}
 :::
 
@@ -52,20 +64,20 @@ This is where the products are heading, not how they work together today. Markse
 **Under every step, Markset.** Records stay readable Markdown that agents write and people review. Intentset's records are already Markset documents.
 
 {.note}
-None of the four requires another.
+None of the four requires another. Use each where it helps your team.
 
 ***
 
 {.eyebrow}
 Whitepaper
 
-## The thinking behind it.
+## Keeping product intent connected in agentic software development.
 
 {.lead}
-[WHITEPAPER SUMMARY: awaiting Gary]
+As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products could keep intent, execution and outcomes connected, separating what exists today from what is proposed.
 
 {.actions}
-[[Read the whitepaper](/whitepaper/)]{.button}
+[[Read the whitepaper](/whitepaper/)]{.button .primary} [[Download the PDF](/coral-reef-whitepaper.pdf)]{.button}
 
 {.note}
 Free to read, with no form and no sign-up.
@@ -86,18 +98,6 @@ Have an agent model one capability your product already has, from its code, test
 {.paths}
 - **Markset on its own.** For documents your agents write and people want to read, [start with Markset](https://markset.org).
 - **Streamlane and Driftline.** Neither is publicly available yet. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
-
-***
-
-{.eyebrow}
-The products
-
-## Four products. One direction.
-
-{{products}}
-
-{.note}
-These offerings share a direction, not an adoption requirement. Use each where it helps your team.
 
 ***
 

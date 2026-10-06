@@ -22,22 +22,22 @@ describe("the door's content", () => {
     }
   });
 
-  // The order of the 2026-10-06 rewrite: the outcome, the problem before the products, the direction, the whitepaper
-  // after it, where to start, the products, then the example, the internal pilot, the founder and the contact.
+  // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
+  // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the internal pilot,
+  // the founder and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software.",
       "Agents change the code. Your team still answers for the product.",
-      "One thread, from intent to feedback.",
-      "None of the four requires another.",
-      "The thinking behind it.",
-      "Try Intentset on one capability.",
-      "Four products. One direction.",
+      "Two open foundations. Two products.",
       "Markset",
       "Intentset",
       "Streamlane",
       "Driftline",
-      "These offerings share a direction, not an adoption requirement.",
+      "Where each one fits, from intent to feedback.",
+      "None of the four requires another.",
+      "Keeping product intent connected in agentic software development.",
+      "Try Intentset on one capability.",
       "One behavior, its owner and its status.",
       "We tried it first on our own product.",
       "Why I started Coral Reef Ventures.",
@@ -50,6 +50,17 @@ describe("the door's content", () => {
       expect(found, phrase).toBeGreaterThan(-1);
       at = found;
     }
+  });
+
+  // Markset and Intentset are open foundations, not products (Gary, 2026-10-06): only Streamlane and Driftline are.
+  it("never calls the four products", () => {
+    expect(door).not.toMatch(/\b(four|the) products\b/i);
+    expect(door).toContain("Markset and Intentset are open foundations");
+  });
+
+  it("offers the whitepaper to read and to download, ungated", () => {
+    expect(door).toContain('href="/coral-reef-whitepaper.pdf"');
+    expect(existsSync(join(import.meta.dirname, "..", "public", "coral-reef-whitepaper.pdf"))).toBe(true);
   });
 
   it("offers the three explicit actions in the hero, and again to close", () => {
