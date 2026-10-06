@@ -183,7 +183,7 @@ optional site and test host). It is a workflow of its own so a locked site's sta
 repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's OIDC; without it, it runs with
 `--no-session` and warns.
 
-**The role CI needs (not created yet).** In the coral-reef project, us-east-2:
+**The role CI needs.** In the coral-reef project, us-east-2. Steps 2 to 4 were done on 2026-10-06; step 1 is what is left:
 
 1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`.
    **The project's SCP denies it.** `iam:CreateOpenIDConnectProvider` was refused with an explicit deny in a service
@@ -249,10 +249,12 @@ Phase 3 locks driftline.app and then streamlane.app (the door plan's "Phase 3").
 
 What is left:
 
-1. The role `crv-leak-check` (above), so the daily run has a session. It waits on the project's SCP, which denies
-   the OIDC provider it needs (2026-10-06): only activating advanced features lifts that, which is Gary's decision.
-2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and the daily run will
-   once the role exists.
+1. GitHub's OIDC provider (step 1 of "The role CI needs" above). The role and the repository variable exist
+   (2026-10-06), and their policies are as written there, but the first manual run failed at "Could not assume role
+   with OIDC: The web identity token provided could not be validated". Once the provider exists, run Actions, "Leak
+   check", by hand and read its log.
+2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and so does the daily
+   run.
 
 ## Rollback
 

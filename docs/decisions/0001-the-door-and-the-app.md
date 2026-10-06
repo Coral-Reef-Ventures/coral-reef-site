@@ -1,6 +1,6 @@
 # 0001. coralreefventures.com becomes the door, and the app behind it
 
-Date: 2026-10-04. Status: proposed (Gary approves with the door copy).
+Date: 2026-10-04. Status: accepted (Gary, 2026-10-06; the door copy it goes with was approved 2026-10-05).
 
 Supersedes, for hosting and for CRV-007: the GitHub Pages hosting decided earlier the same day (#11).
 

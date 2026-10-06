@@ -1,8 +1,8 @@
 # Coral Reef Ventures website requirements v0.2
 
-**Status:** v0.2 was proposed on 2026-10-04, to be approved with the door copy in `site-copy.md` (plan step P8). Gary
-approved the door copy, the privacy page with its retention periods and the invitation text on 2026-10-05; his approval
-named that copy, and this file's requirement text is recorded as proposed until he confirms it too. The decision behind it is
+**Status:** v0.2, approved. It was proposed on 2026-10-04 with the door copy in `site-copy.md` (plan step P8). Gary
+approved the door copy, the privacy page with its retention periods and the invitation text on 2026-10-05, and this
+file's requirement text on 2026-10-06. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
 2026-10-05. The GitHub Pages page that met v0.1, CRV-007
 included, was deleted with its tests on 2026-10-06, the day after the cutover, ahead of the planned 14 days.
