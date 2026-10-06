@@ -253,13 +253,11 @@ What is left:
    the OIDC provider it needs (2026-10-06): only activating advanced features lifts that, which is Gary's decision.
 2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and the daily run will
    once the role exists.
-3. Each product repository's `apps/site/hosting/previous/` is deleted 14 days after its flip (2026-10-20), in its own
-   commit, as its README says.
 
 ## Rollback
 
 **There is no Pages site to go back to.** The GitHub Pages page was deleted and Pages turned off in Phase 2c
-(2026-10-19), so a rollback of the domain is a redeploy of an earlier commit of this app (Amplify's console, the branch's
+(2026-10-06), so a rollback of the domain is a redeploy of an earlier commit of this app (Amplify's console, the branch's
 deployments), not a move to another host. NameSilo still holds its old records, which point at GitHub Pages and would
 now serve nothing.
 

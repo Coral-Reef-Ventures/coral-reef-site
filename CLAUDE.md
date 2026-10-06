@@ -4,7 +4,8 @@
 `docs/decisions/0001-the-door-and-the-app.md`, proposed 2026-10-04): the door to Streamlane and Driftline and the
 company's system of record for interest and access. Next.js static export and Mantine on Amplify Gen 2, with the
 door's copy in Markset (`apps/web/content/`). It replaced the one-page GitHub Pages site at the cutover (plan Phase
-2b, 2026-10-05); Phase 2c deleted that page and turned Pages off on 2026-10-19.
+2b, 2026-10-05); Phase 2c deleted that page and turned Pages off on 2026-10-06, ahead of the planned 14 days, at
+Gary's decision.
 
 Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
 `website-requirements.md` holds the CRV requirements the tests are named after (v0.2, adds CRV-009 to CRV-014 and
@@ -129,8 +130,8 @@ replaced at the cutover by the apex ALIAS, the `www` CNAME and the ACM validatio
 Google Workspace's MX, SPF and DKIM, and Google's verification CNAME, unchanged. NameSilo's own records are kept, so
 rolling back is setting its nameservers again.
 
-GitHub Pages, decided earlier on 2026-10-04 (#11), stayed deployed until 2026-10-19 in case the switch had to be
-undone. Phase 2c then deleted the page, its tests and its workflow, and turned Pages off, so there is no longer a Pages
+GitHub Pages, decided earlier on 2026-10-04 (#11), was to stay deployed until 2026-10-19 in case the switch had to be
+undone; Gary retired it early, on 2026-10-06. Phase 2c then deleted the page, its tests and its workflow, and turned Pages off, so there is no longer a Pages
 site to roll back to.
 
 ## Open launch decisions
