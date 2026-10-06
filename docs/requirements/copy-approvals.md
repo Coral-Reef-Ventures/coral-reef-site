@@ -25,10 +25,11 @@ cards; it is in the history at `apps/web/content/door.md` before this change.
 ## The whitepaper, `/whitepaper/` (proposed 2026-10-06)
 
 `apps/web/content/whitepaper.md`, and the PDF it came from at `/coral-reef-whitepaper.pdf` (`apps/web/public/`),
-ungated. Gary's own text, "Keeping Product Intent Connected in Agentic Software Development" (whitepaper draft,
-October 2026), given 2026-10-06, converted to Markset with his leave to reformat. The words are his; what changed is
-form: the title in sentence case, the bracketed citations as links to the sources, the five lifecycle stages as a
-steps list, the two tables as Markset tables, and dates written 2026-10-05.
+ungated. Gary's own text, "Keeping Product Intent Connected in Agentic Software Development" (October 2026), given
+2026-10-06, converted to Markset with his leave to reformat. The words are his; what changed is form: the title in
+sentence case, the bracketed citations as links to the sources, the five lifecycle stages as a steps list, the two
+tables as Markset tables, and dates written 2026-10-05. Its label dropped "draft" at Gary's request the same day;
+the PDF still prints "Whitepaper draft" on its first page until he replaces it.
 
 ## The product cards (approved 2026-10-03 and 2026-10-04)
 

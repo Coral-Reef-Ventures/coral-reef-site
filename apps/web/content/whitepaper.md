@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Whitepaper draft · October 2026
+Whitepaper · October 2026
 
 # Keeping product intent connected in agentic software development
 

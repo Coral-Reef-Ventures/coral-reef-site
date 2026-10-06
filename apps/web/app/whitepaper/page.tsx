@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title, description },
 };
 
-/** Gary's whitepaper (draft, October 2026) in Markset, ungated, with the PDF it came from beside it. */
+/** Gary's whitepaper (October 2026) in Markset, ungated, with the PDF it came from beside it. */
 export default function Page() {
   return <DoorDocument file="whitepaper.md" />;
 }
