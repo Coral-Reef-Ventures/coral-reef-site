@@ -16,6 +16,9 @@ body {
   --ms-radius: 4px;
 
   --ms-fg: light-dark(#2e3836, #ece7dc);
+  /* Markset's own accent (its steps' markers, its tabs) is the site's ink, as the primary buttons are, not Markset's
+   * default blue. */
+  --ms-accent: var(--ms-fg);
   --ms-fg-muted: light-dark(#5b6159, #a9ab9f);
   --ms-bg: light-dark(#fbf5ed, #141a19);
   --ms-surface: light-dark(#f4ece0, #1b2221);
@@ -313,6 +316,10 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 @media (min-width: 68rem) {
   .door[data-page="door"] .ms-document > hr:first-of-type { margin-top: 6rem; }
 }
+
+/* Markset numbers a step in white on --ms-accent; on the ink accent the number takes the page's ground instead, so it
+ * reads in both schemes. */
+.ms-step::before { color: var(--ms-bg); }
 
 /* ---- actions ------------------------------------------------------------------- */
 /* A row of the page's explicit actions: Try Intentset, Read the whitepaper, Contact us. The one main action in a row
