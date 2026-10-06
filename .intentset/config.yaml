@@ -2,7 +2,6 @@
 # The model is written ahead of the code, so every record is a draft until a person promotes it. Validated with the
 # released CLI, which is not a dependency of this repository:
 #   pnpm dlx @intentset/cli@0.5.0 validate --level L2
-# The Pages site (site/) is the old public page and is not modelled.
 repository: "Coral-Reef-Ventures/coral-reef-site"
 scope:
   - "product/**/*.md"

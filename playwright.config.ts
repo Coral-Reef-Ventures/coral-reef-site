@@ -3,9 +3,9 @@ import process from "node:process";
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Screen tests against the built page, at the two widths CRV-005 names and in
- * both color schemes. global-setup.ts builds the site into e2e/.build, so the
- * run never races dist/ against site:watch.
+ * Screen tests against the app's static export, at the two widths CRV-005
+ * names and in both color schemes. global-setup.ts builds and serves it with
+ * the stub backends.
  *
  *   pnpm exec playwright install chromium   # once
  *   pnpm run e2e
