@@ -235,26 +235,24 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
 
 ## Phase 3: status
 
-Phase 3 locks driftline.app and then streamlane.app (the door plan's "Phase 3"). Checked 2026-10-06, about 05:15 CDT:
+Phase 3 locks driftline.app and then streamlane.app (the door plan's "Phase 3"). Checked 2026-10-06, about 06:30 CDT:
 
 | Exit item | State | Evidence |
 | --- | --- | --- |
-| Both domains serve only to invitees | **driftline.app: done. streamlane.app: not yet** | driftline.app was locked 2026-10-06 (Amplify job 28, driftline cb030f8): `d39wmoekppxvpd` is `WEB_COMPUTE` with the app root `apps/site-door` (driftline #16), and a page load answers the coming-soon page as a 401 with `no-store` and `noindex`. `d32jlosp0d9m43` is still `WEB` and `https://streamlane.app/` answers 200 with the site. |
-| The leak check is green on every host and scheduled daily | **driftline: green; daily without a session** | `pnpm run leak-check --site driftline`, 2026-10-06: 280 requests on the apex, `www` and the amplifyapp.com host, clean, with a session minted as `crv-check@example.com`. driftline is `locked` in `scripts/leak-check/sites.ts`, so the daily run checks it, but without a session until the role `crv-leak-check` exists. |
-| Both `amplifyapp.com` hosts return 403 | **driftline: done** | `main.d39wmoekppxvpd.amplifyapp.com` answers 403. streamlane's answers 200 until its app is flipped. |
+| Both domains serve only to invitees | **Done** | Both apps are `WEB_COMPUTE` with the app root `apps/site-door` (driftline #16, streamlane #348: from an app root whose `package.json` uses Next.js, Amplify runs its own Next.js deployment and refuses the gate's, which failed driftline's first three builds). driftline.app was locked by Amplify job 28 (driftline cb030f8), streamlane.app by job 21 (streamlane 49eb5da), both 2026-10-06. A page load answers the coming-soon page as a 401 with `no-store` and `noindex`; anything else gets an empty 401. Each compute log group keeps 30 days. |
+| The leak check is green on every host and scheduled daily | **Green; daily without a session** | `pnpm run leak-check --site <id>`, 2026-10-06, signed in as `crv-check@example.com`: driftline 280 requests (53 paths), streamlane 470 requests (91 paths), clean on the apex, `www` and the amplifyapp.com host. Both are `locked` in `scripts/leak-check/sites.ts`, so the daily run checks both, without a session until the role `crv-leak-check` exists. |
+| Both `amplifyapp.com` hosts return 403 | **Done** | `main.d39wmoekppxvpd.amplifyapp.com` and `main.d32jlosp0d9m43.amplifyapp.com` answer 403; `www` on each redirects to the apex before the gate. |
 | The temporary apps are deleted | **Not applicable** | None was created: `create-app` falls back to deploy keys, which the organization disables. |
 | The door cards are updated | **Done, ahead of the lock** | The Streamlane and Driftline cards have read "Open to invited guests." since the cutover (CRV-003 v0.2, `apps/web/lib/products.ts`). |
 
-What is left, in order:
+What is left:
 
-1. streamlane.app the way driftline.app was locked: first give it an app root Amplify does not take for Next.js, as
-   driftline #16 did (from `apps/site`, whose `package.json` uses Next.js, Amplify runs its own Next.js deployment
-   whatever the branch's framework says, and the first three driftline builds failed on it). Then streamlane's
-   `apps/site/hosting/README.md` ("Locking the live app"), the compute log group's retention to 30 days,
-   `pnpm run leak-check --site streamlane`, and the change that sets its `locked: true`.
-2. The role `crv-leak-check` (above), so the daily run has a session.
-3. Once both are locked and checked: revoke `crv-check@example.com`'s invitations and delete its Cognito user (an
-   admin's, from /admin/), unless the daily check is to keep using it.
+1. The role `crv-leak-check` (above), so the daily run has a session. The agent's permission system refused creating
+   the OIDC provider (2026-10-06), so it is Gary's, from the steps above.
+2. Revoke `crv-check@example.com`'s invitations and delete its Cognito user (an admin's, from /admin/), unless the
+   daily check is to keep using it, which it needs once the role exists.
+3. Each product repository's `apps/site/hosting/previous/` is deleted 14 days after its flip (2026-10-20), in its own
+   commit, as its README says.
 
 ## Rollback
 

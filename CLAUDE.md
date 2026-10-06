@@ -67,7 +67,7 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   period changes the privacy copy, which is proposed copy again until Gary approves it.
 - **The leak check proves the lock** (CRV-014): `scripts/leak-check.ts`, daily in `.github/workflows/leak-check.yml`
   (a workflow of its own, so a locked site never fails a pull request) and by hand after every product deploy. It
-  checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip.
+  checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip (both are, since 2026-10-06).
   Its session is an existing invitee (`crv-check@example.com`) it sets a fresh password for and signs in as; it makes
   no admin call and never invites, erases or creates anyone, because inviting is an admin's job (go-ahead §17c).
   `apps/web/hosting/README.md`, "The leak check", has how, and the IAM role CI needs, `crv-leak-check`, which does not
@@ -146,11 +146,11 @@ Its custom domain is removed once `www`'s old cached records expire. Phase 2c th
 
 From the requirements' launch gates, not yet settled:
 
-- **Phase 3, the lock: driftline.app is locked, streamlane.app is not yet** (2026-10-06). driftline.app went behind
-  the door from the app root `apps/site-door` (driftline #16: from an app root whose `package.json` uses Next.js,
-  Amplify runs its own Next.js deployment and refuses the gate's), its leak check is clean and it is `locked` in
-  `scripts/leak-check/sites.ts`. streamlane.app builds its lock (#344) but needs the same app root before it is
-  flipped. `apps/web/hosting/README.md`, "Phase 3: status", has the exit list and what is left.
+- **Phase 3, the lock, is applied** (2026-10-06). driftline.app and streamlane.app serve only to invitees, from the
+  app root `apps/site-door` in each repository (driftline #16, streamlane #348: from an app root whose `package.json`
+  uses Next.js, Amplify runs its own Next.js deployment and refuses the gate's). Both leak checks are clean and both
+  sites are `locked` in `scripts/leak-check/sites.ts`. Left: the role `crv-leak-check`, which the agent's permission
+  system refused to create, so the daily run still has no session. `apps/web/hosting/README.md`, "Phase 3: status".
 
 - Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
   privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.

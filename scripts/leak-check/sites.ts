@@ -27,7 +27,7 @@ export const sites: readonly LockedSite[] = [
     id: "streamlane",
     apex: "streamlane.app",
     appId: "d32jlosp0d9m43",
-    locked: false,
+    locked: true,
     pages: [
       "/",
       "/pricing/",
