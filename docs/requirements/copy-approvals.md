@@ -10,7 +10,7 @@ content files became the copy's source.
 approved is proposed again until he approves the new words. Do not write marketing copy, domains, GitHub links,
 contact channels or brand assets that are not recorded here; the one contact address is hello@coralreefventures.com.
 
-## The door, `/` (proposed 2026-10-06)
+## The door, `/` (approved 2026-10-06)
 
 `apps/web/content/door.md`, the page's title and description in `apps/web/app/page.tsx`, and the footer statement in
 `apps/web/lib/site.tsx`. Rewritten at Gary's request on 2026-10-06: lead with the customer's outcome, explain the
@@ -22,7 +22,7 @@ after the shared vision. The founder introduction is Gary's own text, given 2026
 Before this, the door approved on 2026-10-05 read "Building for software teams in the agentic era." over the four
 cards; it is in the history at `apps/web/content/door.md` before this change.
 
-## The whitepaper, `/whitepaper/` (proposed 2026-10-06)
+## The whitepaper, `/whitepaper/` (approved 2026-10-06)
 
 `apps/web/content/whitepaper.md`, ungated. Gary's own text, "Keeping Product Intent Connected in Agentic Software Development" (October 2026), given
 2026-10-06, converted to Markset with his leave to reformat. The words are his; what changed is form: the title in
