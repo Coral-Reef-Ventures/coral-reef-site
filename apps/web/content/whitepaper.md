@@ -10,9 +10,6 @@ Whitepaper · October 2026
 {.lead}
 The opportunity and approach behind Coral Reef Ventures.
 
-{.actions}
-[[Download the PDF](/coral-reef-whitepaper.pdf)]{.button}
-
 ## Executive overview
 
 Software teams need to know what their product is supposed to do, whether a change preserves that promise, and whether users achieve the intended result. As AI agents take on more implementation work, those questions become harder to answer from code review and scattered documents alone.

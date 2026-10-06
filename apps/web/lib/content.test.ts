@@ -65,9 +65,12 @@ describe("the door's content", () => {
     }
   });
 
-  it("offers the whitepaper to read and to download, ungated", () => {
-    expect(door).toContain('href="/coral-reef-whitepaper.pdf"');
-    expect(existsSync(join(import.meta.dirname, "..", "public", "coral-reef-whitepaper.pdf"))).toBe(true);
+  // The whitepaper is one page, kept once: no PDF beside it to maintain twice (Gary, 2026-10-06).
+  it("offers the whitepaper as its page, ungated, and nowhere as a PDF", () => {
+    expect(door).toContain('href="/whitepaper/"');
+    expect(door).not.toMatch(/\.pdf\b/);
+    expect(text("whitepaper.md")).not.toMatch(/\.pdf\b/);
+    expect(readdirSync(join(import.meta.dirname, "..", "public")).filter((f) => f.endsWith(".pdf"))).toEqual([]);
   });
 
   // A reader reaches each action in its context, not as a row at the top to skip to (Gary, 2026-10-06).

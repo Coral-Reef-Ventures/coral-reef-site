@@ -311,10 +311,12 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
  * pages alone: the home page from its first rule, the whitepaper (which has none) from its first section heading. */
 .door[data-page="door"] .ms-document > hr ~ *,
 .door[data-page="whitepaper"] .ms-document > :is(h2, h2 ~ *) { max-width: none; }
-/* The hero has no actions row (a reader meets each action in its section), so the network figure beside the lead
- * hangs lower than the dots; the first rule keeps clear of it wherever the figure shows. */
+/* Neither hero has an actions row (a reader meets each action in its section), so the network figure beside the lead
+ * hangs lower than the dots; what follows the hero keeps clear of it wherever the figure shows: the home page's first
+ * rule, the whitepaper's first section heading. */
 @media (min-width: 68rem) {
   .door[data-page="door"] .ms-document > hr:first-of-type { margin-top: 6rem; }
+  .door[data-page="whitepaper"] .ms-document > h2:first-of-type { margin-top: 8rem; }
 }
 
 /* Markset numbers a step in white on --ms-accent; on the ink accent the number takes the page's ground instead, so it

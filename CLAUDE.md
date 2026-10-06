@@ -30,8 +30,8 @@ supersedes CRV-007; its copy approved 2026-10-05 and its requirement text 2026-1
 - **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
   start, the illustrative example, the internal pilot, Gary's founder note and the contact (proposed 2026-10-06,
-  `copy-approvals.md`). `/whitepaper/` is Gary's whitepaper in Markset, with the PDF at `/coral-reef-whitepaper.pdf`,
-  ungated. `/get-involved/`
+  `copy-approvals.md`). `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
+  only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of

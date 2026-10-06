@@ -74,7 +74,7 @@ Whitepaper
 As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution and outcomes connected.
 
 {.actions}
-[[Read the whitepaper](/whitepaper/)]{.button .primary} [[Download the PDF](/coral-reef-whitepaper.pdf)]{.button}
+[[Read the whitepaper](/whitepaper/)]{.button .primary}
 
 {.note}
 Free to read, with no form and no sign-up.
