@@ -22,16 +22,26 @@ describe("the door's content", () => {
     }
   });
 
-  it("carries the approved copy in the approved order", () => {
+  // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
+  // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the internal pilot,
+  // the founder and the contact.
+  it("carries the copy in its order", () => {
     const order = [
-      "Building for software teams in the agentic era.",
-      "Four ideas. One direction.",
+      "Keep control as agents build your software.",
+      "Agents change the code. Your team still answers for the product.",
+      "Two open foundations. Two products.",
       "Markset",
       "Intentset",
       "Streamlane",
       "Driftline",
-      "These offerings share a direction, not an adoption requirement.",
-      "Better foundations for what comes next.",
+      "Where each one fits, from intent to feedback.",
+      "None of the four requires another.",
+      "Keeping product intent connected in agentic software development.",
+      "Try Intentset on one capability.",
+      "One behavior, its owner and its status.",
+      "We tried it first on our own product.",
+      "Why I started Coral Reef Ventures.",
+      "Talk to us.",
       "hello@coralreefventures.com",
     ];
     let at = 0;
@@ -40,6 +50,56 @@ describe("the door's content", () => {
       expect(found, phrase).toBeGreaterThan(-1);
       at = found;
     }
+  });
+
+  // Markset and Intentset are open foundations, not products (Gary, 2026-10-06): only Streamlane and Driftline are.
+  it("never calls the four products", () => {
+    expect(door).not.toMatch(/\b(four|the) products\b/i);
+    expect(door).toContain("Markset and Intentset are open foundations");
+  });
+
+  // The page says what each one is and where it fits, not how early it is (Gary, 2026-10-06).
+  it("does not hedge the narrative with how early it is", () => {
+    for (const hedge of ["building toward", "still building", "not how", "available yet", "available today"]) {
+      expect(door, hedge).not.toContain(hedge);
+    }
+  });
+
+  // The whitepaper is one page, kept once: no PDF beside it to maintain twice (Gary, 2026-10-06).
+  it("offers the whitepaper as its page, ungated, and nowhere as a PDF", () => {
+    expect(door).toContain('href="/whitepaper/"');
+    expect(door).not.toMatch(/\.pdf\b/);
+    expect(text("whitepaper.md")).not.toMatch(/\.pdf\b/);
+    expect(readdirSync(join(import.meta.dirname, "..", "public")).filter((f) => f.endsWith(".pdf"))).toEqual([]);
+  });
+
+  // A reader reaches each action in its context, not as a row at the top to skip to (Gary, 2026-10-06).
+  it("offers each explicit action in its own section, and none in the hero", () => {
+    const hero = door.slice(0, door.indexOf("<hr"));
+    expect(hero).not.toContain('class="actions"');
+    const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
+    expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
+    expect(section("Try Intentset on one capability.")).toContain('href="https://intentset.org/start/"');
+    expect(section("Talk to us.")).toContain("Contact us");
+    expect(door).toContain('href="https://intentset.org/start/"');
+    expect(door).toContain('href="/whitepaper/"');
+    expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  // The example is Intentset's illustrative one and the pilot is internal, and each page says so where it stands.
+  it("labels the example illustrative and the pilot internal, and claims no review or conformance", () => {
+    expect(door).toContain("Illustrative, adapted from Intentset");
+    expect(door).toContain("An internal pilot on one capability, not customer evidence.");
+    expect(door).toContain("the product owner has not yet reviewed them");
+    expect(door).not.toMatch(/\bverified by\b|\bconform/i);
+  });
+
+  // Gary's own words (2026-10-06), unedited: the first and last sentences pin both ends.
+  it("keeps the founder's introduction word for word", () => {
+    expect(door).toContain("I’ve built software products throughout my career.");
+    expect(door).toContain(
+      "My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.",
+    );
   });
 
   it("links a visitor to Markset and Intentset only, and reads 'Open to invited guests' for the two behind the door", () => {
@@ -93,21 +153,16 @@ describe("the privacy page", () => {
   });
 });
 
-describe("site-copy.md, the source of the door's words", () => {
+describe("copy-approvals.md, the record of what Gary approved", () => {
   const root = join(import.meta.dirname, "..", "..", "..");
-  const copy = readFileSync(join(root, "docs", "requirements", "site-copy.md"), "utf8");
-  const files = ["apps/web/content/door.md", "apps/web/content/get-involved.md", "apps/web/content/privacy.md"];
-  const blocks = new Map(
-    [...copy.matchAll(/^```markdown file=(\S+)\n([\s\S]*?)\n```$/gm)].map((m) => [m[1], `${m[2]}\n`] as const),
-  );
+  const log = readFileSync(join(root, "docs", "requirements", "copy-approvals.md"), "utf8");
+  const files = readdirSync(join(root, "apps", "web", "content")).filter((f) => f.endsWith(".md"));
 
-  it("holds a block for each content file, and no other", () => {
-    expect([...blocks.keys()].sort()).toEqual(files);
-  });
-
-  // Copy is approved text: a content file is its block in site-copy.md, changed there first, in the same commit.
-  it.each(files)("%s is its block, verbatim", (file) => {
-    expect(readFileSync(join(root, file), "utf8")).toBe(blocks.get(file));
+  // Copy is approved text: every content file has an entry, which says approved (with a date) or proposed.
+  it.each(files)("has an entry for %s", (file) => {
+    const entry = log.split(/^## /m).find((section) => section.includes(`apps/web/content/${file}`));
+    expect(entry, file).toBeDefined();
+    expect(entry).toMatch(/\((approved|proposed) \d{4}-\d{2}-\d{2}\)/);
   });
 });
 

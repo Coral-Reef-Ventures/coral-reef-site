@@ -21,7 +21,8 @@ const Lockup = () => (
 export const site = createSite({
   name: "Coral Reef Ventures",
   url: siteUrl,
-  description: "Open foundations and focused tools for creating software with humans and AI working together.",
+  description:
+    "Coral Reef Ventures is building open foundations and focused tools to connect product intent, work, verification and what users experience.",
   nav: [{ key: "involved", label: "Get involved", href: "/get-involved/" }],
   lockup: <Lockup />,
   actions: [],
@@ -36,8 +37,8 @@ export const site = createSite({
   footer: {
     maker: (
       <>
-        Open foundations and focused products for software teams. © 2026 Coral Reef Ventures · Write to{" "}
-        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+        Open foundations and focused tools for teams that build software with agents. © 2026 Coral Reef Ventures · Write
+        to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </>
     ),
     links: [{ label: "Privacy", href: "/privacy/" }],

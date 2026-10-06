@@ -1,6 +1,6 @@
 # Coral Reef Ventures website requirements v0.2
 
-**Status:** v0.2, approved. It was proposed on 2026-10-04 with the door copy in `site-copy.md` (plan step P8). Gary
+**Status:** v0.2, approved. It was proposed on 2026-10-04 with the door copy (plan step P8). Gary
 approved the door copy, the privacy page with its retention periods and the invitation text on 2026-10-05, and this
 file's requirement text on 2026-10-06. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
@@ -35,9 +35,10 @@ destinations. This is a concise company site, not a combined product application
 
 ## Content authority
 
-`site-copy.md` is the editorial source. A product links out only to a confirmed destination. Do not invent domain
-ownership or GitHub links. New copy is drafted in `site-copy.md` marked proposed, and goes live only once Gary approves
-it.
+The content files in `apps/web/content/` and the product table in `apps/web/lib/product-facts.ts` are the copy, and
+`copy-approvals.md` records what Gary approved and when. A product links out only to a confirmed destination. Do not
+invent domain ownership or GitHub links. New copy is proposed in its file with an entry in `copy-approvals.md`, and goes
+live only once Gary approves it.
 
 ## Visual direction
 

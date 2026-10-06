@@ -152,8 +152,8 @@ export const invitationView = async (deps: Deps, invitation: Item) => {
 };
 
 /**
- * The invitation text "Copy invitation" prepares (site-copy.md, "Invitation text (proposed, 2026-10-04)"), for Gary to
- * send from his own mail. Proposed copy: it changes there first and here in the same commit.
+ * The invitation text "Copy invitation" prepares, for Gary to send from his own mail. Approved copy
+ * (docs/requirements/copy-approvals.md, "Invitation text"): a change is proposed there in the same commit.
  */
 export const invitationText = (sites: readonly DoorSite[], email: string, door: string) => {
   const names = siteList(sites);

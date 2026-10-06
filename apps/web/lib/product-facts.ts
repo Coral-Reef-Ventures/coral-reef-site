@@ -10,7 +10,7 @@
  * invitation, like streamlane.app, is `plannedDestination` and renders as text. driftline.app gained a
  * `cta` on 2026-10-04, when its site went live with an early-access request.
  *
- * Copy is from docs/requirements/site-copy.md, which is the editorial source.
+ * Approved copy: docs/requirements/copy-approvals.md records why each card reads as it does.
  */
 
 export interface Product {

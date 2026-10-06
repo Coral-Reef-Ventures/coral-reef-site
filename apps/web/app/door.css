@@ -16,12 +16,15 @@ body {
   --ms-radius: 4px;
 
   --ms-fg: light-dark(#2e3836, #ece7dc);
+  /* Markset's own accent (its steps' markers, its tabs) is the site's ink, as the primary buttons are, not Markset's
+   * default blue. */
+  --ms-accent: var(--ms-fg);
   --ms-fg-muted: light-dark(#5b6159, #a9ab9f);
   --ms-bg: light-dark(#fbf5ed, #141a19);
   --ms-surface: light-dark(#f4ece0, #1b2221);
   --ms-border: light-dark(#ddd5c9, #333b39);
 
-  /* The four product accents (site-copy.md layout notes). The bar colors are
+  /* The four product accents (copy-approvals.md, layout notes). The bar colors are
    * decoration; the -text variants are darkened or lightened until they read
    * as text on the page background. */
   --crv-markset: light-dark(#9982bc, #ab97d1);
@@ -236,7 +239,6 @@ header > div:has(.door-scheme-slot) > a:first-child { flex: 0 1 auto; min-width:
 .ms-document > h1 ~ p:has(> .button) { margin-top: 2rem; }
 
 /* ---- product cards ------------------------------------------------------------ */
-.ms-document > h2 ~ .lead + p { max-width: 38rem; }
 .ms-grid.products { --ms-gap: 2rem; margin-top: 2.5rem; }
 .ms-grid.products[data-cols="2"] { --ms-cols: 2; }
 .product {
@@ -301,6 +303,109 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 /* The one contact channel: an address, not a form, so there is still no backend (CRV-007). */
 .ms-document > .contact { margin-top: 2.5rem; font-size: 1.1rem; }
 .contact a { display: inline-block; padding-block: 0.4rem; font-weight: 650; }
+
+/* ---- the home page's and the whitepaper's width --------------------------------------- */
+/* Below the hero, every block on the home page and the whitepaper runs the column's full width, the product grid's, so
+ * each section's right edge lines up with the cards and the rules between sections. The hero keeps its narrower lead
+ * beside the network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for these two
+ * pages alone: the home page from its first rule, the whitepaper (which has none) from its first section heading. */
+.door[data-page="door"] .ms-document > hr ~ *,
+.door[data-page="whitepaper"] .ms-document > :is(h2, h2 ~ *) { max-width: none; }
+/* Neither hero has an actions row (a reader meets each action in its section), so the network figure beside the lead
+ * hangs lower than the dots; what follows the hero keeps clear of it wherever the figure shows: the home page's first
+ * rule, the whitepaper's first section heading. */
+@media (min-width: 68rem) {
+  .door[data-page="door"] .ms-document > hr:first-of-type { margin-top: 6rem; }
+  .door[data-page="whitepaper"] .ms-document > h2:first-of-type { margin-top: 8rem; }
+}
+
+/* Markset numbers a step in white on --ms-accent; on the ink accent the number takes the page's ground instead, so it
+ * reads in both schemes. */
+.ms-step::before { color: var(--ms-bg); }
+
+/* ---- actions ------------------------------------------------------------------- */
+/* A row of the page's explicit actions: Try Intentset, Read the whitepaper, Contact us. The one main action in a row
+ * is .primary, filled, and inverts on hover. */
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.ms-document > :is(.lead, ol, ul, .ms-card, .note) + .actions { margin-top: 2rem; }
+.button.primary a { background: var(--ms-fg); color: var(--ms-bg); }
+.button.primary a:hover { background: transparent; color: var(--ms-fg); }
+
+/* ---- the problem --------------------------------------------------------------- */
+.questions { padding-left: 1.4rem; }
+.questions > li + li { margin-top: 0.85rem; }
+.questions + p { margin-top: 1.5rem; }
+
+/* ---- the lifecycle ------------------------------------------------------------- */
+/* Five steps, intent to feedback, as text: an ordered list, so it reads in order without CSS and needs no image.
+ * Each step names the product working toward it in its accent's text color. Wide, the steps sit side by side under
+ * one rule; narrow, they stack. */
+/* Markset draws each step's number in an accent circle beside it, joined by a line (.ms-step); here the number sits
+ * above the step instead, so the circle and the line are reset. */
+.lifecycle { margin-top: 2rem; padding: 0; list-style: none; }
+.lifecycle > li { position: relative; min-height: 0; padding: 1.1rem 0 0; border-top: 2px solid var(--ms-border); }
+.lifecycle > li::before {
+  content: counter(list-item, decimal-leading-zero) / "";
+  position: static;
+  display: block;
+  width: auto;
+  height: auto;
+  margin-bottom: 0.4rem;
+  border-radius: 0;
+  background: none;
+  font-family: var(--ms-font-mono);
+  font-weight: 600;
+  font-size: 0.72rem;
+  color: var(--ms-fg-muted);
+}
+.lifecycle > .ms-step:not(:last-child)::after { content: none; }
+.lifecycle > .ms-step + .ms-step { margin-top: 1.5rem; }
+.lifecycle .kicker { display: block; margin-top: 0.6rem; }
+@media (min-width: 62rem) {
+  .lifecycle { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; }
+  .lifecycle > .ms-step + .ms-step { margin-top: 0; }
+}
+.foundation {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--crv-markset);
+  background: var(--ms-surface);
+  border-radius: 0 var(--ms-radius) var(--ms-radius) 0;
+}
+.foundation + .note { margin-top: 1.5rem; }
+
+/* ---- where to start ------------------------------------------------------------ */
+.paths { margin-top: 2rem; padding: 0; list-style: none; }
+.paths > li { padding-left: 1rem; border-left: 2px solid var(--ms-border); }
+.paths > li + li { margin-top: 1rem; }
+.paths a { display: inline-block; padding-block: 0.15rem; }
+
+/* ---- the illustrative example ------------------------------------------------------ */
+.ms-card.example { margin-top: 2rem; border-left: 4px solid var(--crv-intentset); }
+.ms-card.example ul { padding-left: 1.2rem; }
+.ms-card.example li + li { margin-top: 0.5rem; }
+.ms-card.example + p { margin-top: 1.5rem; }
+
+/* ---- the founder -------------------------------------------------------------------- */
+/* Gary's own words, set apart by a coral rule rather than a box. */
+.ms-card.founder {
+  margin-top: 2rem;
+  padding: 0 0 0 1.5rem;
+  border: 0;
+  border-left: 3px solid var(--crv-focus);
+  border-radius: 0;
+  background: none;
+}
+.ms-card.founder p + p { margin-top: 1rem; }
+.byline {
+  margin-top: 1.5rem;
+  font-family: var(--ms-font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ms-fg-muted);
+}
 
 /* ---- narrow screens -------------------------------------------------------------- */
 @media (max-width: 52rem) {

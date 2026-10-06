@@ -7,7 +7,7 @@ import { type Segment, segments } from "./markset.ts";
  * component the page names for it. The HTML is the build's own rendering of a file in this repository, not input.
  */
 export const DoorDocument = ({ file, slots = {} }: { file: string; slots?: Record<string, ReactNode> }) => (
-  <div className="door">
+  <div className="door" data-page={file.replace(/\.md$/, "")}>
     {segments(file, Object.keys(slots)).map((part: Segment, index) =>
       "html" in part ? (
         // biome-ignore lint/security/noDangerouslySetInnerHtml: rendered at build from this repository's own content files.

@@ -7,27 +7,31 @@ door's copy in Markset (`apps/web/content/`). It replaced the one-page GitHub Pa
 2b, 2026-10-05); Phase 2c deleted that page and turned Pages off on 2026-10-06, ahead of the planned 14 days, at
 Gary's decision.
 
-Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
+Read `docs/requirements/` before changing anything: `copy-approvals.md` records what copy Gary approved, and
 `website-requirements.md` holds the CRV requirements the tests are named after (v0.2, adds CRV-009 to CRV-014 and
 supersedes CRV-007; its copy approved 2026-10-05 and its requirement text 2026-10-06).
 
 ## Rules
 
-- **Copy is approved text.** Use `site-copy.md` verbatim; do not write new marketing copy, invent domains, GitHub links,
+- **Copy is approved text.** The copy is the content files (`apps/web/content/`), the product table
+  (`apps/web/lib/product-facts.ts`) and the strings `copy-approvals.md` lists; do not write new marketing copy, invent domains, GitHub links,
   contact channels (the one approved is hello@coralreefventures.com) or brand assets. The one exception is the mark,
   `packages/brand/icon.svg` (served as `apps/web/public/icon.svg`): a puffer fish on a coral tile, asked for and approved 2026-10-03, drawn in the same language as the
   three products' marks. Its spines end in dots ("spines as nodes"), chosen the same day from a set of alternatives
   over the first version's plain spines, so the fish carries the network figure and the dots of Markset's mark. The
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
-- **New copy is drafted in `site-copy.md`, marked proposed, and Gary approves it before it goes live.** The door, its
-  privacy page with its retention periods, and the invitation text were approved by Gary on 2026-10-05 (plan step P8),
-  as was the locked sites' coming-soon page, which reef's gate serves. A change to any of them is proposed again until
-  he approves it. `site-copy.md` is the source of the app's
-  content files: `apps/web/content/door.md`, `get-involved.md` and `privacy.md` are copied into it verbatim, and
-  `apps/web/lib/content.test.ts` fails if any differs. Change the copy there first and the content file in the same commit. The form's and sign-in's words are
-  listed there too; keep the components' strings in step with it.
-- **The app's pages.** `/` is the door: the story, the four product cards and the closing statement. `/get-involved/`
+- **New copy is proposed in its file, with an entry in `docs/requirements/copy-approvals.md` marked proposed, and Gary
+  approves it before it goes live.** The log records each approval's date and why the words read as they do; it
+  replaced `site-copy.md` on 2026-10-06. The privacy page with its retention periods, the invitation text, the
+  Get involved page and the locked sites' coming-soon page (reef's gate) were approved on 2026-10-05; a change to any is
+  proposed again until he approves it. `apps/web/lib/content.test.ts` fails if a content file has no entry. The form's
+  and sign-in's words are listed there too; keep the components' strings in step with it.
+- **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
+  open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
+  start, the illustrative example, the internal pilot, Gary's founder note and the contact (approved 2026-10-06,
+  `copy-approvals.md`). `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
+  only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
