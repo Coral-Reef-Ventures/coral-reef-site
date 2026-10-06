@@ -183,17 +183,16 @@ optional site and test host). It is a workflow of its own so a locked site's sta
 repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's OIDC; without it, it runs with
 `--no-session` and warns.
 
-**The role CI needs.** In the coral-reef project, us-east-2. Steps 2 to 4 were done on 2026-10-06; step 1 is what is left:
+**The role CI needs (in place since 2026-10-06).** In the coral-reef project, us-east-2:
 
 1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`.
-   **The project's SCP denies it.** `iam:CreateOpenIDConnectProvider` was refused with an explicit deny in a service
-   control policy (`p-8r7znzr8`) on 2026-10-06, as `iam:GetOpenIDConnectProvider` and `iam:ListOpenIDConnectProviders`
-   were on 2026-10-05. AWS's published project SCPs deny `iam:*Provider*`, and only activating advanced features in
-   AWS Settings (Projects, Actions, Explore advanced features) hands the SCPs to the owner. That is Gary's decision: it
-   cannot be undone and it removes the spend limit. Until then CI runs without a session and the authenticated half is
-   run by hand after each product deploy. A long-lived access key in GitHub would avoid the provider, and is not used.
+   Created 2026-10-06 (`aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com
+   --client-id-list sts.amazonaws.com`), once Gary had activated the project's advanced features: until then the
+   project's managed SCP denied `iam:*Provider*`.
 2. A role, `crv-leak-check`, with this trust policy, so only this repository's `main` (the schedule and a manual run)
-   can assume it:
+   can assume it. The repository uses GitHub's immutable subject, which carries the owner's and the repository's ids
+   (`repo:Coral-Reef-Ventures@337009897/coral-reef-site@1402479746:...`), so the policy names both forms; with only
+   the plain one, the first run was refused at "Not authorized to perform sts:AssumeRoleWithWebIdentity".
 
    ```json
    {
@@ -205,7 +204,10 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
        "Condition": {
          "StringEquals": {
            "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-           "token.actions.githubusercontent.com:sub": "repo:Coral-Reef-Ventures/coral-reef-site:ref:refs/heads/main"
+           "token.actions.githubusercontent.com:sub": [
+             "repo:Coral-Reef-Ventures/coral-reef-site:ref:refs/heads/main",
+             "repo:Coral-Reef-Ventures@337009897/coral-reef-site@1402479746:ref:refs/heads/main"
+           ]
          }
        }
      }]
@@ -242,19 +244,13 @@ Phase 3 locks driftline.app and then streamlane.app (the door plan's "Phase 3").
 | Exit item | State | Evidence |
 | --- | --- | --- |
 | Both domains serve only to invitees | **Done** | Both apps are `WEB_COMPUTE` with the app root `apps/site-door` (driftline #16, streamlane #348: from an app root whose `package.json` uses Next.js, Amplify runs its own Next.js deployment and refuses the gate's, which failed driftline's first three builds). driftline.app was locked by Amplify job 28 (driftline cb030f8), streamlane.app by job 21 (streamlane 49eb5da), both 2026-10-06. A page load answers the coming-soon page as a 401 with `no-store` and `noindex`; anything else gets an empty 401. Each compute log group keeps 30 days. |
-| The leak check is green on every host and scheduled daily | **Green; daily without a session** | `pnpm run leak-check --site <id>`, 2026-10-06, signed in as `crv-check@example.com`: driftline 280 requests (53 paths), streamlane 470 requests (91 paths), clean on the apex, `www` and the amplifyapp.com host. Both are `locked` in `scripts/leak-check/sites.ts`, so the daily run checks both, without a session until the role `crv-leak-check` exists. |
+| The leak check is green on every host and scheduled daily | **Done** | `pnpm run leak-check --site <id>`, 2026-10-06, signed in as `crv-check@example.com`: driftline 280 requests (53 paths), streamlane 470 requests (91 paths), clean on the apex, `www` and the amplifyapp.com host. Both are `locked` in `scripts/leak-check/sites.ts`, and the daily workflow signs in through `crv-leak-check`: its first manual run on `main` (Actions run 37466471636, 2026-10-06) minted a session for both and was clean, 750 requests. |
 | Both `amplifyapp.com` hosts return 403 | **Done** | `main.d39wmoekppxvpd.amplifyapp.com` and `main.d32jlosp0d9m43.amplifyapp.com` answer 403; `www` on each redirects to the apex before the gate. |
 | The temporary apps are deleted | **Not applicable** | None was created: `create-app` falls back to deploy keys, which the organization disables. |
 | The door cards are updated | **Done, ahead of the lock** | The Streamlane and Driftline cards have read "Open to invited guests." since the cutover (CRV-003 v0.2, `apps/web/lib/products.ts`). |
 
-What is left:
-
-1. GitHub's OIDC provider (step 1 of "The role CI needs" above). The role and the repository variable exist
-   (2026-10-06), and their policies are as written there, but the first manual run failed at "Could not assume role
-   with OIDC: The web identity token provided could not be validated". Once the provider exists, run Actions, "Leak
-   check", by hand and read its log.
-2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and so does the daily
-   run.
+Phase 3 is complete (2026-10-06). `crv-check@example.com` stays: the daily run and the by-hand check after each
+product deploy sign in as it.
 
 ## Rollback
 
