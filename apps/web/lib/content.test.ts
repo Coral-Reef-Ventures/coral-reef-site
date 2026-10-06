@@ -22,16 +22,26 @@ describe("the door's content", () => {
     }
   });
 
-  it("carries the approved copy in the approved order", () => {
+  // The order of the 2026-10-06 rewrite: the outcome, the problem before the products, the direction, the whitepaper
+  // after it, where to start, the products, then the example, the internal pilot, the founder and the contact.
+  it("carries the copy in its order", () => {
     const order = [
-      "Building for software teams in the agentic era.",
-      "Four ideas. One direction.",
+      "Keep control as agents build your software.",
+      "Agents change the code. Your team still answers for the product.",
+      "One thread, from intent to feedback.",
+      "None of the four requires another.",
+      "The thinking behind it.",
+      "Try Intentset on one capability.",
+      "Four products. One direction.",
       "Markset",
       "Intentset",
       "Streamlane",
       "Driftline",
       "These offerings share a direction, not an adoption requirement.",
-      "Better foundations for what comes next.",
+      "One behavior, its owner and its status.",
+      "We tried it first on our own product.",
+      "Why I started Coral Reef Ventures.",
+      "Talk to us.",
       "hello@coralreefventures.com",
     ];
     let at = 0;
@@ -40,6 +50,30 @@ describe("the door's content", () => {
       expect(found, phrase).toBeGreaterThan(-1);
       at = found;
     }
+  });
+
+  it("offers the three explicit actions in the hero, and again to close", () => {
+    const hero = door.slice(0, door.indexOf("<hr"));
+    for (const action of ["Try Intentset", "Read the whitepaper", "Contact us"]) expect(hero, action).toContain(action);
+    expect(door).toContain('href="https://intentset.org/start/"');
+    expect(door).toContain('href="/whitepaper/"');
+    expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  // The example is Intentset's illustrative one and the pilot is internal, and each page says so where it stands.
+  it("labels the example illustrative and the pilot internal, and claims no review or conformance", () => {
+    expect(door).toContain("Illustrative, adapted from Intentset");
+    expect(door).toContain("An internal pilot on one capability, not customer evidence.");
+    expect(door).toContain("the product owner has not yet reviewed them");
+    expect(door).not.toMatch(/\bverified by\b|\bconform/i);
+  });
+
+  // Gary's own words (2026-10-06), unedited: the first and last sentences pin both ends.
+  it("keeps the founder's introduction word for word", () => {
+    expect(door).toContain("I’ve built software products throughout my career.");
+    expect(door).toContain(
+      "My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.",
+    );
   });
 
   it("links a visitor to Markset and Intentset only, and reads 'Open to invited guests' for the two behind the door", () => {

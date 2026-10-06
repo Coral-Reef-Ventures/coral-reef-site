@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { DoorDocument } from "../lib/page.tsx";
 import { DoorForward } from "../src/features/access/door-session/index.ts";
 
-const title = "Coral Reef Ventures · Documents. Intent. Work. Usage.";
-const description = "Open foundations and focused tools for creating software with humans and AI working together.";
+const title = "Coral Reef Ventures · Keep control as agents build your software";
+const description =
+  "Coral Reef Ventures is building open foundations and focused tools to connect product intent, work, verification and what users experience.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
