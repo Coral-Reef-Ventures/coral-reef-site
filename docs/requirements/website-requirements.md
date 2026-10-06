@@ -4,8 +4,8 @@
 approved the door copy, the privacy page with its retention periods and the invitation text on 2026-10-05; his approval
 named that copy, and this file's requirement text is recorded as proposed until he confirms it too. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
-2026-10-05. The GitHub Pages page (`site/`) still meets v0.1, CRV-007 included, and its tests keep checking it until it
-and they are deleted on 2026-10-19, 14 days after the cutover.
+2026-10-05. The GitHub Pages page that met v0.1, CRV-007
+included, was deleted with its tests on 2026-10-06, the day after the cutover, ahead of the planned 14 days.
 
 ## Purpose
 
@@ -50,4 +50,4 @@ verify metadata and broken links; approve final copy. The door copy, privacy pag
 2026-10-05 (P8). The leak check (`scripts/leak-check.ts`) green on every host of each locked site, daily.
 
 Hosting is decided by ADR 0001: the app on Amplify in the coral-reef project (us-east-2), serving coralreefventures.com
-since 2026-10-05, with GitHub Pages kept deployed for the v0.1 page until 2026-10-19.
+since 2026-10-05. GitHub Pages served the v0.1 page until the cutover and was turned off on 2026-10-06.

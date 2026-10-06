@@ -1,8 +1,4 @@
 node_modules/
-dist/
-dist.staging-*/
-dist.previous-*/
-e2e/.build/
 test-results/
 playwright-report/
 apps/web/.next/

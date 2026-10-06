@@ -1,7 +1,6 @@
 /**
- * Coral Reef Ventures' brand tokens. Each color is a light/dark pair, written the way site/site.css writes it:
- * `light-dark(light, dark)`. The values are copied from that stylesheet, and tokens.test.ts holds the two together
- * until the stylesheet is retired in Phase 2c.
+ * Coral Reef Ventures' brand tokens. Each color is a light/dark pair, written the way the door's stylesheet
+ * (apps/web/app/door.css) writes it: `light-dark(light, dark)`. tokens.test.ts holds the two together.
  */
 
 export type ColorPair = { readonly light: string; readonly dark: string };

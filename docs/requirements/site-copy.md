@@ -116,7 +116,7 @@ one link, "Get involved", goes there.
 names, taglines, descriptions and labels, and their availability line becomes **Open to invited guests.** Neither card
 links anywhere for a visitor, because the sites behind the door would only send that visitor back here. A signed-in
 invitee instead sees **Continue to Streamlane** and **Continue to Driftline**, one for each site they were invited to.
-`{{products}}` is the four cards, generated from `site/products.ts` by `apps/web/lib/products.ts`.
+`{{products}}` is the four cards, generated from `apps/web/lib/product-facts.ts` by `apps/web/lib/products.ts`.
 
 **The page source,** `apps/web/content/door.md`.
 

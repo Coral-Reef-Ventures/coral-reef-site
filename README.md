@@ -1,24 +1,23 @@
 # Coral Reef Ventures website
 
-**Since 2026-10-05 coralreefventures.com is served by the CRV app (`apps/web`, on Amplify), not by this page.** The page
-below stays deployed to GitHub Pages, without the domain, until 2026-10-19, and is then deleted. Hosting is in
-`CLAUDE.md` and `apps/web/hosting/README.md`.
+coralreefventures.com: the door to Streamlane and Driftline, and the company's record of interest and access. It
+explains the thesis, introduces Markset, Intentset, Streamlane and Driftline as independent offerings, takes the
+interest form and signs invited guests in to the two locked product sites. Requirements are in
+[docs/requirements/](docs/requirements/README.md), and the decision behind the app is
+[ADR 0001](docs/decisions/0001-the-door-and-the-app.md).
 
-The parent-company site: one page that explains the thesis and introduces Markset, Intentset, Streamlane and
-Driftline as independent offerings. Requirements are in [docs/requirements/](docs/requirements/README.md).
-
-The page is a [Markset](https://markset.org) document, `site/content/index.md`, rendered to static HTML by the Markset
-reference implementation and deployed to GitHub Pages. There is no framework, no client-side script and no backend.
+The app (`apps/web`) is a Next.js static export with Mantine, its copy written in [Markset](https://markset.org) and
+copied verbatim from `docs/requirements/site-copy.md`. Its backend (`amplify/`) is Amplify Gen 2 in us-east-2. Both are
+hosted on Amplify; `apps/web/hosting/README.md` has how, and how to roll back.
 
 ## Working on it
 
-Node ≥ 22.18. TypeScript runs directly through Node's type stripping; there is no compile step.
+Node ≥ 22.18 and pnpm.
 
 ```sh
 pnpm install
-pnpm run site:watch   # http://localhost:3009, rebuilds and reloads on change
-pnpm run site         # build into dist/
-pnpm test             # requirements checks against the built HTML
+pnpm run web:dev      # http://localhost:3002
+pnpm test             # Vitest: the app, the packages and the backend
 pnpm exec playwright install chromium   # once
 pnpm run e2e          # Chromium at 390px and 1440px, light and dark
 pnpm run lint && pnpm run typecheck
@@ -28,26 +27,22 @@ pnpm run lint && pnpm run typecheck
 
 | Path | What it is |
 |---|---|
-| `site/content/index.md` | The page copy, in Markset. `{{products}}` is replaced with the product cards. |
-| `site/products.ts` | Product names, taglines, status labels and destinations. The only place a product link can come from. |
-| `site/build.ts` | Renders the page and wraps it in the shell: header, footer, metadata. |
-| `site/site.css` | The site theme, layered over Markset's default stylesheet. |
-| `test/` | Requirements checks against the built HTML, named after the CRV IDs. |
-| `e2e/` | Playwright screen tests: overflow, tap targets, keyboard, focus, contrast. |
+| `apps/web/content/` | The door's copy, in Markset, copied verbatim from `docs/requirements/site-copy.md`. |
+| `apps/web/lib/product-facts.ts` | Product names, taglines, status labels and destinations. The only place a product link can come from. |
+| `apps/web/app/door.css` | The door's theme, layered over Markset's default stylesheet. |
+| `packages/brand/` | The mark and the brand's color tokens. |
+| `amplify/` | The backend: auth, the interest, access and people areas, and their functions. |
+| `scripts/leak-check.ts` | Proves the locked sites serve nothing without a session (CRV-014). |
+| `e2e/` | Playwright screen tests: overflow, tap targets, keyboard, focus, contrast, and the form and admin flows. |
 
 ## Changing a product's status or destination
 
-Edit `site/products.ts`. A product gets a link only when it has a `cta`, and the build fails unless that is an absolute
-`https` URL:
+Edit `apps/web/lib/product-facts.ts`. A product gets a link only when it has a `cta`, and the build fails unless that
+is an absolute `https` URL:
 
 ```ts
 cta: { text: "Visit Intentset", href: "https://intentset.org" },
 ```
 
-Update the CRV-003 test with it, which lists the confirmed destinations.
-
-## Publishing
-
-`.github/workflows/pages.yml` runs lint, typecheck, tests and the screen tests, builds `dist/`, and deploys it on every push to `main`.
-Enable Pages once in the repository settings with **GitHub Actions** as the source. The canonical URL is `homepage` in
-`package.json`; a custom domain is set in the repository's Pages settings.
+The door drops the links of the two locked products and shows them as open to invited guests
+(`apps/web/lib/products.ts`, CRV-003).

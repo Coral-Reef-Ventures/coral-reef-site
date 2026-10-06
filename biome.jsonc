@@ -10,7 +10,6 @@
       "!**/dist",
       "!dist.staging-*",
       "!dist.previous-*",
-      "!e2e/.build",
       "!**/.next",
       "!**/out",
       "!**/.e2e-out",

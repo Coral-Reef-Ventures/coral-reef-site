@@ -1,6 +1,6 @@
 /**
- * The door in Chromium, at the two widths CRV-005 names and in both color schemes: the checks page.spec.ts runs on the
- * old page, ported to the pages of the app (global-setup.ts builds it with the stub backend and serves it).
+ * The door in Chromium, at the two widths CRV-005 names and in both color schemes: the checks the retired Pages page's
+ * spec ran, ported to the pages of the app (global-setup.ts builds it with the stub backend and serves it).
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";

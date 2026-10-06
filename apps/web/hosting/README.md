@@ -253,25 +253,16 @@ What is left:
    the OIDC provider it needs (2026-10-06): only activating advanced features lifts that, which is Gary's decision.
 2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and the daily run will
    once the role exists.
-3. Each product repository's `apps/site/hosting/previous/` is deleted 14 days after its flip (2026-10-20), in its own
-   commit, as its README says.
 
 ## Rollback
 
-**The domain, back to GitHub Pages** (deployed until 2026-10-19):
+**There is no Pages site to go back to.** The GitHub Pages page was deleted and Pages turned off in Phase 2c
+(2026-10-06), so a rollback of the domain is a redeploy of an earlier commit of this app (Amplify's console, the branch's
+deployments), not a move to another host. NameSilo still holds its old records, which point at GitHub Pages and would
+now serve nothing.
 
-1. `aws amplify delete-domain-association --app-id "$APP_ID" --domain-name coralreefventures.com`, which removes the
-   records Amplify wrote.
-2. In the Route 53 zone, put back the GitHub Pages records: the apex A records (`185.199.108.153`, `185.199.109.153`,
-   `185.199.110.153`, `185.199.111.153`) and the `www` CNAME `coral-reef-ventures.github.io`.
-3. In the repository's Pages settings, set the custom domain to `coralreefventures.com` again.
-
-NameSilo still holds the old records, so setting its nameservers back to its own is the other way, and the slower one.
-Either way, set `CRV_ADMIN_ORIGIN` back to `https://main.d1fw6blayytium.amplifyapp.com` and redeploy, so the
-notification's admin link reaches the app.
-
-**The app.** Delete it (`aws amplify delete-app --app-id "$APP_ID"`) and the backend stacks it deployed, only after the
-domain has gone back to Pages. The KMS key and the six model tables
+**The app.** Deleting it (`aws amplify delete-app --app-id "$APP_ID"`) and the backend stacks it deployed takes
+coralreefventures.com, the door and the locked sites' sign-in down with it, so it is only for retiring the site. The KMS key and the six model tables
 (people, addresses, Activity, submissions, invitations and grants) are retained when the stack is deleted, by design,
 and the tables keep deletion protection. To remove them too, turn deletion protection off on each table
 (`aws dynamodb update-table --table-name <name> --no-deletion-protection-enabled`), delete it, and schedule the key's

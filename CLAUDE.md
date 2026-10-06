@@ -1,15 +1,11 @@
 # Coral Reef Ventures site
 
-Two things live here, one replacing the other (ADR 0001, `docs/decisions/0001-the-door-and-the-app.md`, proposed
-2026-10-04):
-
-- **The Pages page** (`site/`, `test/`, `e2e/page.spec.ts`): one static page, built the way the Markset site is, as
-  Markset source rendered by `@markset-lang/parser` and `@markset-lang/render-html`, a TypeScript build script run by
-  Node's type stripping, and a Pages workflow. It served coralreefventures.com until the cutover (plan Phase 2b,
-  2026-10-05) and stays deployed, without the domain, until 2026-10-19, when Phase 2c deletes it.
-- **The CRV app** (`apps/web`, `packages/brand` and the backend in `amplify/`): the door to Streamlane and
-  Driftline and the company's system of record for interest and access. Next.js static export and Mantine on Amplify
-  Gen 2, with the door's copy in Markset (`apps/web/content/`).
+**The CRV app** (`apps/web`, `packages/brand` and the backend in `amplify/`; ADR 0001,
+`docs/decisions/0001-the-door-and-the-app.md`, proposed 2026-10-04): the door to Streamlane and Driftline and the
+company's system of record for interest and access. Next.js static export and Mantine on Amplify Gen 2, with the
+door's copy in Markset (`apps/web/content/`). It replaced the one-page GitHub Pages site at the cutover (plan Phase
+2b, 2026-10-05); Phase 2c deleted that page and turned Pages off on 2026-10-06, ahead of the planned 14 days, at
+Gary's decision.
 
 Read `docs/requirements/` before changing anything: `site-copy.md` is the editorial source and
 `website-requirements.md` holds the CRV requirements the tests are named after (v0.2, adds CRV-009 to CRV-014 and
@@ -19,7 +15,7 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
 
 - **Copy is approved text.** Use `site-copy.md` verbatim; do not write new marketing copy, invent domains, GitHub links,
   contact channels (the one approved is hello@coralreefventures.com) or brand assets. The one exception is the mark,
-  `site/icon.svg`: a puffer fish on a coral tile, asked for and approved 2026-10-03, drawn in the same language as the
+  `packages/brand/icon.svg` (served as `apps/web/public/icon.svg`): a puffer fish on a coral tile, asked for and approved 2026-10-03, drawn in the same language as the
   three products' marks. Its spines end in dots ("spines as nodes"), chosen the same day from a set of alternatives
   over the first version's plain spines, so the fish carries the network figure and the dots of Markset's mark. The
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
@@ -42,14 +38,10 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   the collapsed pill's size so the open pill grows leftward over the bar and a phone's row never overflows. Every page's
   column, the admin views' included, is the shell's (`--site-max-width`, `--site-gutter`), so the h1 starts where the
   lockup does and nothing runs past the header's right edge. `e2e/door.spec.ts` holds both, at 390 to 1440px.
-- **Product facts live in `site/products.ts` only.** A link exists only where a destination is confirmed
+- **Product facts live in `apps/web/lib/product-facts.ts` only.** A link exists only where a destination is confirmed
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
   The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives
   them "Open to invited guests." (CRV-003 v0.2).
-- **The Pages page only: no form, tracking or external font** (CRV-007, which v0.2 supersedes for the app), and **one
-  script**: the color-scheme control's, the same as markset.org's and intentset.org's, which stores one word in the
-  reader's browser and sends nothing anywhere. CRV-007 rules out a tracking dependency, not that. `test/` enforces both
-  halves until the page is retired.
 - **The app: no tracking, no external font, no third-party script** (CRV-011). Nothing loads from another origin but
   the AWS endpoints the form and sign-in call. The browser stores only the sign-in tokens, the form's guest identity id
   and the scheme word, and coralreefventures.com sets no cookie. The locked sites set three, all the door's
@@ -110,18 +102,18 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
   project with the branch.
 - Node ≥ 22.18. Erasable TypeScript only (no enums, namespaces, parameter properties); import with `.ts` extensions.
-- pnpm (pinned by `packageManager`; moved from npm 2026-10-04 with the lockfile imported). `pnpm test` builds into a
-  temporary directory and checks the output. `pnpm run e2e` is Playwright, as in Streamlane and
-  Markset's editor: `e2e/global-setup.ts` builds into `e2e/.build`, and `e2e/page.spec.ts` checks it in Chromium at
-  390px and 1440px in both color schemes for overflow, tap targets, keyboard order, focus rings and WCAG AA contrast.
-  `pnpm exec playwright install chromium` once before the first run.
+- pnpm (pinned by `packageManager`; moved from npm 2026-10-04 with the lockfile imported). `pnpm test` is Vitest:
+  the app and packages, and the backend. `pnpm run e2e` is Playwright, as in Streamlane and Markset's editor:
+  `e2e/global-setup.ts` builds the app's export with the stub backends and serves it, and `e2e/door.spec.ts` checks it
+  in Chromium at 390px and 1440px in both color schemes for overflow, tap targets, keyboard order, focus rings and WCAG
+  AA contrast. `pnpm exec playwright install chromium` once before the first run.
 - `pnpm run lint` is Biome, configured in `biome.jsonc`; the stylesheet is exempt from formatting, as in Markset.
-- `site/site.css` sets Markset's tokens and styles the author classes the page uses. Every color is a `light-dark()`
+- `apps/web/app/door.css` sets Markset's tokens and styles the author classes the door uses. Every color is a `light-dark()`
   pair, as in `markset.css`. The four product accents (violet, teal, amber, sea blue) each have a bar color and a darker or
   lighter `-text` variant that clears 4.5:1. Each product card shows that product's own mark beside its name, carried
   in the stylesheet as a data URI (Markset's and Intentset's from their sites, Streamlane's tiles from its brand package,
-  the ink tile in light and the light tile in dark, as that guide says; Driftline's drawn 2026-10-03 for this page, until
-  Driftline has a repository to own it); refresh them there when a product's mark changes.
+  the ink tile in light and the light tile in dark, as that guide says; Driftline's drawn 2026-10-03 for the old page,
+  until Driftline has a repository to own it); refresh them there when a product's mark changes.
 
 ## Hosting
 
@@ -138,9 +130,9 @@ replaced at the cutover by the apex ALIAS, the `www` CNAME and the ACM validatio
 Google Workspace's MX, SPF and DKIM, and Google's verification CNAME, unchanged. NameSilo's own records are kept, so
 rolling back is setting its nameservers again.
 
-GitHub Pages, decided earlier on 2026-10-04 (#11), stays deployed until 2026-10-19 in case the switch has to be undone.
-Its custom domain is removed once `www`'s old cached records expire. Phase 2c then deletes `site/`, `test/`,
-`e2e/page.spec.ts` and `.github/workflows/pages.yml`, and disables Pages.
+GitHub Pages, decided earlier on 2026-10-04 (#11), was to stay deployed until 2026-10-19 in case the switch had to be
+undone; Gary retired it early, on 2026-10-06. Phase 2c then deleted the page, its tests and its workflow, and turned Pages off, so there is no longer a Pages
+site to roll back to.
 
 ## Open launch decisions
 
@@ -155,8 +147,7 @@ From the requirements' launch gates, not yet settled:
 
 - Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
   privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.
-- Phase 2c, on or after 2026-10-19: delete the Pages page and its workflow and disable Pages.
-- Brand assets: the mark exists (`site/icon.svg`); there is no social image, so the social card is text only.
+- Brand assets: the mark exists (`packages/brand/icon.svg`); there is no social image, so the social card is text only.
 - Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
   Intentset `Open source · Early release`.
 

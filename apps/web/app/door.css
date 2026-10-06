@@ -1,4 +1,4 @@
-/* The door's theme, ported from site/site.css (the page it replaces), layered over markset.css the way a theme
+/* The door's theme, ported from the retired Pages page's stylesheet, layered over markset.css the way a theme
  * stylesheet is layered over a Markset document (Markset spec §6). It sets the tokens the default stylesheet reads,
  * bridges them to the shell's (@coralreefventures/site reads --site-* and --mantine-*), then styles the author classes
  * the pages use: eyebrow, lead, button, products, product, kicker, tagline, status, planned, cta, note, statement,

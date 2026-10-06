@@ -14,7 +14,7 @@
  */
 
 export interface Product {
-  /** Used as the card's class, which picks its accent color in site.css. */
+  /** Used as the card's class, which picks its accent color in door.css. */
   slug: "markset" | "intentset" | "streamlane" | "driftline";
   name: string;
   /** What it handles: documents, intent, work or usage; the card's kicker. */

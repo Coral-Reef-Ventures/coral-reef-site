@@ -10,13 +10,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      '@markset-lang/parser':
-        specifier: ^0.3.4
-        version: 0.3.4(supports-color@7.2.0)
-      '@markset-lang/render-html':
-        specifier: ^0.3.4
-        version: 0.3.4(supports-color@7.2.0)
     devDependencies:
       '@aws-amplify/backend':
         specifier: 1.24.0
