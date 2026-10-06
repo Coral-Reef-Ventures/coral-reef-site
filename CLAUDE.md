@@ -146,10 +146,11 @@ Its custom domain is removed once `www`'s old cached records expire. Phase 2c th
 
 From the requirements' launch gates, not yet settled:
 
-- **Phase 3, the lock, is built but not applied** (2026-10-05). Both product sites build their lock (site-tools 0.4.0;
-  driftline #13 and #14, streamlane #344), but both live apps are still `WEB` and public, and no site is `locked` in
-  `scripts/leak-check/sites.ts`. The driftline.app flip was refused by the agent's permission system as a production
-  deploy and waits on Gary. `apps/web/hosting/README.md`, "Phase 3: status", has the exit list and what is left.
+- **Phase 3, the lock: driftline.app is locked, streamlane.app is not yet** (2026-10-06). driftline.app went behind
+  the door from the app root `apps/site-door` (driftline #16: from an app root whose `package.json` uses Next.js,
+  Amplify runs its own Next.js deployment and refuses the gate's), its leak check is clean and it is `locked` in
+  `scripts/leak-check/sites.ts`. streamlane.app builds its lock (#344) but needs the same app root before it is
+  flipped. `apps/web/hosting/README.md`, "Phase 3: status", has the exit list and what is left.
 
 - Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
   privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.
