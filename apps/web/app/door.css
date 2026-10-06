@@ -236,7 +236,6 @@ header > div:has(.door-scheme-slot) > a:first-child { flex: 0 1 auto; min-width:
 .ms-document > h1 ~ p:has(> .button) { margin-top: 2rem; }
 
 /* ---- product cards ------------------------------------------------------------ */
-.ms-document > h2 ~ .lead + p { max-width: 38rem; }
 .ms-grid.products { --ms-gap: 2rem; margin-top: 2.5rem; }
 .ms-grid.products[data-cols="2"] { --ms-cols: 2; }
 .product {
@@ -302,6 +301,12 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .ms-document > .contact { margin-top: 2.5rem; font-size: 1.1rem; }
 .contact a { display: inline-block; padding-block: 0.4rem; font-weight: 650; }
 
+/* ---- the home page's width ------------------------------------------------------ */
+/* Below the hero, every block on the home page runs the column's full width, the product grid's, so each section's
+ * right edge lines up with the cards and the rules between sections. The hero keeps its narrower lead beside the
+ * network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for the door alone. */
+.door[data-page="door"] .ms-document > hr ~ * { max-width: none; }
+
 /* ---- actions ------------------------------------------------------------------- */
 /* A row of the page's explicit actions: Try Intentset, Read the whitepaper, Contact us. The one main action in a row
  * is .primary, filled, and inverts on hover. */
@@ -311,9 +316,9 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .button.primary a:hover { background: transparent; color: var(--ms-fg); }
 
 /* ---- the problem --------------------------------------------------------------- */
-.questions { max-width: 38rem; padding-left: 1.4rem; }
+.questions { padding-left: 1.4rem; }
 .questions > li + li { margin-top: 0.85rem; }
-.questions + p { max-width: 38rem; margin-top: 1.5rem; }
+.questions + p { margin-top: 1.5rem; }
 
 /* ---- the lifecycle ------------------------------------------------------------- */
 /* Five steps, intent to feedback, as text: an ordered list, so it reads in order without CSS and needs no image.
@@ -354,21 +359,20 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .foundation + .note { margin-top: 1.5rem; }
 
 /* ---- where to start ------------------------------------------------------------ */
-.paths { max-width: 38rem; margin-top: 2rem; padding: 0; list-style: none; }
+.paths { margin-top: 2rem; padding: 0; list-style: none; }
 .paths > li { padding-left: 1rem; border-left: 2px solid var(--ms-border); }
 .paths > li + li { margin-top: 1rem; }
 .paths a { display: inline-block; padding-block: 0.15rem; }
 
 /* ---- the illustrative example ------------------------------------------------------ */
-.ms-card.example { max-width: 44rem; margin-top: 2rem; border-left: 4px solid var(--crv-intentset); }
+.ms-card.example { margin-top: 2rem; border-left: 4px solid var(--crv-intentset); }
 .ms-card.example ul { padding-left: 1.2rem; }
 .ms-card.example li + li { margin-top: 0.5rem; }
-.ms-card.example + p { max-width: 38rem; margin-top: 1.5rem; }
+.ms-card.example + p { margin-top: 1.5rem; }
 
 /* ---- the founder -------------------------------------------------------------------- */
 /* Gary's own words, set apart by a coral rule rather than a box. */
 .ms-card.founder {
-  max-width: 44rem;
   margin-top: 2rem;
   padding: 0 0 0 1.5rem;
   border: 0;
