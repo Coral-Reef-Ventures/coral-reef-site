@@ -118,7 +118,7 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
       {view.kind === "signin" && (
         <>
           {destination && (
-            // The site the visitor is going to, by name only: no approved sentence names it yet (site-copy.md).
+            // The site the visitor is going to, by name only: no approved sentence names it yet (copy-approvals.md).
             <p className={classes.destination} data-site={destination.id}>
               {destination.name}
             </p>

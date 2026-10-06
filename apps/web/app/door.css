@@ -21,7 +21,7 @@ body {
   --ms-surface: light-dark(#f4ece0, #1b2221);
   --ms-border: light-dark(#ddd5c9, #333b39);
 
-  /* The four product accents (site-copy.md layout notes). The bar colors are
+  /* The four product accents (copy-approvals.md, layout notes). The bar colors are
    * decoration; the -text variants are darkened or lightened until they read
    * as text on the page background. */
   --crv-markset: light-dark(#9982bc, #ab97d1);

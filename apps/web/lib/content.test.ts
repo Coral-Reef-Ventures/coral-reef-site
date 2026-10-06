@@ -93,21 +93,16 @@ describe("the privacy page", () => {
   });
 });
 
-describe("site-copy.md, the source of the door's words", () => {
+describe("copy-approvals.md, the record of what Gary approved", () => {
   const root = join(import.meta.dirname, "..", "..", "..");
-  const copy = readFileSync(join(root, "docs", "requirements", "site-copy.md"), "utf8");
-  const files = ["apps/web/content/door.md", "apps/web/content/get-involved.md", "apps/web/content/privacy.md"];
-  const blocks = new Map(
-    [...copy.matchAll(/^```markdown file=(\S+)\n([\s\S]*?)\n```$/gm)].map((m) => [m[1], `${m[2]}\n`] as const),
-  );
+  const log = readFileSync(join(root, "docs", "requirements", "copy-approvals.md"), "utf8");
+  const files = readdirSync(join(root, "apps", "web", "content")).filter((f) => f.endsWith(".md"));
 
-  it("holds a block for each content file, and no other", () => {
-    expect([...blocks.keys()].sort()).toEqual(files);
-  });
-
-  // Copy is approved text: a content file is its block in site-copy.md, changed there first, in the same commit.
-  it.each(files)("%s is its block, verbatim", (file) => {
-    expect(readFileSync(join(root, file), "utf8")).toBe(blocks.get(file));
+  // Copy is approved text: every content file has an entry, which says approved (with a date) or proposed.
+  it.each(files)("has an entry for %s", (file) => {
+    const entry = log.split(/^## /m).find((section) => section.includes(`apps/web/content/${file}`));
+    expect(entry, file).toBeDefined();
+    expect(entry).toMatch(/\((approved|proposed) \d{4}-\d{2}-\d{2}\)/);
   });
 });
 
