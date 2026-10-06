@@ -185,11 +185,13 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
 
 **The role CI needs (not created yet).** In the coral-reef project, us-east-2:
 
-1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`, if the
-   project has none. **The project's SCP denies `iam:GetOpenIDConnectProvider` and
-   `iam:ListOpenIDConnectProviders` to `AccountFullAccessRole`** (checked 2026-10-05), so creating one may need the
-   project's advanced features turned on in AWS Settings first, or may not be possible at all; until it is, CI runs
-   without a session and the authenticated half is run by hand.
+1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`.
+   **The project's SCP denies it.** `iam:CreateOpenIDConnectProvider` was refused with an explicit deny in a service
+   control policy (`p-8r7znzr8`) on 2026-10-06, as `iam:GetOpenIDConnectProvider` and `iam:ListOpenIDConnectProviders`
+   were on 2026-10-05. AWS's published project SCPs deny `iam:*Provider*`, and only activating advanced features in
+   AWS Settings (Projects, Actions, Explore advanced features) hands the SCPs to the owner. That is Gary's decision: it
+   cannot be undone and it removes the spend limit. Until then CI runs without a session and the authenticated half is
+   run by hand after each product deploy. A long-lived access key in GitHub would avoid the provider, and is not used.
 2. A role, `crv-leak-check`, with this trust policy, so only this repository's `main` (the schedule and a manual run)
    can assume it:
 
@@ -247,10 +249,10 @@ Phase 3 locks driftline.app and then streamlane.app (the door plan's "Phase 3").
 
 What is left:
 
-1. The role `crv-leak-check` (above), so the daily run has a session. The agent's permission system refused creating
-   the OIDC provider (2026-10-06), so it is Gary's, from the steps above.
-2. Revoke `crv-check@example.com`'s invitations and delete its Cognito user (an admin's, from /admin/), unless the
-   daily check is to keep using it, which it needs once the role exists.
+1. The role `crv-leak-check` (above), so the daily run has a session. It waits on the project's SCP, which denies
+   the OIDC provider it needs (2026-10-06): only activating advanced features lifts that, which is Gary's decision.
+2. `crv-check@example.com` stays: the by-hand check after each product deploy signs in as it, and the daily run will
+   once the role exists.
 3. Each product repository's `apps/site/hosting/previous/` is deleted 14 days after its flip (2026-10-20), in its own
    commit, as its README says.
 

@@ -71,7 +71,7 @@ supersedes CRV-007; its copy approved, its requirement text still recorded as pr
   Its session is an existing invitee (`crv-check@example.com`) it sets a fresh password for and signs in as; it makes
   no admin call and never invites, erases or creates anyone, because inviting is an admin's job (go-ahead §17c).
   `apps/web/hosting/README.md`, "The leak check", has how, and the IAM role CI needs, `crv-leak-check`, which does not
-  exist yet (checked 2026-10-05), so the daily run checks without a session until it does.
+  exist: the project's SCP denies the OIDC provider it needs (2026-10-06), so the daily run checks without a session.
 - **Unlocking a locked site is a recorded decision** (`door.unlocked` in Activity, with a reason), never a silent
   rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
@@ -149,8 +149,9 @@ From the requirements' launch gates, not yet settled:
 - **Phase 3, the lock, is applied** (2026-10-06). driftline.app and streamlane.app serve only to invitees, from the
   app root `apps/site-door` in each repository (driftline #16, streamlane #348: from an app root whose `package.json`
   uses Next.js, Amplify runs its own Next.js deployment and refuses the gate's). Both leak checks are clean and both
-  sites are `locked` in `scripts/leak-check/sites.ts`. Left: the role `crv-leak-check`, which the agent's permission
-  system refused to create, so the daily run still has no session. `apps/web/hosting/README.md`, "Phase 3: status".
+  sites are `locked` in `scripts/leak-check/sites.ts`. Left: the role `crv-leak-check`, whose OIDC provider the
+  project's SCP denies (2026-10-06) until advanced features are activated, Gary's decision; the daily run has no
+  session until then. `apps/web/hosting/README.md`, "Phase 3: status".
 
 - Requirements v0.2 and ADR 0001 are still recorded as proposed. Gary approved the copy they go with (the door, the
   privacy page with its retention periods and the invitation text) on 2026-10-05 (P8); his approval named the copy.
