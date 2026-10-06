@@ -306,6 +306,11 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
  * right edge lines up with the cards and the rules between sections. The hero keeps its narrower lead beside the
  * network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for the door alone. */
 .door[data-page="door"] .ms-document > hr ~ * { max-width: none; }
+/* The hero has no actions row (a reader meets each action in its section), so the network figure beside the lead
+ * hangs lower than the dots; the first rule keeps clear of it wherever the figure shows. */
+@media (min-width: 68rem) {
+  .door[data-page="door"] .ms-document > hr:first-of-type { margin-top: 6rem; }
+}
 
 /* ---- actions ------------------------------------------------------------------- */
 /* A row of the page's explicit actions: Try Intentset, Read the whitepaper, Contact us. The one main action in a row

@@ -10,9 +10,6 @@ Coral Reef Ventures
 {.lead}
 Coral Reef Ventures is building open foundations and focused tools to connect product intent, the work that changes it, the checks that verify it, and what users experience.
 
-{.actions}
-[[Try Intentset](https://intentset.org/start/)]{.button .primary} [[Read the whitepaper](/whitepaper/)]{.button} [[Contact us](/get-involved/)]{.button}
-
 ***
 
 {.eyebrow}
@@ -38,19 +35,19 @@ What we build
 ## Two open foundations. Two products.
 
 {.lead}
-Markset and Intentset are open foundations: open source, and available today. Streamlane and Driftline are products: focused tools we are still building.
+Markset and Intentset are open foundations: open source, for any team to adopt. Streamlane and Driftline are products: focused tools for coordinating work and learning from use.
 
 {{products}}
 
 ***
 
 {.eyebrow}
-The direction we are building toward
+How they fit
 
 ## Where each one fits, from intent to feedback.
 
 {.lead}
-Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience. That is the direction we are building toward, not how the four work together today.
+Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience.
 
 :::steps{.lifecycle}
 1. **Intent.** Write down what the product promises, and who owns each promise. [Intentset]{.kicker .intentset}
@@ -74,7 +71,7 @@ Whitepaper
 ## Keeping product intent connected in agentic software development.
 
 {.lead}
-As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products could keep intent, execution and outcomes connected, separating what exists today from what is proposed.
+As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution and outcomes connected.
 
 {.actions}
 [[Read the whitepaper](/whitepaper/)]{.button .primary} [[Download the PDF](/coral-reef-whitepaper.pdf)]{.button}
@@ -97,7 +94,7 @@ Have an agent model one capability your product already has, from its code, test
 
 {.paths}
 - **Markset on its own.** For documents your agents write and people want to read, [start with Markset](https://markset.org).
-- **Streamlane and Driftline.** Neither is publicly available yet. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
+- **Streamlane and Driftline.** Both are open to invited guests. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
 
 ***
 
@@ -163,7 +160,7 @@ Next steps
 Tell us what your team is building, and where keeping track of it is hard.
 
 {.actions}
-[[Contact us](/get-involved/)]{.button .primary} [[Read the whitepaper](/whitepaper/)]{.button}
+[[Contact us](/get-involved/)]{.button .primary}
 
 {.contact}
 Or write to [hello@coralreefventures.com](mailto:hello@coralreefventures.com).

@@ -58,14 +58,26 @@ describe("the door's content", () => {
     expect(door).toContain("Markset and Intentset are open foundations");
   });
 
+  // The page says what each one is and where it fits, not how early it is (Gary, 2026-10-06).
+  it("does not hedge the narrative with how early it is", () => {
+    for (const hedge of ["building toward", "still building", "not how", "available yet", "available today"]) {
+      expect(door, hedge).not.toContain(hedge);
+    }
+  });
+
   it("offers the whitepaper to read and to download, ungated", () => {
     expect(door).toContain('href="/coral-reef-whitepaper.pdf"');
     expect(existsSync(join(import.meta.dirname, "..", "public", "coral-reef-whitepaper.pdf"))).toBe(true);
   });
 
-  it("offers the three explicit actions in the hero, and again to close", () => {
+  // A reader reaches each action in its context, not as a row at the top to skip to (Gary, 2026-10-06).
+  it("offers each explicit action in its own section, and none in the hero", () => {
     const hero = door.slice(0, door.indexOf("<hr"));
-    for (const action of ["Try Intentset", "Read the whitepaper", "Contact us"]) expect(hero, action).toContain(action);
+    expect(hero).not.toContain('class="actions"');
+    const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
+    expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
+    expect(section("Try Intentset on one capability.")).toContain('href="https://intentset.org/start/"');
+    expect(section("Talk to us.")).toContain("Contact us");
     expect(door).toContain('href="https://intentset.org/start/"');
     expect(door).toContain('href="/whitepaper/"');
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
