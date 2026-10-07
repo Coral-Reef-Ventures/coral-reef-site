@@ -153,19 +153,6 @@ describe("the privacy page", () => {
   });
 });
 
-describe("copy-approvals.md, the record of what Gary approved", () => {
-  const root = join(import.meta.dirname, "..", "..", "..");
-  const log = readFileSync(join(root, "docs", "requirements", "copy-approvals.md"), "utf8");
-  const files = readdirSync(join(root, "apps", "web", "content")).filter((f) => f.endsWith(".md"));
-
-  // Copy is approved text: every content file has an entry, which says approved (with a date) or proposed.
-  it.each(files)("has an entry for %s", (file) => {
-    const entry = log.split(/^## /m).find((section) => section.includes(`apps/web/content/${file}`));
-    expect(entry, file).toBeDefined();
-    expect(entry).toMatch(/\((approved|proposed) \d{4}-\d{2}-\d{2}\)/);
-  });
-});
-
 describe("a production build", () => {
   const out = join(import.meta.dirname, "..", "out");
   const walk = (dir: string): string[] =>

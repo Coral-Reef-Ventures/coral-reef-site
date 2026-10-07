@@ -30,7 +30,7 @@ The constraints that shaped the design:
 - **Amplify lessons:** a static export runs on platform `WEB`; build spec, headers and rules are applied with
   `update-app`; the amplify tsconfig is self-contained.
 - **Family rules:** the reef shell and packages where they fit; no trackers or third-party scripts; copy is approved
-  text.
+  text. *Since 2026-10-06 (Gary):* copy can be written and changed without approval, and never invents a fact.
 - **The family source licence** is with counsel, so the CRV app builds its own small auth on `defineAuth` and copies
   nothing from the products.
 
@@ -49,7 +49,7 @@ Three facts found on 2026-10-04 shaped the choices:
   `crv-door.auth.us-east-2.amazoncognito.com`. A custom auth domain would need a certificate in us-east-1.
 - Tokens stay in browser storage, so coralreefventures.com sets no cookie.
 - The door's copy is Markset (`apps/web/content/door.md`, and `get-involved.md` for the form and the sign-in, which
-  have their own page at `/get-involved/` since 2026-10-05) from approved text, rendered at build.
+  have their own page at `/get-involved/` since 2026-10-05), rendered at build.
 - The page loads nothing from another origin except the AWS endpoints the form and sign-in call.
 
 **Invite-only sign-in, bound to an identity.** Two Cognito triggers enforce it:

@@ -6,8 +6,7 @@ interest form and signs invited guests in to the two locked product sites. Requi
 [docs/requirements/](docs/requirements/README.md), and the decision behind the app is
 [ADR 0001](docs/decisions/0001-the-door-and-the-app.md).
 
-The app (`apps/web`) is a Next.js static export with Mantine, its copy written in [Markset](https://markset.org) and
-recorded as approved in `docs/requirements/copy-approvals.md`. Its backend (`amplify/`) is Amplify Gen 2 in us-east-2. Both are
+The app (`apps/web`) is a Next.js static export with Mantine, its copy written in [Markset](https://markset.org). Its backend (`amplify/`) is Amplify Gen 2 in us-east-2. Both are
 hosted on Amplify; `apps/web/hosting/README.md` has how, and how to roll back.
 
 ## Working on it
@@ -27,7 +26,7 @@ pnpm run lint && pnpm run typecheck
 
 | Path | What it is |
 |---|---|
-| `apps/web/content/` | The site's copy, in Markset. `docs/requirements/copy-approvals.md` records what was approved and when. |
+| `apps/web/content/` | The site's copy, in Markset. It changes without approval but never invents a fact (`docs/requirements/website-requirements.md`, "Content authority"). |
 | `apps/web/lib/product-facts.ts` | Product names, taglines, status labels and destinations. The only place a product link can come from. |
 | `apps/web/app/door.css` | The door's theme, layered over Markset's default stylesheet. |
 | `packages/brand/` | The mark and the brand's color tokens. |
