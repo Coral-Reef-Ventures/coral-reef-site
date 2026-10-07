@@ -1,6 +1,8 @@
 # 0001. coralreefventures.com becomes the door, and the app behind it
 
-Date: 2026-10-04. Status: accepted (Gary, 2026-10-06; the door copy it goes with was approved 2026-10-05).
+Date: 2026-10-04. Status: accepted (Gary, 2026-10-06; the door copy it goes with was approved 2026-10-05). Amended
+2026-10-06: the product repositories are private, and the family stance governs publishing them; see "Amendment:
+the product repositories (2026-10-06)".
 
 Supersedes, for hosting and for CRV-007: the GitHub Pages hosting decided earlier the same day (#11).
 
@@ -203,8 +205,10 @@ and requests every file of each locked site on every host with no cookie, with a
   new holder would inherit the person and their grants.
 - **Cognito triggers in the data resource group.** The user pool's trigger configuration and AppSync's user-pool
   authorization would make the auth and data stacks depend on each other.
-- **Making the product repositories private.** It isn't decided here, and it is not part of the lock. Their copy and
-  prices remain readable on GitHub unless Gary decides otherwise. The door locks the sites, not the source.
+- **Making the product repositories private.** It isn't decided here, and it is not part of the lock. The repositories
+  are private, so their copy and prices are not readable on GitHub either, but that is not the door's doing: the door
+  locks the sites, not the source. When the source is published is the family's decision ("Amendment: the product
+  repositories (2026-10-06)").
 
 ## Consequences
 
@@ -226,3 +230,19 @@ and requests every file of each locked site on every host with no cookie, with a
   no form" rule now applies only to the retired Pages page, which is deleted 14 days after the cutover (2026-10-05), on 2026-10-19.
 - **New offerings join by configuration.** A locked offering added later is one entry in the door's site registry and
   one `reef-door-bundle` line in its build. An open one needs neither.
+
+## Amendment: the product repositories (2026-10-06)
+
+The bullet under "Rejected" said the product repositories' copy and prices "remain readable on GitHub". They are not:
+Driftline's repository has been private since it was created on 2026-10-03, and both repositories are private in the
+Coral-Reef-Ventures organization on GitHub Team, which Streamlane's moved to on 2026-10-04 (Streamlane #312). No reason
+for making them private was recorded. The bullet is corrected above.
+
+Gary decided the family's stance on 2026-10-06: the working repositories stay private. Each product is published from a
+new public repository with a squashed root commit at its first release, once counsel has finished the licence, the
+free-use terms are settled, and the CLA and trademark search are done. Publishing is a recorded decision, dated in that
+product's README.md.
+
+This changes nothing in the door. It locks the sites, not the source, and publishing a product's source is not a
+condition for lifting a site's lock. Each is a recorded decision of its own: unlocking is `door.unlocked` in Activity,
+with a reason, and publishing is the dated line in the README.
