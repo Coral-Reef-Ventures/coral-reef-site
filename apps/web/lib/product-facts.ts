@@ -10,7 +10,7 @@
  * invitation, like streamlane.app, is `plannedDestination` and renders as text. driftline.app gained a
  * `cta` on 2026-10-04, when its site went live with an early-access request.
  *
- * Approved copy: docs/requirements/copy-approvals.md records why each card reads as it does.
+ * docs/requirements/website-requirements.md, "The product cards", has the facts each card must keep.
  */
 
 export interface Product {
@@ -21,7 +21,7 @@ export interface Product {
   area: string;
   tagline: string;
   description: string;
-  /** Maturity label, shown on the card exactly as approved. */
+  /** Maturity label, shown on the card as written here. */
   label: string;
   /** A confirmed public destination. Absent means the card carries no link. */
   cta?: { text: string; href: string };

@@ -1,7 +1,7 @@
 /**
  * How long each kind of record is kept (plan §2.3a). The privacy page (`apps/web/content/privacy.md`) quotes these, and
- * `retention.test.ts` fails if the two disagree. Changing a period here is not a schema change, but it changes the
- * privacy copy, which is then proposed copy again until Gary approves it (decision D3).
+ * `retention.test.ts` fails if the two disagree. Changing a period here is not a schema change, but it is a decision
+ * (D3) and changes the privacy page with it, in the same commit.
  *
  * DynamoDB deletes an expired TTL item within a few days of its `expiresAt`, which is why the privacy page says
  * "within a few days after".

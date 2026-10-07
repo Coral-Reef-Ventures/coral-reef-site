@@ -2,7 +2,8 @@
 
 Date: 2026-10-04. Status: accepted (Gary, 2026-10-06; the door copy it goes with was approved 2026-10-05). Amended
 2026-10-06: the product repositories are private, and the family stance governs publishing them; see "Amendment:
-the product repositories (2026-10-06)".
+the product repositories (2026-10-06)". Amended 2026-10-06: copy changes without approval (Gary); see "Amendment: copy
+(2026-10-06)".
 
 Supersedes, for hosting and for CRV-007: the GitHub Pages hosting decided earlier the same day (#11).
 
@@ -30,7 +31,7 @@ The constraints that shaped the design:
 - **Amplify lessons:** a static export runs on platform `WEB`; build spec, headers and rules are applied with
   `update-app`; the amplify tsconfig is self-contained.
 - **Family rules:** the reef shell and packages where they fit; no trackers or third-party scripts; copy is approved
-  text.
+  text. *Since 2026-10-06 (Gary), copy changes without approval; see "Amendment: copy (2026-10-06)".*
 - **The family source licence** is with counsel, so the CRV app builds its own small auth on `defineAuth` and copies
   nothing from the products.
 
@@ -49,7 +50,8 @@ Three facts found on 2026-10-04 shaped the choices:
   `crv-door.auth.us-east-2.amazoncognito.com`. A custom auth domain would need a certificate in us-east-1.
 - Tokens stay in browser storage, so coralreefventures.com sets no cookie.
 - The door's copy is Markset (`apps/web/content/door.md`, and `get-involved.md` for the form and the sign-in, which
-  have their own page at `/get-involved/` since 2026-10-05) from approved text, rendered at build.
+  have their own page at `/get-involved/` since 2026-10-05) from approved text, rendered at build. (No longer
+  "from approved text" since 2026-10-06; see "Amendment: copy (2026-10-06)".)
 - The page loads nothing from another origin except the AWS endpoints the form and sign-in call.
 
 **Invite-only sign-in, bound to an identity.** Two Cognito triggers enforce it:
@@ -246,3 +248,16 @@ product's README.md.
 This changes nothing in the door. It locks the sites, not the source, and publishing a product's source is not a
 condition for lifting a site's lock. Each is a recorded decision of its own: unlocking is `door.unlocked` in Activity,
 with a reason, and publishing is the dated line in the README.
+
+## Amendment: copy (2026-10-06)
+
+Gary decided on 2026-10-06, in his words: "The 'How copy changes' requiring approval has become cumbersome. Let's
+remove that requirement. Current copy is approved." The copy that was live that day is approved; from then on, copy can
+be written and changed without proposal or approval. It never invents a fact: no domain, link, contact address, price,
+legal or privacy claim, or claim that is not true today. The approval log, `docs/requirements/copy-approvals.md`, and
+the test that required an entry in it for each content file are deleted; git history and pull request descriptions are
+the record.
+
+So the Constraints bullet's "copy is approved text" and the Decision bullet's "from approved text" no longer hold. Both
+are kept above as they were decided, each with a pointer here. The door's facts are unchanged: they still come from
+`apps/web/lib/product-facts.ts`, the retention constants and the one approved contact address.

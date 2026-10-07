@@ -7,30 +7,26 @@ door's copy in Markset (`apps/web/content/`). It replaced the one-page GitHub Pa
 2b, 2026-10-05); Phase 2c deleted that page and turned Pages off on 2026-10-06, ahead of the planned 14 days, at
 Gary's decision.
 
-Read `docs/requirements/` before changing anything: `copy-approvals.md` records what copy Gary approved, and
-`website-requirements.md` holds the CRV requirements the tests are named after (v0.2, adds CRV-009 to CRV-014 and
-supersedes CRV-007; its copy approved 2026-10-05 and its requirement text 2026-10-06).
+Read `docs/requirements/` before changing anything: `website-requirements.md` holds the CRV requirements the tests
+are named after (v0.2, adds CRV-009 to CRV-014 and supersedes CRV-007; its requirement text accepted 2026-10-06), and
+the facts the copy must keep.
 
 ## Rules
 
-- **Copy is approved text.** The copy is the content files (`apps/web/content/`), the product table
-  (`apps/web/lib/product-facts.ts`) and the strings `copy-approvals.md` lists; do not write new marketing copy, invent domains, GitHub links,
-  contact channels (the one approved is hello@coralreefventures.com) or brand assets. The one exception is the mark,
+- **Copy can be written and changed without approval** (Gary, 2026-10-06). The copy is the content files
+  (`apps/web/content/`), the product table (`apps/web/lib/product-facts.ts`) and the components' strings. It never
+  invents a fact: no domain, link, contact address, price, legal or privacy claim, or claim that is not true today.
+  The one contact address is hello@coralreefventures.com.
+  `website-requirements.md`, "Content authority", has the facts the cards and pages keep.
+- **No invented brand assets.** The one mark is
   `packages/brand/icon.svg` (served as `apps/web/public/icon.svg`): a puffer fish on a coral tile, asked for and approved 2026-10-03, drawn in the same language as the
   three products' marks. Its spines end in dots ("spines as nodes"), chosen the same day from a set of alternatives
   over the first version's plain spines, so the fish carries the network figure and the dots of Markset's mark. The
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
   products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
-- **New copy is proposed in its file, with an entry in `docs/requirements/copy-approvals.md` marked proposed, and Gary
-  approves it before it goes live.** The log records each approval's date and why the words read as they do; it
-  replaced `site-copy.md` on 2026-10-06. The privacy page with its retention periods, the invitation text, the
-  Get involved page and the locked sites' coming-soon page (reef's gate) were approved on 2026-10-05; a change to any is
-  proposed again until he approves it. `apps/web/lib/content.test.ts` fails if a content file has no entry. The form's
-  and sign-in's words are listed there too; keep the components' strings in step with it.
 - **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
-  start, the illustrative example, the internal pilot, Gary's founder note and the contact (approved 2026-10-06,
-  `copy-approvals.md`). `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
+  start, the illustrative example, the internal pilot, Gary's founder note (his own text) and the contact. `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
   only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with
@@ -60,7 +56,8 @@ supersedes CRV-007; its copy approved 2026-10-05 and its requirement text 2026-1
 - **Nothing personal or secret is logged**: no request body, message, email address, cookie, ticket or token. Each
   function logs an event kind, ids and a status, and a test per function holds it.
 - **Every stored field has a retention period** (plan §2.3a), kept as constants the privacy page quotes. A changed
-  period changes the privacy copy, which is proposed copy again until Gary approves it.
+  period is a decision (D3) and changes the privacy page in the same commit; `amplify/areas/retention.test.ts` holds the
+  two together.
 - **The leak check proves the lock** (CRV-014): `scripts/leak-check.ts`, daily in `.github/workflows/leak-check.yml`
   (a workflow of its own, so a locked site never fails a pull request) and by hand after every product deploy. It
   checks the sites marked `locked` in `scripts/leak-check/sites.ts`, which is set in the change that records a flip (both are, since 2026-10-06).

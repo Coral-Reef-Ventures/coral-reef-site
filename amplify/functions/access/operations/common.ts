@@ -152,8 +152,8 @@ export const invitationView = async (deps: Deps, invitation: Item) => {
 };
 
 /**
- * The invitation text "Copy invitation" prepares, for Gary to send from his own mail. Approved copy
- * (docs/requirements/copy-approvals.md, "Invitation text"): a change is proposed there in the same commit.
+ * The invitation text "Copy invitation" prepares, for Gary to send from his own mail. Its door path and anchor
+ * (`/get-involved/#invited`) and the contact address are facts; keep them true.
  */
 export const invitationText = (sites: readonly DoorSite[], email: string, door: string) => {
   const names = siteList(sites);

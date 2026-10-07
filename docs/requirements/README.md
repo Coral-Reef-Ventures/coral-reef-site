@@ -3,8 +3,7 @@
 Copy this folder to `coral-reef-ventures/docs/requirements/`.
 
 1. [Website requirements](website-requirements.md)
-2. [Copy approvals](copy-approvals.md): what Gary approved, when, and where it lives
-3. [Implementation backlog](implementation-backlog.md)
+2. [Implementation backlog](implementation-backlog.md)
 
 Decisions are recorded in [docs/decisions/](../decisions/): [ADR 0001](../decisions/0001-the-door-and-the-app.md) makes coralreefventures.com the door to Streamlane and Driftline, and the app behind it (accepted, 2026-10-06).
 
