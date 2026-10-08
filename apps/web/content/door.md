@@ -154,10 +154,10 @@ Next steps
 ## Talk to us
 
 {.statement}
-Tell us what your team is building, and where keeping track of it is hard.
+We are looking for funding, design partners and advisors. Tell us who you are and what you have in mind.
 
 {.actions}
-[[Contact us](/get-involved/)]{.button .primary}
+[[Take part](/get-involved/)]{.button .primary}
 
 {.contact}
 Or write to [hello@coralreefventures.com](mailto:hello@coralreefventures.com).

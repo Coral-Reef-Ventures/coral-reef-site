@@ -80,7 +80,7 @@ describe("the door's content", () => {
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
     expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
     expect(section("Try Intentset on one capability")).toContain('href="https://intentset.org/start/"');
-    expect(section("Talk to us")).toContain("Contact us");
+    expect(section("Talk to us")).toContain("Take part");
     expect(door).toContain('href="https://intentset.org/start/"');
     expect(door).toContain('href="/whitepaper/"');
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
