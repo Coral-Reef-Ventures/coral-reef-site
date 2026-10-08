@@ -23,8 +23,8 @@ describe("the door's content", () => {
   });
 
   // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
-  // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the origin story
-  // and the contact.
+  // shows how they fit, the direction, the whitepaper after it, then what Intentset produces with the ways in under
+  // it, the origin story and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
@@ -37,7 +37,6 @@ describe("the door's content", () => {
       "Where each one fits, from intent to feedback",
       "None of the four requires another.",
       "Keeping product intent connected in agentic software development",
-      "Try Intentset on one capability",
       "One behavior, its owner and its status",
       "Why we started Coral Reef Ventures",
       "Talk to us",
@@ -78,7 +77,7 @@ describe("the door's content", () => {
     expect(hero).not.toContain('class="actions"');
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
     expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
-    expect(section("Try Intentset on one capability")).toContain('href="https://intentset.org/start/"');
+    expect(section("One behavior, its owner and its status")).toContain('href="https://intentset.org/start/"');
     expect(section("Talk to us")).toContain("Take part");
     expect(door).toContain('href="https://intentset.org/start/"');
     expect(door).toContain('href="/whitepaper/"');
