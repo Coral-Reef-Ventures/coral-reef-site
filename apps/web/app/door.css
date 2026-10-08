@@ -20,9 +20,13 @@ body {
    * default blue. */
   --ms-accent: var(--ms-fg);
   --ms-fg-muted: light-dark(#5b6159, #a9ab9f);
-  --ms-bg: light-dark(#fbf5ed, #141a19);
-  --ms-surface: light-dark(#f4ece0, #1b2221);
-  --ms-border: light-dark(#ddd5c9, #333b39);
+  /* The ground carries the mark's coral, faintly, in both schemes: the tile on the lockup is #b8461f, so the cream
+   * is already its warm neighbour and the dark ground is a warm near-black rather than the green-black it was, which
+   * sat cool under a coral mark and cream text. Every pair was checked against WCAG AA on both grounds, and
+   * e2e/door.spec.ts measures them on the built pages. */
+  --ms-bg: light-dark(#fbf5ed, #191310);
+  --ms-surface: light-dark(#f4ece0, #221a15);
+  --ms-border: light-dark(#ddd5c9, #3a2f27);
 
   /* The four product accents (website-requirements.md, "Visual direction"). The bar colors are
    * decoration; the -text variants are darkened or lightened until they read

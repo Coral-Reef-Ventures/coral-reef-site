@@ -15,6 +15,7 @@
     "format": "biome check --write .",
     "e2e": "playwright test",
     "leak-check": "node scripts/leak-check.ts",
+    "social-card": "node scripts/social-card.ts",
     "intentset": "pnpm dlx @intentset/cli@0.5.0 validate --level L2",
     "sandbox": "ampx sandbox --identifier crv-agent --profile coral-reef --once"
   },
