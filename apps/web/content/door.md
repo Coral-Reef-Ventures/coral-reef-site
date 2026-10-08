@@ -143,7 +143,7 @@ I’ve built software products throughout my career. Keeping track of what they 
 
 The fragmentation extended beyond development. Planning, documentation, support, product analytics, and observability lived in separate systems. Each served a purpose, but connecting what we intended, what we built, and what users experienced took continual effort.
 
-I also loved Markdown’s portability, while wanting documents that were more beautiful and easier to read. These experiences led me to start Coral Reef Ventures: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring user experience back into product decisions. My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
+These experiences led me to start Coral Reef Ventures: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring user experience back into product decisions. My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
 
 {.byline}
 Gary Clarke, founder
