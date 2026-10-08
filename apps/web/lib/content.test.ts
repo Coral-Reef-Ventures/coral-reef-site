@@ -23,8 +23,8 @@ describe("the door's content", () => {
   });
 
   // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
-  // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the internal pilot,
-  // the origin story and the contact.
+  // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the origin story
+  // and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
@@ -39,7 +39,6 @@ describe("the door's content", () => {
       "Keeping product intent connected in agentic software development",
       "Try Intentset on one capability",
       "One behavior, its owner and its status",
-      "We tried it first on our own product",
       "Why we started Coral Reef Ventures",
       "Talk to us",
       "hello@coralreefventures.com",
@@ -86,12 +85,12 @@ describe("the door's content", () => {
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  // The example is Intentset's illustrative one and the pilot is internal, and each page says so where it stands.
-  it("labels the example illustrative and the pilot internal, and claims no review or conformance", () => {
+  // The example is Intentset's illustrative one and says so inside the card. The door carries no adoption evidence
+  // of its own: those counts live in Intentset's adoption log, where the context that reads them does (2026-10-08).
+  it("labels the example illustrative, and claims no adoption evidence, review or conformance", () => {
     expect(door).toContain("Illustrative, adapted from Intentset");
-    expect(door).toContain("An internal pilot on one capability, not customer evidence.");
-    expect(door).toContain("the product owner has not yet reviewed them");
     expect(door).not.toMatch(/\bverified by\b|\bconform/i);
+    expect(door).not.toMatch(/\bpilot\b|\bcustomer evidence\b/i);
   });
 
   // The origin story is the company's voice and carries no byline (2026-10-08): the first and last

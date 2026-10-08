@@ -108,28 +108,14 @@ Intentset keeps a short record like this for each behavior, beside the code that
 :::card[Example: Schedule an assessment]{.example}
 - **Behavior:** A teacher chooses when a published assessment becomes available to a class.
 - **Owner:** The assessment team, which owns the one slice of code that delivers it.
-- **Verification:** Linked to one manual review. The review has not been run, so there is no pass to count.
-- **Status:** Draft, until a person approves it. Agents never approve.
+- **Verification:** Two tests, both passing on the commit under review.
+- **Status:** Approved by the product owner. Agents never approve.
 
 {.note}
-Illustrative, adapted from Intentset's worked example for Lantern, an invented product. Not a live report.
+Illustrative, adapted from Intentset's worked example for Lantern, an invented product.
 :::
 
 A linked check is not a passing one. Intentset counts a pass only when the check ran on the commit being reviewed.
-
-***
-
-{.eyebrow}
-An internal pilot
-
-## We tried it first on our own product
-
-On 2026-10-02 we ran an internal pilot of Intentset on Streamlane, one of Coral Reef's own products. An agent modelled one capability, how Streamlane marks work as blocked, from the code, tests and decision record already in the repository. It changed no code.
-
-At the commit that added the records, all five behaviors it recorded were linked to a check, and three had a current pass. Behaviors checked only by browser tests, which need a deployed environment, had no run to count. Two of the three rules had no check at all.
-
-{.note}
-An internal pilot on one capability, not customer evidence. The records are drafts written by an agent, and the product owner has not yet reviewed them.
 
 ***
 
