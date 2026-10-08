@@ -15,7 +15,7 @@ Coral Reef Ventures is building open foundations and focused tools to connect pr
 {.eyebrow}
 The problem
 
-## Agents change the code. Your team still answers for the product.
+## Agents change the code. Your team still answers for the product
 
 {.lead}
 After every change an agent makes, someone still has to answer three questions.
@@ -32,7 +32,7 @@ The answers sit in the code, the tracker, the test runs and what users report. T
 {.eyebrow}
 What we build
 
-## Two open foundations. Two products.
+## Two open foundations. Two products
 
 {.lead}
 Markset and Intentset are open foundations: open source, for any team to adopt. Streamlane and Driftline are products: focused tools for coordinating work and learning from use.
@@ -44,7 +44,7 @@ Markset and Intentset are open foundations: open source, for any team to adopt. 
 {.eyebrow}
 How they fit
 
-## Where each one fits, from intent to feedback.
+## Where each one fits, from intent to feedback
 
 {.lead}
 Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience.
@@ -68,7 +68,7 @@ None of the four requires another. Use each where it helps your team.
 {.eyebrow}
 Whitepaper
 
-## Keeping product intent connected in agentic software development.
+## Keeping product intent connected in agentic software development
 
 {.lead}
 As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution and outcomes connected.
@@ -84,7 +84,7 @@ Free to read, with no form and no sign-up.
 {.eyebrow}
 Where to start
 
-## Try Intentset on one capability.
+## Try Intentset on one capability
 
 {.lead}
 Have an agent model one capability your product already has, from its code, tests and decision records. Review what it wrote, and see which promises have a passing check, which only have one linked, and which have none. You do not need to reorganize your repository.
@@ -101,7 +101,7 @@ Have an agent model one capability your product already has, from its code, test
 {.eyebrow}
 Illustrative example
 
-## One behavior, its owner and its status.
+## One behavior, its owner and its status
 
 Intentset keeps a short record like this for each behavior, beside the code that delivers it.
 
@@ -122,7 +122,7 @@ A linked check is not a passing one. Intentset counts a pass only when the check
 {.eyebrow}
 An internal pilot
 
-## We tried it first on our own product.
+## We tried it first on our own product
 
 On 2026-10-02 we ran an internal pilot of Intentset on Streamlane, one of Coral Reef's own products. An agent modelled one capability, how Streamlane marks work as blocked, from the code, tests and decision record already in the repository. It changed no code.
 
@@ -136,7 +136,7 @@ An internal pilot on one capability, not customer evidence. The records are draf
 {.eyebrow}
 From the founder
 
-## Why I started Coral Reef Ventures.
+## Why I started Coral Reef Ventures
 
 :::card{.founder}
 I’ve built software products throughout my career. Keeping track of what they do has always been a challenge, and the past two years of agentic development have magnified it. We built repositories with hundreds of thousands of lines of code, extensive documentation maintained by agents, deliberate architecture, and automated quality gates. Yet answering straightforward questions about product behavior still required investigation. The code and its documentation needed a much tighter connection.
@@ -154,7 +154,7 @@ Gary Clarke, founder
 {.eyebrow}
 Next steps
 
-## Talk to us.
+## Talk to us
 
 {.statement}
 Tell us what your team is building, and where keeping track of it is hard.
