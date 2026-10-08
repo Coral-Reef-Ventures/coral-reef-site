@@ -5,7 +5,7 @@ markset: 0
 {.eyebrow}
 Coral Reef Ventures
 
-# Keep control as agents build your software.
+# Keep control as agents build your software
 
 {.lead}
 Coral Reef Ventures is building open foundations and focused tools to connect product intent, the work that changes it, the checks that verify it, and what users experience.
