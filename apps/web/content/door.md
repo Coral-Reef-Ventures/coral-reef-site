@@ -134,19 +134,16 @@ An internal pilot on one capability, not customer evidence. The records are draf
 ***
 
 {.eyebrow}
-From the founder
+Why we exist
 
-## Why I started Coral Reef Ventures
+## Why we started Coral Reef Ventures
 
-:::card{.founder}
-I’ve built software products throughout my career. Keeping track of what they do has always been a challenge, and the past two years of agentic development have magnified it. We built repositories with hundreds of thousands of lines of code, extensive documentation maintained by agents, deliberate architecture, and automated quality gates. Yet answering straightforward questions about product behavior still required investigation. The code and its documentation needed a much tighter connection.
+:::card{.origin}
+Keeping track of what a software product does has always been a challenge, and the past two years of agentic development have magnified it. We built repositories with hundreds of thousands of lines of code, extensive documentation maintained by agents, deliberate architecture, and automated quality gates. Yet answering straightforward questions about product behavior still required investigation. The code and its documentation needed a much tighter connection.
 
 The fragmentation extended beyond development. Planning, documentation, support, product analytics, and observability lived in separate systems. Each served a purpose, but connecting what we intended, what we built, and what users experienced took continual effort.
 
-These experiences led me to start Coral Reef Ventures: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring user experience back into product decisions. My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
-
-{.byline}
-Gary Clarke, founder
+Coral Reef Ventures came out of those experiences: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring user experience back into product decisions. The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
 :::
 
 ***

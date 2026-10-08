@@ -31,7 +31,8 @@ the facts the copy must keep.
   social card.
 - **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
-  start, the illustrative example, the internal pilot, Gary's founder note (his own text) and the contact. `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
+  start, the illustrative example, the internal pilot, the origin story ("Why we exist": the company's voice, unsigned
+  since 2026-10-08, when Gary's signed founder note was rewritten at his request) and the contact. `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
   only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with

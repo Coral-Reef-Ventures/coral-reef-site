@@ -390,9 +390,9 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .ms-card.example li + li { margin-top: 0.5rem; }
 .ms-card.example + p { margin-top: 1.5rem; }
 
-/* ---- the founder -------------------------------------------------------------------- */
-/* Gary's own words, set apart by a coral rule rather than a box. */
-.ms-card.founder {
+/* ---- why we exist ------------------------------------------------------------------- */
+/* The origin story, set apart by a coral rule rather than a box. */
+.ms-card.origin {
   margin-top: 2rem;
   padding: 0 0 0 1.5rem;
   border: 0;
@@ -400,16 +400,7 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
   border-radius: 0;
   background: none;
 }
-.ms-card.founder p + p { margin-top: 1rem; }
-.byline {
-  margin-top: 1.5rem;
-  font-family: var(--ms-font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ms-fg-muted);
-}
+.ms-card.origin p + p { margin-top: 1rem; }
 
 /* ---- narrow screens -------------------------------------------------------------- */
 @media (max-width: 52rem) {
