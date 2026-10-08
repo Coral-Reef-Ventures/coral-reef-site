@@ -82,24 +82,7 @@ Free to read, with no form and no sign-up.
 ***
 
 {.eyebrow}
-Where to start
-
-## Try Intentset on one capability
-
-{.lead}
-Have an agent model one capability your product already has, from its code, tests and decision records. Review what it wrote, and see which promises have a passing check, which only have one linked, and which have none. You do not need to reorganize your repository.
-
-{.actions}
-[[Try Intentset](https://intentset.org/start/)]{.button .primary}
-
-{.paths}
-- **Markset on its own.** For documents your agents write and people want to read, [start with Markset](https://markset.org).
-- **Streamlane and Driftline.** Both are open to invited guests. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
-
-***
-
-{.eyebrow}
-Illustrative example
+What it produces
 
 ## One behavior, its owner and its status
 
@@ -116,6 +99,11 @@ Illustrative, adapted from Intentset's worked example for Lantern, an invented p
 :::
 
 A linked check is not a passing one. Intentset counts a pass only when the check ran on the commit being reviewed.
+
+{.paths}
+- **Try it.** [Model one capability with Intentset](https://intentset.org/start/), from code, tests and decision records you already have.
+- **Markset on its own.** For documents your agents write and people want to read, [start with Markset](https://markset.org).
+- **Streamlane and Driftline.** Both are open to invited guests. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
 
 ***
 
