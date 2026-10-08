@@ -5,7 +5,7 @@ markset: 0
 {.eyebrow}
 Privacy
 
-# What we keep, and for how long.
+# What we keep, and for how long
 
 {.lead}
 This page covers the interest form and the invitation sign-in on coralreefventures.com. There is no tracking, no analytics and no third-party script on this site.

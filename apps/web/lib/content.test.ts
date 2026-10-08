@@ -27,7 +27,7 @@ describe("the door's content", () => {
   // the founder and the contact.
   it("carries the copy in its order", () => {
     const order = [
-      "Keep control as agents build your software.",
+      "Keep control as agents build your software",
       "Agents change the code. Your team still answers for the product.",
       "Two open foundations. Two products.",
       "Markset",
