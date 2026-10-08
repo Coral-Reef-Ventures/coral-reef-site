@@ -24,7 +24,7 @@ describe("the door's content", () => {
 
   // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
   // shows how they fit, the direction, the whitepaper after it, where to start, then the example, the internal pilot,
-  // the founder and the contact.
+  // the origin story and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
@@ -40,7 +40,7 @@ describe("the door's content", () => {
       "Try Intentset on one capability",
       "One behavior, its owner and its status",
       "We tried it first on our own product",
-      "Why I started Coral Reef Ventures",
+      "Why we started Coral Reef Ventures",
       "Talk to us",
       "hello@coralreefventures.com",
     ];
@@ -94,12 +94,17 @@ describe("the door's content", () => {
     expect(door).not.toMatch(/\bverified by\b|\bconform/i);
   });
 
-  // Gary's own words (2026-10-06), unedited: the first and last sentences pin both ends.
-  it("keeps the founder's introduction word for word", () => {
-    expect(door).toContain("I’ve built software products throughout my career.");
+  // The origin story is the company's voice and carries no byline (2026-10-08): the first and last
+  // sentences pin both ends, and no name appears on the page.
+  it("keeps the origin story word for word, unsigned", () => {
     expect(door).toContain(
-      "My aim is to help teams retain a coherent understanding of their products as agents take on more of the work.",
+      "Keeping track of what a software product does has always been a challenge, and the past two years of agentic development have magnified it.",
     );
+    expect(door).toContain(
+      "The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.",
+    );
+    expect(door).not.toContain("Gary");
+    expect(door).not.toMatch(/\bI’ve\b|\bMy aim\b/);
   });
 
   it("links a visitor to Markset and Intentset only, and reads 'Open to invited guests' for the two behind the door", () => {

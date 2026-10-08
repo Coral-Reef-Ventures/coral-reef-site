@@ -39,8 +39,10 @@ own strings are the copy. Copy can be written and changed without approval (Gary
 fact: no domain, link, contact address, price, legal or privacy claim, or claim that is not true today. A product links
 out only to a confirmed destination; the one contact address is hello@coralreefventures.com; the privacy page quotes
 the retention periods in `amplify/areas/retention.ts`, and a changed period is a decision (D3) that changes the page in
-the same commit. The founder note on the door and the whitepaper are Gary's own text (2026-10-06); the whitepaper is
-kept only at `/whitepaper/`, with no PDF beside it.
+the same commit. The whitepaper is Gary's own text (2026-10-06) and is kept only at
+`/whitepaper/`, with no PDF beside it. The door's origin story ("Why we exist") was his signed founder note until
+2026-10-08; at his request it carries no byline and no name, and it is written in the company's voice, so the door
+names no person.
 
 `/get-involved/` and its anchors `#involved` and `#invited` are linked from outside the app, by reef's gate on the
 locked sites' coming-soon page and by the invitation text, so they do not move without those.
