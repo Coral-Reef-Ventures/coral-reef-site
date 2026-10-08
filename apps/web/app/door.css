@@ -378,18 +378,6 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 }
 .foundation + .note { margin-top: 1.5rem; }
 
-/* ---- where to start ------------------------------------------------------------ */
-.paths { margin-top: 2rem; padding: 0; list-style: none; }
-.paths > li { padding-left: 1rem; border-left: 2px solid var(--ms-border); }
-.paths > li + li { margin-top: 1rem; }
-.paths a { display: inline-block; padding-block: 0.15rem; }
-
-/* ---- the illustrative example ------------------------------------------------------ */
-.ms-card.example { margin-top: 2rem; border-left: 4px solid var(--crv-intentset); }
-.ms-card.example ul { padding-left: 1.2rem; }
-.ms-card.example li + li { margin-top: 0.5rem; }
-.ms-card.example + p { margin-top: 1.5rem; }
-
 /* ---- why we exist ------------------------------------------------------------------- */
 /* The origin story, set apart by a coral rule rather than a box. */
 .ms-card.origin {
