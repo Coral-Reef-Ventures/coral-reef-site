@@ -99,6 +99,55 @@ The model also links customer explanations to their sources. When a source chang
 
 The intended result is a reviewer who can identify what changed, which evidence is relevant and what remains unknown, with direct access to the underlying records and implementation.
 
+## What coordination gains from product meaning
+
+Work management tools organize around the organization: a team, a project, a timeline, a person. That axis answers who
+is doing what by when. It cannot answer what a change means for the product, because the tool holds no account of what
+the product promises. Classification fields such as area or component carry a label with nothing behind it.
+
+Durable product meaning offers a second axis through the same work. A behavior has an identity, rules, an owning
+implementation slice and associated checks. [[2]](#sources-and-scope) Where a work item references one, the question
+"what does this change affect" has an answer that does not depend on the reviewer's memory of the system.
+
+### What a connection could make possible
+
+Our proposed direction is that a coordination tool connected to a product model could support the following. None of
+it is available today, and each depends on the conditions set out below.
+
+- **Classification with a referent.** Grouping, reporting and ownership by product behavior rather than by a free-text
+  area, alongside the existing grouping by team and project.
+- **Review that distinguishes its unknowns.** A coverage view that separates a rule with no check, a check that has not
+  run, a failed check and a result from an earlier snapshot. Four different answers should not be collapsed into one
+  percentage.
+- **Release readiness stated by behavior.** A release could report which behaviors it changes, which of those carry
+  current evidence, and which customer explanations may now be out of date — as information for a human decision,
+  never as an automatic judgment.
+- **Product bets checked against use.** A recorded expectation of impact, set beside what the behavior did after
+  release, if release feedback is later connected and the behavior identity survives the journey.
+- **Agents handed the model with the work.** An agent assigned an item could receive the behaviors, rules and checks
+  that govern the code it is about to change, rather than reconstructing them from the diff and the ticket.
+- **Record drift as assigned work.** A check that reports code changed without its records changing is more likely to
+  be acted on when it becomes an item with an owner than when it is a failing step in a pipeline.
+
+### One rule holds the boundary
+
+Completing work must never assert that a product promise is kept. A closed ticket is evidence that someone considers
+the work finished; it is not evidence that a behavior is released, that a check passed, or that a customer explanation
+is accurate. A coordination tool that infers product state from work state reintroduces exactly the drift the model
+exists to expose. The tool should display what the model reports and reinterpret none of it.
+
+### The integration that pays first is the one that lowers maintenance cost
+
+A product model is only as useful as it is current, and keeping it current is work. Our expectation is therefore that
+the connections worth building first are not the ones that display the model most attractively, but the ones that make
+it cheaper to maintain: handing the model to the agent doing the work, and turning drift into an assigned task. A
+connection that only consumes the model raises its value without lowering its cost, and a model that costs more than
+it returns is abandoned regardless of how well it is presented.
+
+This remains a proposition to test. It depends on stable behavior identities that survive renaming and refactoring, on
+enough of a product being modelled for the second axis to be worth navigating, and on each connection preserving
+ownership, evidence and the distinction between what is unknown and what is merely absent.
+
 ## A change followed through the lifecycle
 
 Consider a team adding scheduled exports to a business application. The user wants an export to run at a future time and remain subject to the organization’s access rules. This is an illustrative scenario, not an implemented Coral Reef workflow or a customer result.
