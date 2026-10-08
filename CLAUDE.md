@@ -23,7 +23,12 @@ the facts the copy must keep.
   three products' marks. Its spines end in dots ("spines as nodes"), chosen the same day from a set of alternatives
   over the first version's plain spines, so the fish carries the network figure and the dots of Markset's mark. The
   coral tile (`#b8461f`) was kept over eight reef blues the same day: it is the one tile clearly distinct from all four
-  products, and every blue sat close to Driftline's sea blue. It is the favicon and the header's image. There is still no social image.
+  products, and every blue sat close to Driftline's sea blue. **The ground is the tile's neighbour in both schemes**
+  (`packages/brand/tokens.ts`, the one source, which `tokens.test.ts` holds `door.css` to): the cream always was, and
+  on 2026-10-07 the dark ground went from a green-black to a warm near-black, which had been sitting cool under a
+  coral mark and cream text. Every family site's ground carries its own mark's color this way; `e2e/door.spec.ts`
+  measures WCAG AA on every text element in both schemes, and a changed dark ground means redrawing the social card. It is the favicon, the header's image and the mark on the
+  social card.
 - **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
   start, the illustrative example, the internal pilot, Gary's founder note (his own text) and the contact. `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
@@ -42,6 +47,13 @@ the facts the copy must keep.
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
   The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives
   them "Open to invited guests." (CRV-003 v0.2).
+- **The social card is drawn by hand and committed** (2026-10-07): `pnpm run social-card` runs
+  `scripts/social-card.ts`, which draws `apps/web/public/social-card.png` in a headless Chromium from the mark and
+  the constants in `apps/web/lib/social-card.ts`; every page names it through `socialCardImages`, and a page that
+  writes its own `openGraph` names it again, because Next replaces rather than merges. reef's own card builder
+  (`socialCard` in `lib/site.tsx`) stays unused: it fetches a web font from Google at build time, which would put
+  another origin in the build. Redraw the card when the mark, the headline or the colours change;
+  `apps/web/lib/social-card.test.ts` holds the committed file to the size the pages claim.
 - **The app: no tracking, no external font, no third-party script** (CRV-011). Nothing loads from another origin but
   the AWS endpoints the form and sign-in call. The browser stores only the sign-in tokens, the form's guest identity id
   and the scheme word, and coralreefventures.com sets no cookie. The locked sites set three, all the door's
@@ -147,6 +159,8 @@ From the requirements' launch gates, not yet settled:
   sites are `locked` in `scripts/leak-check/sites.ts`. The daily leak check signs in through the role
   `crv-leak-check`. `apps/web/hosting/README.md`, "Phase 3: status".
 
-- Brand assets: the mark exists (`packages/brand/icon.svg`); there is no social image, so the social card is text only.
+- Brand assets: the mark exists (`packages/brand/icon.svg`), and since 2026-10-07 so does the social card,
+  `apps/web/public/social-card.png`: the mark, the home page's headline and the four colours already in
+  `lib/site.tsx`, nothing invented.
 - Product claims, to be confirmed against actual releases. The labels were confirmed 2026-10-04: Markset `Open source · v0`,
   Intentset `Open source · Early release`.

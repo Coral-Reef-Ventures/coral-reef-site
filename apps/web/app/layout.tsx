@@ -7,9 +7,17 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { rootMetadata, rootViewport, SiteFooter, SiteHeader } from "../lib/site.tsx";
+import { socialCardImages } from "../lib/social-card.ts";
 import { schemeScript } from "../lib/scheme.tsx";
 
-export const metadata: Metadata = rootMetadata();
+// The social card, on top of the shell's root metadata. A page that writes its own openGraph replaces this rather
+// than merging with it, so those pages name the card again themselves.
+const root = rootMetadata();
+export const metadata: Metadata = {
+  ...root,
+  openGraph: { ...root.openGraph, images: socialCardImages },
+  twitter: { ...root.twitter, images: socialCardImages },
+};
 
 // The shell is light-only; the door follows the reader's scheme through color-scheme, so the browser chrome does too.
 export const viewport: Viewport = { ...rootViewport(), colorScheme: "light dark" };

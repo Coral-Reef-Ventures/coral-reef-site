@@ -12,10 +12,14 @@ export const coral = { light: "#b8461f", dark: "#f29a74" } as const satisfies Co
 export const ink = { light: "#2e3836", dark: "#ece7dc" } as const satisfies ColorPair;
 export const inkMuted = { light: "#5b6159", dark: "#a9ab9f" } as const satisfies ColorPair;
 
-/** Surfaces and rules. */
-export const paper = { light: "#fbf5ed", dark: "#141a19" } as const satisfies ColorPair;
-export const surface = { light: "#f4ece0", dark: "#1b2221" } as const satisfies ColorPair;
-export const border = { light: "#ddd5c9", dark: "#333b39" } as const satisfies ColorPair;
+/**
+ * Surfaces and rules, both schemes warm, so the ground reads as the mark's neighbour rather than against it. The
+ * cream was always coral's; the dark ground was a green-black until 2026-10-07, which sat cool under a coral tile
+ * and cream text. Every pair clears WCAG AA on both grounds, and e2e/door.spec.ts measures them on the built pages.
+ */
+export const paper = { light: "#fbf5ed", dark: "#191310" } as const satisfies ColorPair;
+export const surface = { light: "#f4ece0", dark: "#221a15" } as const satisfies ColorPair;
+export const border = { light: "#ddd5c9", dark: "#3a2f27" } as const satisfies ColorPair;
 
 /** The mark's own tile, which does not change with the scheme. */
 export const markTile = "#b8461f";

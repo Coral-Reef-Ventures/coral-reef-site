@@ -1,6 +1,7 @@
 import { createSite } from "@coralreefventures/site";
 
 import { SchemeControl } from "./scheme.tsx";
+import { CARD_COLORS } from "./social-card.ts";
 
 export const siteUrl = "https://coralreefventures.com";
 export const contactEmail = "hello@coralreefventures.com";
@@ -15,8 +16,9 @@ const Lockup = () => (
 );
 
 /**
- * The shell, bound to Coral Reef Ventures. The door has one page to reach, where the form and the sign-in are, and no social cards: the card builder
- * fetches a web font at build time, and this site loads nothing from another origin.
+ * The shell, bound to Coral Reef Ventures. The door has one page to reach, where the form and the sign-in are. reef's
+ * per-page card builder stays unused: it fetches a web font at build time, and this site puts no other origin in the
+ * browser or in the build. The one card every page names is drawn by hand instead (lib/social-card.ts).
  */
 export const site = createSite({
   name: "Coral Reef Ventures",
@@ -45,7 +47,9 @@ export const site = createSite({
     trademarks: [],
   },
   cards: {},
-  socialCard: { background: "#141a19", text: "#ece7dc", muted: "#a9ab9f", accent: "#f29a74", mark: null },
+  // reef's own card builder is still unused here, because it fetches a web font from Google at build time. The
+  // card this site serves is drawn by scripts/social-card.ts from these same four colors, so the two cannot drift.
+  socialCard: { ...CARD_COLORS, mark: null },
   icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }] },
   themeColor: "#b8461f",
 });
