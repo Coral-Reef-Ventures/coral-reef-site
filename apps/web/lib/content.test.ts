@@ -28,20 +28,20 @@ describe("the door's content", () => {
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
-      "Agents change the code. Your team still answers for the product.",
-      "Two open foundations. Two products.",
+      "Agents change the code. Your team still answers for the product",
+      "Two open foundations. Two products",
       "Markset",
       "Intentset",
       "Streamlane",
       "Driftline",
-      "Where each one fits, from intent to feedback.",
+      "Where each one fits, from intent to feedback",
       "None of the four requires another.",
-      "Keeping product intent connected in agentic software development.",
-      "Try Intentset on one capability.",
-      "One behavior, its owner and its status.",
-      "We tried it first on our own product.",
-      "Why I started Coral Reef Ventures.",
-      "Talk to us.",
+      "Keeping product intent connected in agentic software development",
+      "Try Intentset on one capability",
+      "One behavior, its owner and its status",
+      "We tried it first on our own product",
+      "Why I started Coral Reef Ventures",
+      "Talk to us",
       "hello@coralreefventures.com",
     ];
     let at = 0;
@@ -79,8 +79,8 @@ describe("the door's content", () => {
     expect(hero).not.toContain('class="actions"');
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
     expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
-    expect(section("Try Intentset on one capability.")).toContain('href="https://intentset.org/start/"');
-    expect(section("Talk to us.")).toContain("Contact us");
+    expect(section("Try Intentset on one capability")).toContain('href="https://intentset.org/start/"');
+    expect(section("Talk to us")).toContain("Contact us");
     expect(door).toContain('href="https://intentset.org/start/"');
     expect(door).toContain('href="/whitepaper/"');
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
