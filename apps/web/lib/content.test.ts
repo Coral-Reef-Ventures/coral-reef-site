@@ -23,8 +23,7 @@ describe("the door's content", () => {
   });
 
   // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
-  // shows how they fit, the direction, the whitepaper after it, then what Intentset produces with the ways in under
-  // it, the origin story and the contact.
+  // shows how they fit, the direction, the whitepaper, the origin story and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
@@ -37,7 +36,6 @@ describe("the door's content", () => {
       "Where each one fits, from intent to feedback",
       "None of the four requires another.",
       "Keeping product intent connected in agentic software development",
-      "One behavior, its owner and its status",
       "Why we started Coral Reef Ventures",
       "Talk to us",
       "hello@coralreefventures.com",
@@ -77,19 +75,18 @@ describe("the door's content", () => {
     expect(hero).not.toContain('class="actions"');
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
     expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
-    expect(section("One behavior, its owner and its status")).toContain('href="https://intentset.org/start/"');
     expect(section("Talk to us")).toContain("Take part");
-    expect(door).toContain('href="https://intentset.org/start/"');
     expect(door).toContain('href="/whitepaper/"');
-    expect(door.match(/href="\/get-involved\/"/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(door.match(/href="\/get-involved\/"/g)?.length).toBe(1);
   });
 
-  // The example is Intentset's illustrative one and says so inside the card. The door carries no adoption evidence
-  // of its own: those counts live in Intentset's adoption log, where the context that reads them does (2026-10-08).
-  it("labels the example illustrative, and claims no adoption evidence, review or conformance", () => {
-    expect(door).toContain("Illustrative, adapted from Intentset");
+  // The door makes the case and does not demonstrate it: the worked example and the internal pilot both came off on
+  // 2026-10-08. What each product is stays on its card, and the evidence lives where its context does, in the
+  // whitepaper and in Intentset's adoption log.
+  it("claims no adoption evidence, review or conformance, and carries no worked example", () => {
     expect(door).not.toMatch(/\bverified by\b|\bconform/i);
     expect(door).not.toMatch(/\bpilot\b|\bcustomer evidence\b/i);
+    expect(door).not.toMatch(/\bIllustrative\b|Schedule an assessment/);
   });
 
   // The origin story is the company's voice and carries no byline (2026-10-08): the first and last

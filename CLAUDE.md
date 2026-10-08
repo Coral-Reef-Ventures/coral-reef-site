@@ -30,14 +30,13 @@ the facts the copy must keep.
   measures WCAG AA on every text element in both schemes, and a changed dark ground means redrawing the social card. It is the favicon, the header's image and the mark on the
   social card.
 - **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
-  open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, where to
-  what Intentset produces (a complete record, not an empty one, labelled illustrative inside the card, with the three
-  ways in under it: Intentset, Markset and the design-partner ask; the internal pilot that stood after it was cut
-  2026-10-08, because a dated one-capability experiment dated the company instead of the work, and Intentset's own
-  adoption log carries those counts with their context; the separate "Where to start" section merged into this one the
-  same day, its how-to lead dropped, because the door is read by investors and the lead was written for an engineer),
-  the origin story ("Why we exist": the company's voice, unsigned
-  since 2026-10-08, when Gary's signed founder note was rewritten at his request) and the contact. `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
+  open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, the origin
+  story ("Why we exist": the company's voice, unsigned since 2026-10-08, when Gary's signed founder note was rewritten
+  at his request) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
+  pilot, the worked example and "Where to start" all came off that day, because a dated one-capability experiment and a
+  record of a product's emptiest state told a reader how new this is, and the how-to lead was written for an engineer
+  on a page read by investors. The evidence lives where its context does, in `/whitepaper/` and in Intentset's adoption
+  log; `/get-involved/` is reached from the header's nav and the one button in "Talk to us". `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
   only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with

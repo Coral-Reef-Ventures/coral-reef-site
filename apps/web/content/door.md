@@ -82,32 +82,6 @@ Free to read, with no form and no sign-up.
 ***
 
 {.eyebrow}
-What it produces
-
-## One behavior, its owner and its status
-
-Intentset keeps a short record like this for each behavior, beside the code that delivers it.
-
-:::card[Example: Schedule an assessment]{.example}
-- **Behavior:** A teacher chooses when a published assessment becomes available to a class.
-- **Owner:** The assessment team, which owns the one slice of code that delivers it.
-- **Verification:** Two tests, both passing on the commit under review.
-- **Status:** Approved by the product owner. Agents never approve.
-
-{.note}
-Illustrative, adapted from Intentset's worked example for Lantern, an invented product.
-:::
-
-A linked check is not a passing one. Intentset counts a pass only when the check ran on the commit being reviewed.
-
-{.paths}
-- **Try it.** [Model one capability with Intentset](https://intentset.org/start/), from code, tests and decision records you already have.
-- **Markset on its own.** For documents your agents write and people want to read, [start with Markset](https://markset.org).
-- **Streamlane and Driftline.** Both are open to invited guests. If your team wants to help shape one, [ask about becoming a design partner](/get-involved/).
-
-***
-
-{.eyebrow}
 Why we exist
 
 ## Why we started Coral Reef Ventures
