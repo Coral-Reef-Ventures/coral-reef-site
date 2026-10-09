@@ -39,6 +39,9 @@ Markset and Intentset are open foundations: open source, for any team to adopt. 
 
 {{products}}
 
+{.note}
+If your team wants to help shape Streamlane or Driftline, [ask about becoming a design partner](/get-involved/).
+
 ***
 
 {.eyebrow}
