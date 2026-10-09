@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { segments } from "./markset.ts";
 import { doorProducts } from "./products.ts";
+import { site } from "./site.tsx";
 
 const text = (file: string, slots: string[] = []) =>
   segments(file, slots)
@@ -129,18 +130,17 @@ describe("the Get involved page", () => {
   });
 });
 
-// Eddy is in planning (2026-10-09): the door asks whether the loop starts at intent, under the lifecycle, and /eddy/
-// answers with the loop one step earlier. Eddy has no card, mark, accent or domain yet, so neither page links out for it.
+// Eddy is in planning (2026-10-09): every page's footer links to /eddy/ as "The step before intent", which shows the
+// loop one step earlier. The home page makes no case for it, and Eddy has no card, mark, accent or domain yet, so
+// neither page links out for it.
 describe("the step before intent", () => {
   const door = text("door.md");
   const eddy = text("eddy.md");
 
-  it("asks the question on the door, directly after the independence note, and links to /eddy/", () => {
-    const note = door.indexOf("None of the four requires another");
-    const question = door.indexOf("Does the loop really start at intent?");
-    expect(question).toBeGreaterThan(note);
-    expect(question).toBeLessThan(door.indexOf("Keeping product intent connected in agentic software development"));
-    expect(door.match(/href="\/eddy\/"/g)).toHaveLength(1);
+  it("is reached from every page's footer, not from the door's copy", () => {
+    expect(site.config.footer.links).toContainEqual({ label: "The step before intent →", href: "/eddy/" });
+    expect(door).not.toContain("/eddy/");
+    expect(door).not.toMatch(/before intent|\bEddy\b/i);
   });
 
   it("leaves the door's four cards as they are", () => {

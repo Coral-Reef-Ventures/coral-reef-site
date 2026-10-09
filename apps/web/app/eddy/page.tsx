@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Eddy and the step before intent, reached from the note under the door's lifecycle (2026-10-09). Eddy is in planning
+ * Eddy and the step before intent, reached from the footer's "The step before intent" (2026-10-09). Eddy is in planning
  * and has no domain, card, mark or accent yet, so this page is its only place on the site and names no destination.
  */
 export default function Page() {
