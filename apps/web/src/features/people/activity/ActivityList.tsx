@@ -4,9 +4,16 @@ import { Table, Text } from "@mantine/core";
 import type { Activity, ActivityQuery } from "../../../infrastructure/amplify/api.ts";
 import { getAdminApi } from "../../../infrastructure/amplify/adminClient.ts";
 import { ErrorNotice, formatWhen, useLoad } from "../../admin/shell/index.ts";
-import { kindLabel } from "./model.ts";
+import { useDirectory } from "./directory.ts";
+import { describeActor, describeSubject, detailSummary, type Directory, emptyDirectory, kindLabel } from "./model.ts";
 
-export function ActivityTable({ rows }: { rows: readonly Activity[] }) {
+export function ActivityTable({
+  rows,
+  directory = emptyDirectory,
+}: {
+  rows: readonly Activity[];
+  directory?: Directory;
+}) {
   if (rows.length === 0) return <Text c="dimmed">No activity.</Text>;
   return (
     <Table.ScrollContainer minWidth={520}>
@@ -20,16 +27,22 @@ export function ActivityTable({ rows }: { rows: readonly Activity[] }) {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {rows.map((row) => (
-            <Table.Tr key={row.id}>
-              <Table.Td>{formatWhen(row.at)}</Table.Td>
-              <Table.Td>{kindLabel(row.kind)}</Table.Td>
-              <Table.Td>
-                {row.subjectType} {row.subjectId}
-              </Table.Td>
-              <Table.Td>{row.actorId}</Table.Td>
-            </Table.Tr>
-          ))}
+          {rows.map((row) => {
+            const subject = describeSubject(row, directory);
+            const actor = describeActor(row.actorId, directory);
+            const summary = detailSummary(row.detail);
+            return (
+              <Table.Tr key={row.id}>
+                <Table.Td>{formatWhen(row.at)}</Table.Td>
+                <Table.Td>
+                  {kindLabel(row.kind)}
+                  {summary ? <Text span c="dimmed">{` · ${summary}`}</Text> : null}
+                </Table.Td>
+                <Table.Td title={subject.title}>{subject.text}</Table.Td>
+                <Table.Td title={actor.title}>{actor.text}</Table.Td>
+              </Table.Tr>
+            );
+          })}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>
@@ -42,7 +55,8 @@ export function ActivityList({ query, refreshKey }: { query: ActivityQuery; refr
     () => getAdminApi().listActivity(query),
     [query.area, query.personId, query.subjectId, refreshKey],
   );
+  const directory = useDirectory(refreshKey);
   if (result.state === "error") return <ErrorNotice message={result.message} />;
   if (result.state === "loading") return <Text c="dimmed">Loading.</Text>;
-  return <ActivityTable rows={result.data} />;
+  return <ActivityTable rows={result.data} directory={directory} />;
 }

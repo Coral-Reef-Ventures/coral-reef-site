@@ -25,16 +25,24 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
   const nextId = () => `01STUB${String(++counter).padStart(6, "0")}`;
   const stamp = () => now().toISOString();
 
-  function log(kind: string, area: Activity["area"], subjectType: string, subjectId: string, personId?: string) {
+  function log(
+    kind: string,
+    area: Activity["area"],
+    subjectType: string,
+    subjectId: string,
+    personId?: string,
+    extra?: { actorId?: string; detail?: Record<string, unknown> },
+  ) {
     activity.unshift({
       id: nextId(),
       personId,
-      actorId: "stub-admin",
+      actorId: extra?.actorId ?? "stub-admin",
       area,
       kind,
       subjectType,
       subjectId,
       at: stamp(),
+      detail: extra?.detail,
     });
   }
 
@@ -110,6 +118,11 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
     log("interest.submitted", "interest", "Submission", "01STUB-S1");
     log("access.invited", "access", "Invitation", "eli@example.com", "01STUB-P2");
     log("access.signed_up", "access", "Invitation", "dee@example.com", "01STUB-P1");
+    // As the backend writes it: the person is the subject and the actor, and the detail names the site, never the ticket.
+    log("access.ticket_issued", "access", "Person", "01STUB-P1", "01STUB-P1", {
+      actorId: "01STUB-P1",
+      detail: { site: "driftline", host: "driftline.app", grantId: "01STUB-G1", jti: "01STUB-T1" },
+    });
   }
   seed();
 
