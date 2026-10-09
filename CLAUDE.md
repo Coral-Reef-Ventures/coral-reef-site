@@ -128,6 +128,9 @@ the facts the copy must keep.
   in Chromium at 390px and 1440px in both color schemes for overflow, tap targets, keyboard order, focus rings and WCAG
   AA contrast. `pnpm exec playwright install chromium` once before the first run.
 - `pnpm run lint` is Biome, configured in `biome.jsonc`; the stylesheet is exempt from formatting, as in Markset.
+- `pnpm run intentset` is the architecture check (Intentset L2, the `product/model/slices/` files), and it is a gate
+  CI runs that `pnpm test`, `pnpm run lint` and `pnpm run typecheck` do not: a slice reaching past another's
+  `index.ts` entrypoint, or importing a slice it does not declare in `dependsOn`, is an error. Run it before pushing.
 - `apps/web/app/door.css` sets Markset's tokens and styles the author classes the door uses. Every color is a `light-dark()`
   pair, as in `markset.css`. The four product accents (violet, teal, amber, sea blue) each have a bar color and a darker or
   lighter `-text` variant that clears 4.5:1. Each product card shows that product's own mark beside its name, carried
