@@ -81,10 +81,10 @@ describe("the directory", () => {
 });
 
 describe("the detail summary", () => {
-  it("names a site by its id or its host", () => {
+  it("names a site by the id the backend wrote", () => {
     expect(detailSummary({ site: "driftline", host: "driftline.app", jti: "01TICKET" })).toBe("Driftline");
     expect(detailSummary({ site: "crv" })).toBe("Coral Reef Ventures");
-    expect(detailSummary({ sites: ["streamlane.app", "driftline.app"] })).toBe("Streamlane, Driftline");
+    expect(detailSummary({ sites: ["streamlane", "driftline"] })).toBe("Streamlane, Driftline");
     expect(detailSummary({ sites: [] })).toBe("No sites");
   });
 
@@ -98,6 +98,8 @@ describe("the detail summary", () => {
     expect(detailSummary(undefined)).toBe("");
     expect(detailSummary({ secret: "do-not-show" })).toBe("");
     expect(detailSummary({ site: "https://evil.example" })).toBe("");
+    expect(detailSummary({ site: "someone@example.com" })).toBe("");
+    expect(detailSummary({ sites: ["driftline.app"] })).toBe("");
     expect(detailSummary({ from: "new", to: "<script>" })).toBe("");
     expect(detailSummary({ grantId: "01GRANT", jti: "01TICKET", length: 12 })).toBe("");
   });

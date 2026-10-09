@@ -20,7 +20,7 @@ intentset:
     entrypoints: [apps/web/src/features/people/activity/index.ts]
     layers:
       presentation: [apps/web/src/features/people/activity/*.tsx, apps/web/src/features/people/activity/index.ts]
-      application: [apps/web/src/features/people/activity/model.ts]
+      application: [apps/web/src/features/people/activity/model.ts, apps/web/src/features/people/activity/directory.ts]
       policy: []
       model: []
       external: []

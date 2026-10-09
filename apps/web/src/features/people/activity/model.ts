@@ -1,4 +1,3 @@
-import { lockedSites } from "../../access/door-session/sites.ts";
 import { SUBMISSION_STATUSES, type Activity, type ActivityArea } from "../../../infrastructure/amplify/api.ts";
 import { titleCase } from "../../admin/shell/format.ts";
 
@@ -86,16 +85,16 @@ export function describeActor(actorId: string, directory: Directory): Cell {
   return cell(known ?? shortId(actorId), actorId);
 }
 
-const SITE_NAMES: Record<string, string> = {
-  crv: "Coral Reef Ventures",
-  ...Object.fromEntries(
-    lockedSites.flatMap((site) => [[site.id, site.name] as const, [site.host, site.name] as const]),
-  ),
-};
+const siteShape = /^[a-z][a-z0-9-]{1,19}$/;
 
-/** A site's name, by the id the backend writes or by its host; "" for anything not in the door's own list. */
+/**
+ * A site as the row names it. The backend writes the registry's own id — "driftline", or "crv" for a submission's
+ * source — so the word is shown as it is, capitalised, and an id this view has never heard of still reads correctly.
+ * Only a plain lowercase word passes: nothing else a detail holds can reach the column through this.
+ */
 export function siteName(value: unknown): string {
-  return typeof value === "string" ? (SITE_NAMES[value] ?? "") : "";
+  if (typeof value !== "string" || !siteShape.test(value)) return "";
+  return value === "crv" ? "Coral Reef Ventures" : titleCase(value);
 }
 
 const isStatus = (value: unknown): boolean =>
