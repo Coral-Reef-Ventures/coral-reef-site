@@ -138,7 +138,7 @@ describe("the step before intent", () => {
   const eddy = text("eddy.md");
 
   it("is reached from every page's footer, not from the door's copy", () => {
-    expect(site.config.footer.links).toContainEqual({ label: "The step before intent →", href: "/eddy/" });
+    expect(site.config.footer.links).toContainEqual({ label: "The step before intent", href: "/eddy/" });
     expect(door).not.toContain("/eddy/");
     expect(door).not.toMatch(/before intent|\bEddy\b/i);
   });
