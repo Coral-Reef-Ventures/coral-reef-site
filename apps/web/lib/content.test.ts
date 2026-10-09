@@ -77,7 +77,7 @@ describe("the door's content", () => {
     expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
     expect(section("Talk to us")).toContain("Take part");
     expect(door).toContain('href="/whitepaper/"');
-    expect(door.match(/href="\/get-involved\/"/g)?.length).toBe(1);
+    expect(door.match(/href="\/get-involved\/"/g)?.length).toBe(2);
   });
 
   // The door makes the case and does not demonstrate it: the worked example and the internal pilot both came off on
