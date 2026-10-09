@@ -18,6 +18,8 @@ Coral Reef Ventures is building open foundations and focused products that keep 
 
 Our thesis is that the next opportunity in software development lies in maintaining a trustworthy connection between intent, execution and outcomes. A team should be able to ask what a change means for its product, see the evidence behind the answer, and decide what to do next. Agents can help maintain the records; people retain authority over product promises and consequential decisions.
 
+The same connection is what lets a team delegate more at once. When each behavior has one owning slice of code and every change is checked against its records, several agents can work in parallel without colliding, and a person can review what each one kept rather than what each one wrote. None of this asks a team to change the controls it has: how a change is reviewed, merged and released stays the team's rule, and the approach works inside it.
+
 Each offering can be adopted independently. Our longer-term vision connects them through explicit product meaning and evidence, allowing information created during planning to remain useful during implementation, release and learning.
 
 This paper explains the problem, the opportunity, and how the approach could work in practice. It separates current foundations from proposed integrations and future capabilities. It does not claim that a connected product model guarantees correctness or that faster code generation always produces better outcomes.
@@ -39,6 +41,10 @@ A ticket explains why a feature was requested. Code expresses what it now does. 
 ### Review volume can exceed review capacity
 
 When generating a change becomes easier, the team still has to understand its effects. A large diff can hide a small but consequential behavior change. A short AI summary can hide uncertainty just as easily. Review needs a stable account of the product, linked evidence and clear ownership, together with inspection of the implementation where risk warrants it.
+
+### Several agents at once create a coordination problem of their own
+
+A team that delegates enough work will run more than one agent at a time, and each session starts without memory of the others. Two agents changing the same code collide. Two agents changing different code can still break a promise that spans both, if nothing says which code is accountable for which behavior. A decision made in one session, and the alternatives it rejected, have to reach the next session or be made again. The coordination that a team of people does by talking has to be carried, for agents, by what is written down in the repository.
 
 ### Passing checks leave unanswered questions
 
@@ -65,7 +71,9 @@ We organize the approach around four needs. Their relationship is a product visi
 
 ### Intentset supplies product meaning
 
-Intentset is the proposed connection between these needs. A product behavior has an identity, rules, an accountable implementation slice and associated checks. Its draft export contract defines what other tools can read from the model. That creates a basis for integration without requiring a team to adopt every Coral Reef product. [[2]](#sources-and-scope)
+Intentset is the proposed connection between these needs. A product behavior has an identity, rules, an accountable implementation slice, associated checks, and the decisions that explain why it was built as it was. Its draft export contract defines what other tools can read from the model. That creates a basis for integration without requiring a team to adopt every Coral Reef product. [[2]](#sources-and-scope)
+
+The slice is also the unit of parallel work. Because one slice is accountable for each behavior and the architecture check keeps other code out of its internals, two agents in two slices can only meet at a declared contract, and an agent handed one slice's context makes a change that stays in that slice. A review check lists each slice whose code changed while none of its records did, so each branch shows whether it kept the promises it touched. This is what allows one person to run several agents on one product at once, and Intentset publishes guidance for doing so on its site. [[2]](#sources-and-scope)
 
 ### Markset makes that meaning easier to share
 
@@ -112,7 +120,8 @@ implementation slice and associated checks. [[2]](#sources-and-scope) Where a wo
 ### What a connection could make possible
 
 Our proposed direction is that a coordination tool connected to a product model could support the following. None of
-it is available today, and each depends on the conditions set out below.
+the connections is available today, and each depends on the conditions set out below. Where Intentset alone already
+provides one half, the item says so.
 
 - **Classification with a referent.** Grouping, reporting and ownership by product behavior rather than by a free-text
   area, alongside the existing grouping by team and project.
@@ -124,10 +133,13 @@ it is available today, and each depends on the conditions set out below.
   never as an automatic judgment.
 - **Product bets checked against use.** A recorded expectation of impact, set beside what the behavior did after
   release, if release feedback is later connected and the behavior identity survives the journey.
-- **Agents handed the model with the work.** An agent assigned an item could receive the behaviors, rules and checks
-  that govern the code it is about to change, rather than reconstructing them from the diff and the ticket.
-- **Record drift as assigned work.** A check that reports code changed without its records changing is more likely to
-  be acted on when it becomes an item with an owner than when it is a failing step in a pipeline.
+- **Agents handed the model with the work.** An agent assigned an item could receive the behaviors, rules, checks and
+  decisions that govern the code it is about to change, rather than reconstructing them from the diff and the ticket.
+  Intentset's toolchain already hands an agent that context for a file or a record, in the repository and through a
+  read-only server; what does not exist is the hand-off through a work item. [[2]](#sources-and-scope)
+- **Record drift as assigned work.** Intentset's review check already reports each slice whose code changed without
+  its records changing, and can fail a pull request on it. [[2]](#sources-and-scope) That report is more likely to be
+  acted on when it becomes an item with an owner than when it is a failing step in a pipeline.
 
 ### One rule holds the boundary
 
@@ -153,9 +165,9 @@ ownership, evidence and the distinction between what is unknown and what is mere
 Consider a team adding scheduled exports to a business application. The user wants an export to run at a future time and remain subject to the organization’s access rules. This is an illustrative scenario, not an implemented Coral Reef workflow or a customer result.
 
 :::steps
-1. **Agree the behavior and constraints.** A product owner and agent draft the behavior in Intentset. An authorized user can schedule an export. Rules define time handling, cancellation, and what happens if access is revoked before execution. The product owner approves the intended behavior. Open questions stay visible rather than being silently settled by the implementation.
+1. **Agree the behavior and constraints.** A product owner and agent draft the behavior in Intentset. An authorized user can schedule an export. Rules define time handling, cancellation, and what happens if access is revoked before execution. The product owner approves the intended behavior. Open questions stay visible rather than being silently settled by the implementation, and each one settled is written as a decision record, with the alternatives rejected, so an agent in a later session reads why rather than deciding again.
 2. **Coordinate and implement the work.** In the proposed Streamlane integration, the task would reference the approved behavior and identify the responsible team. The implementing agent would load the relevant model, make changes in the owning slice, and update its records and checks. If the work requires changing a product rule, that proposed change would return for human approval.
-3. **Review the meaning and the evidence.** Suppose the checks cover successful scheduling and cancellation, but no test verifies revoked access at execution time. A model that links each rule to its checks makes that omission easier to identify. The reviewer can request the missing evidence and inspect the authorization implementation before approving the change. A readable change report could use Markset to present the changed behavior, affected rules, checks and unresolved questions. The report should link to its sources and distinguish failed checks, checks that have not run, and rules with no associated checks. A confident narrative alone would not justify approval.
+3. **Review the meaning and the evidence.** Suppose the checks cover successful scheduling and cancellation, but no test verifies revoked access at execution time. A model that links each rule to its checks makes that omission easier to identify. The reviewer can request the missing evidence and inspect the authorization implementation before approving the change. A readable change report could use Markset to present the changed behavior, affected rules, checks and unresolved questions, as the agent's plan for the work was a Markset page it kept current while the work ran. The report should link to its sources and distinguish failed checks, checks that have not run, and rules with no associated checks. A confident narrative alone would not justify approval.
 4. **Observe use and investigate friction.** In the planned Driftline experience, the release would carry context about the scheduled-export behavior. The team could relate failures and adoption friction to that behavior and its owner. Feedback might show that users cannot tell when the export will run, even though the implementation passes its checks. That observation would be a hypothesis to investigate. A metric by itself cannot establish the cause of friction. The team could examine errors and ask affected users, with appropriate consent and data controls, before changing the product.
 5. **Use learning to revise intent.** If the problem is confirmed, a person could approve a clearer time display and confirmation message. That decision would update the behavior or guidance, create new work, and lead to fresh evidence for the next release. The connection to the original intent would remain available throughout.
 :::
@@ -168,7 +180,7 @@ A useful starting point is one existing capability with meaningful rules and a r
 
 ### What exists today
 
-| Offering | Public status as of 2026-10-05 |
+| Offering | Public status as of 2026-10-09 |
 | --- | --- |
 | Markset | Open source v0; the site lists reference version 0.4.2 and tooling for authoring, checking and rendering. |
 | Intentset | Specifications in review; the site lists reference toolchain 0.6.1 for trying the model on a real capability. |
@@ -177,9 +189,11 @@ A useful starting point is one existing capability with meaningful rules and a r
 
 These are published project statuses, not evidence of broad customer adoption or a completed integrated platform. Versions and availability will change. [[1–3]](#sources-and-scope)
 
-### What the first pilot shows
+### What the adoption log shows
 
-Intentset reports a pilot on one Streamlane capability. The model validated and the architecture check passed. It identified two of three rules without tests and three behaviors checked only through the browser. This is a useful example of making verification gaps visible. It is a single reported internal pilot, with no demonstrated reduction in defects or review time. [[2]](#sources-and-scope)
+Intentset keeps a public log of its adoption in Streamlane and Driftline, Coral Reef's own unreleased products. [[2]](#sources-and-scope) The first pilot modelled one Streamlane capability from its code, tests and an existing decision record: the model validated, the architecture check passed, and the model identified two of three rules without tests and three behaviors checked only through the browser. Since 2026-10-06 the model's checks are a required step on every Streamlane pull request: validation in a migration mode that holds the architecture violations already present as a baseline that may shrink and may not grow, and a drift check that fails a change which touched a slice's code and none of its records unless a commit says why. Driftline's model was written before its code, so its first commits were checked against promises that already existed.
+
+These are examples of making verification gaps and record drift visible in real repositories, and of the adoption itself being done by agents, one capability at a time. They are internal, on products that are not released, with no demonstrated reduction in defects or review time.
 
 ### What to measure next
 
@@ -189,7 +203,7 @@ Track these measures alongside escaped defects and rework so that faster review 
 
 ### How the approach can expand
 
-Once a capability demonstrates value, extend the model to adjacent slices and automate record maintenance. Connect work management and reviewed explanations where those links reduce real effort. Integrate production feedback only when behavior identities, release mapping and data handling are reliable. Each step should justify its maintenance cost before the team adds more scope.
+Once a capability demonstrates value, extend the model to adjacent slices and automate record maintenance. The extension is itself work that agents do, in parallel, with a person approving the records and watching the counts; Intentset publishes guidance for running it that way within a team's existing controls. [[2]](#sources-and-scope) Connect work management and reviewed explanations where those links reduce real effort. Integrate production feedback only when behavior identities, release mapping and data handling are reliable. Each step should justify its maintenance cost before the team adds more scope.
 
 ## The vision and the conditions for success
 
@@ -199,6 +213,8 @@ The commercial opportunity is to serve teams that find this connection valuable 
 
 The approach succeeds only if records remain readable and current, checks expose uncertainty, and integrations preserve ownership and evidence. Production feedback also requires explicit decisions about consent, access, retention and the data sent to agents. Humans need practical authority to approve, reject and revise the work.
 
+Delegating more also depends on the boundaries around the agents, and automation should widen only as those boundaries are in place: what an agent's commands may touch, an environment of its own that holds no real data, and a path to the main branch that runs only through the review the team already requires. The product model does not replace any of them. Its contribution is to the last: it gives the reviewer a short account of what a change kept, where the diff gives a long one of what it did.
+
 We invite software teams to start with one capability: model its promises, connect the evidence, and assess the next change. We also welcome collaborators and partners who want to help establish open foundations for this way of building software.
 
 {.contact}
@@ -206,10 +222,10 @@ Explore the projects at [coralreefventures.com](/) or contact [hello@coralreefve
 
 ## Sources and scope
 
-Project descriptions and statuses were reviewed on 2026-10-05. The connected lifecycle, integration scenario and commercial opportunity are Coral Reef’s proposed direction. External sources establish agent capabilities and the need for evaluation; they do not validate Coral Reef’s approach.
+Project descriptions and statuses were reviewed on 2026-10-09. The connected lifecycle, integration scenario and commercial opportunity are Coral Reef’s proposed direction. External sources establish agent capabilities and the need for evaluation; they do not validate Coral Reef’s approach.
 
 1. Coral Reef Ventures: [coralreefventures.com](https://coralreefventures.com/)
-2. Intentset project overview and reported pilot: [intentset.org](https://intentset.org/)
+2. Intentset project overview, adoption log and guidance for running an adoption: [intentset.org](https://intentset.org/), [intentset.org/pilot/](https://intentset.org/pilot/), [intentset.org/adopt/](https://intentset.org/adopt/)
 3. Markset project overview and tooling: [markset.org](https://markset.org/)
 4. GitHub, Application card for Copilot Agents: [docs.github.com/en/copilot/responsible-use/agents](https://docs.github.com/en/copilot/responsible-use/agents)
 5. Anthropic, Building effective agents: [anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)
