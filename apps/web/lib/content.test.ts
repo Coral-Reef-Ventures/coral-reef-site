@@ -129,6 +129,46 @@ describe("the Get involved page", () => {
   });
 });
 
+// Eddy is in planning (2026-10-09): the door asks whether the loop starts at intent, under the lifecycle, and /eddy/
+// answers with the loop one step earlier. Eddy has no card, mark, accent or domain yet, so neither page links out for it.
+describe("the step before intent", () => {
+  const door = text("door.md");
+  const eddy = text("eddy.md");
+
+  it("asks the question on the door, directly after the independence note, and links to /eddy/", () => {
+    const note = door.indexOf("None of the four requires another");
+    const question = door.indexOf("Does the loop really start at intent?");
+    expect(question).toBeGreaterThan(note);
+    expect(question).toBeLessThan(door.indexOf("Keeping product intent connected in agentic software development"));
+    expect(door.match(/href="\/eddy\/"/g)).toHaveLength(1);
+  });
+
+  it("leaves the door's four cards as they are", () => {
+    expect(door).not.toMatch(/class="[^"]*\beddy\b/);
+    expect(doorProducts.map((p) => p.slug)).not.toContain("eddy");
+  });
+
+  it("has one h1 and shows the loop as six steps, Capture first, then the door's five", () => {
+    expect(h1s(eddy)).toBe(1);
+    const order = ["Capture.", "Intent.", "Execution.", "Verification.", "Release.", "Feedback."];
+    let at = 0;
+    for (const step of order) {
+      const found = eddy.indexOf(`<strong>${step}</strong>`, at);
+      expect(found, step).toBeGreaterThan(-1);
+      at = found;
+    }
+  });
+
+  it("says Eddy is in planning, keeps it independent, and claims no price, date, domain or release", () => {
+    expect(eddy).toContain("Eddy is in planning");
+    expect(eddy).toContain("planned to stand on its own");
+    expect(eddy).not.toMatch(/\$\d|\bper month\b|\bavailable now\b|\bbeta\b|\b20\d\d\b/i);
+    expect(eddy).not.toMatch(/https?:\/\/(?!markset\.org|intentset\.org)/);
+    expect(eddy).toContain('href="/get-involved/"');
+    expect(eddy).toContain("hello@coralreefventures.com");
+  });
+});
+
 describe("the privacy page", () => {
   const privacy = text("privacy.md");
 

@@ -66,6 +66,9 @@ Those three questions are easier to answer when a change can be followed from th
 {.note}
 The five steps are a loop, not a line: what you learn from use becomes the next thing you promise. Every connection along it removes a handoff. None of the four requires another, so start where the pain is.
 
+{.note}
+Does the loop really start at intent? Most promises begin as a passing thought, a hallway decision or a note to self. [What comes before intent](/eddy/)
+
 ***
 
 {.eyebrow}

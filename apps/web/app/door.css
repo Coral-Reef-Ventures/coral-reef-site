@@ -260,6 +260,8 @@ header > div:has(.door-scheme-slot) > a:first-child { flex: 0 1 auto; min-width:
 .intentset { --crv-accent: var(--crv-intentset); --crv-accent-text: var(--crv-intentset-text); }
 .streamlane { --crv-accent: var(--crv-streamlane); --crv-accent-text: var(--crv-streamlane-text); }
 .driftline { --crv-accent: var(--crv-driftline); --crv-accent-text: var(--crv-driftline-text); }
+/* Eddy is in planning, with no approved mark or accent yet, so its kicker on /eddy/ stays the page's muted ink. */
+.eddy { --crv-accent: var(--ms-border); --crv-accent-text: var(--ms-fg-muted); }
 
 /* Each product's own mark beside its name, as the product's site shows it:
  * Markset's from markset.org, Intentset's from intentset.org, Streamlane's
@@ -314,12 +316,13 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
  * beside the network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for these two
  * pages alone: the home page from its first rule, the whitepaper (which has none) from its first section heading. */
 .door[data-page="door"] .ms-document > hr ~ *,
+.door[data-page="eddy"] .ms-document > hr ~ *,
 .door[data-page="whitepaper"] .ms-document > :is(h2, h2 ~ *) { max-width: none; }
 /* Neither hero has an actions row (a reader meets each action in its section), so the network figure beside the lead
  * hangs lower than the dots; what follows the hero keeps clear of it wherever the figure shows: the home page's first
  * rule, the whitepaper's first section heading. */
 @media (min-width: 68rem) {
-  .door[data-page="door"] .ms-document > hr:first-of-type { margin-top: 6rem; }
+  .door:is([data-page="door"], [data-page="eddy"]) .ms-document > hr:first-of-type { margin-top: 6rem; }
   .door[data-page="whitepaper"] .ms-document > h2:first-of-type { margin-top: 8rem; }
 }
 
@@ -368,6 +371,10 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 @media (min-width: 62rem) {
   .lifecycle { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; }
   .lifecycle > .ms-step + .ms-step { margin-top: 0; }
+}
+/* /eddy/ shows the loop with Capture ahead of Intent: six steps, the same rule. */
+@media (min-width: 62rem) {
+  .door[data-page="eddy"] .lifecycle { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 .foundation {
   margin-top: 1.5rem;
