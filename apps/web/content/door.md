@@ -64,7 +64,7 @@ Those three questions are easier to answer when a change can be followed from th
 **Under every step, Markset.** Records stay readable Markdown that agents write and people review. Intentset's records are already Markset documents.
 
 {.note}
-None of the four requires another. Use each where it helps your team.
+The five steps are a loop, not a line: what you learn from use becomes the next thing you promise. Every connection along it removes a handoff. None of the four requires another, so start where the pain is.
 
 ***
 
