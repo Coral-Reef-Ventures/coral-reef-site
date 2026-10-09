@@ -39,7 +39,8 @@ the facts the copy must keep.
   log; `/get-involved/` is reached from the header's nav and the one button in "Talk to us". `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
   only there: no PDF beside it. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
-  Gary's request; the header's one nav link goes there. A locked site's gate redirects to the door's origin, `/`, with
+  Gary's request; the header's nav is Whitepaper (added 2026-10-09, so the paper the door sends readers to for its
+  evidence is reachable from every page) and then Get involved. A locked site's gate redirects to the door's origin, `/`, with
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest.

@@ -71,10 +71,11 @@ test("the keyboard reaches the header, its scheme control and then the page in o
     rings.push(stop.ring);
     stops.push(stop.at);
   }
-  // The skip link, then the header in reading order: the lockup, the one nav link, the scheme control (the checked
-  // radio is its one stop), and then the page. The control is in the bar now, not a row of its own below it.
-  expect(stops.slice(0, 4)).toEqual(["other:A", "header:A", "header:A", "header:INPUT"]);
-  expect(stops[4]).toMatch(/^main:/);
+  // The skip link, then the header in reading order: the lockup, the two nav links (Whitepaper, then Get involved),
+  // the scheme control (the checked radio is its one stop), and then the page. The control is in the bar now, not a
+  // row of its own below it.
+  expect(stops.slice(0, 5)).toEqual(["other:A", "header:A", "header:A", "header:A", "header:INPUT"]);
+  expect(stops[5]).toMatch(/^main:/);
   expect(rings.length, "the page's stops").toBeGreaterThan(10);
   expect(rings.length, "tabbing ended").toBeLessThan(80);
   for (const ring of rings) expect(ring, "a focus stop has no ring").toMatch(/:(solid|auto):(3px|2px|1px)/);
@@ -290,7 +291,10 @@ test("the home page has one h1 and neither the form nor the sign-in; the Get inv
   await expect(page.getByRole("heading", { name: "Have an invitation?" })).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Sign in with Google" })).toHaveCount(0);
-  await expect(page.getByRole("navigation", { name: "Main" }).first().getByRole("link")).toHaveText(["Get involved"]);
+  await expect(page.getByRole("navigation", { name: "Main" }).first().getByRole("link")).toHaveText([
+    "Whitepaper",
+    "Get involved",
+  ]);
 
   await page.goto(`${base()}/get-involved/`);
   await expect(page.locator("h1")).toHaveCount(1);
