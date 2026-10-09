@@ -8,7 +8,7 @@ Coral Reef Ventures
 # Keep control as agents build your software
 
 {.lead}
-Coral Reef Ventures is building open foundations and focused tools to connect product intent, the work that changes it, the checks that verify it, and what users experience.
+Teams need a durable connection between product intent, execution, verification and real-world outcomes. Coral Reef Ventures is building open foundations and focused tools around that need.
 
 ***
 
@@ -47,14 +47,14 @@ If your team wants to help shape Streamlane or Driftline, [ask about becoming a 
 {.eyebrow}
 How they fit
 
-## Where each one fits, from intent to feedback
+## Where each one fits, from intent to outcomes
 
 {.lead}
-Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience.
+Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience. Intent, execution and verification each take one step here; outcomes take two, because what a release is meant to do and what users do with it are recorded separately.
 
 :::steps{.lifecycle}
 1. **Intent.** Write down what the product promises, and who owns each promise. [Intentset]{.kicker .intentset}
-2. **Work.** Plan each change and move it forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
+2. **Execution.** Plan each change and move it forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
 3. **Verification.** See which promises have a check passing on this commit, and which have no check at all. [Intentset]{.kicker .intentset}
 4. **Release.** Record what each release is meant to do for users, before it ships. [Driftline]{.kicker .driftline}
 5. **Feedback.** Watch real users meet it, ask them why when adoption stalls, and take what you learn back to intent. [Driftline]{.kicker .driftline}
@@ -74,7 +74,7 @@ Whitepaper
 ## Keeping product intent connected in agentic software development
 
 {.lead}
-As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution and outcomes connected.
+As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution, verification and outcomes connected.
 
 {.actions}
 [[Read the whitepaper](/whitepaper/)]{.button .primary}
@@ -94,7 +94,7 @@ Keeping track of what a software product does has always been a challenge, and t
 
 The fragmentation extended beyond development. Planning, documentation, support, product analytics, and observability lived in separate systems. Each served a purpose, but connecting what we intended, what we built, and what users experienced took continual effort.
 
-Coral Reef Ventures came out of those experiences: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring user experience back into product decisions. The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
+Coral Reef Ventures came out of those experiences: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring real-world outcomes back into product decisions. The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
 :::
 
 ***
