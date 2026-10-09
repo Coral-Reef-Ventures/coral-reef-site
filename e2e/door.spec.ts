@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/whitepaper/", "/get-involved/", "/privacy/", "/signout/"];
+const pages = ["/", "/whitepaper/", "/eddy/", "/get-involved/", "/privacy/", "/signout/"];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });

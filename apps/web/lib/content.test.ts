@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { segments } from "./markset.ts";
 import { doorProducts } from "./products.ts";
+import { site } from "./site.tsx";
 
 const text = (file: string, slots: string[] = []) =>
   segments(file, slots)
@@ -126,6 +127,45 @@ describe("the Get involved page", () => {
     expect(page.indexOf("Get involved")).toBeLessThan(page.indexOf("[[interest-form]]"));
     expect(page.indexOf("[[interest-form]]")).toBeLessThan(page.indexOf("Have an invitation?"));
     expect(page.indexOf("Have an invitation?")).toBeLessThan(page.indexOf("[[sign-in]]"));
+  });
+});
+
+// Eddy is in planning (2026-10-09): every page's footer links to /eddy/ as "The step before intent", which shows the
+// loop one step earlier. The home page makes no case for it, and Eddy has no card, mark, accent or domain yet, so
+// neither page links out for it.
+describe("the step before intent", () => {
+  const door = text("door.md");
+  const eddy = text("eddy.md");
+
+  it("is reached from every page's footer, not from the door's copy", () => {
+    expect(site.config.footer.links).toContainEqual({ label: "The step before intent", href: "/eddy/" });
+    expect(door).not.toContain("/eddy/");
+    expect(door).not.toMatch(/before intent|\bEddy\b/i);
+  });
+
+  it("leaves the door's four cards as they are", () => {
+    expect(door).not.toMatch(/class="[^"]*\beddy\b/);
+    expect(doorProducts.map((p) => p.slug)).not.toContain("eddy");
+  });
+
+  it("has one h1 and shows the loop as six steps, Capture first, then the door's five", () => {
+    expect(h1s(eddy)).toBe(1);
+    const order = ["Capture.", "Intent.", "Execution.", "Verification.", "Release.", "Feedback."];
+    let at = 0;
+    for (const step of order) {
+      const found = eddy.indexOf(`<strong>${step}</strong>`, at);
+      expect(found, step).toBeGreaterThan(-1);
+      at = found;
+    }
+  });
+
+  it("says Eddy is in planning, keeps it independent, and claims no price, date, domain or release", () => {
+    expect(eddy).toContain("Eddy is in planning");
+    expect(eddy).toContain("planned to stand on its own");
+    expect(eddy).not.toMatch(/\$\d|\bper month\b|\bavailable now\b|\bbeta\b|\b20\d\d\b/i);
+    expect(eddy).not.toMatch(/https?:\/\/(?!markset\.org|intentset\.org)/);
+    expect(eddy).toContain('href="/get-involved/"');
+    expect(eddy).toContain("hello@coralreefventures.com");
   });
 });
 

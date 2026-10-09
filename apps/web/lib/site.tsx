@@ -49,7 +49,12 @@ export const site = createSite({
         to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </>
     ),
-    links: [{ label: "Privacy", href: "/privacy/" }],
+    // Eddy, in planning, is reached from here alone (2026-10-09): the door keeps its four, and every page carries the way
+    // to the step before intent without the home page making the case for it.
+    links: [
+      { label: "The step before intent", href: "/eddy/" },
+      { label: "Privacy", href: "/privacy/" },
+    ],
     trademarks: [],
   },
   cards: {},

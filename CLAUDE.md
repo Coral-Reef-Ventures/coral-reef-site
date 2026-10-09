@@ -42,7 +42,10 @@ the facts the copy must keep.
   Gary's request; the header's nav is Whitepaper (added 2026-10-09, so the paper the door sends readers to for its
   evidence is reachable from every page) and then Get involved. A locked site's gate redirects to the door's origin, `/`, with
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
-  the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/privacy/`, `/signed-in/`,
+  the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/eddy/` (2026-10-09) introduces Eddy, in planning, and the loop with
+  Capture ahead of Intent; it is reached only from the footer's "The step before intent" (the door's note asking whether the loop starts
+  at intent came off the same day, at Gary's request), and Eddy has no card, mark,
+  accent or domain until each is approved. `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest.
 - **The frame lines up with the shell.** The color-scheme control is in the header's bar, after the nav and before the
   folded menu's button, through reef's `headerTools` (`@coralreefventures/site` 0.3.0, `lib/site.tsx`); its slot keeps
