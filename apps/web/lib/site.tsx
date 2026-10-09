@@ -24,7 +24,7 @@ export const site = createSite({
   name: "Coral Reef Ventures",
   url: siteUrl,
   description:
-    "Coral Reef Ventures is building open foundations and focused tools to connect product intent, work, verification and what users experience.",
+    "Coral Reef Ventures is building open foundations and focused tools for a durable connection between product intent, execution, verification and real-world outcomes.",
   nav: [{ key: "involved", label: "Get involved", href: "/get-involved/" }],
   lockup: <Lockup />,
   actions: [],

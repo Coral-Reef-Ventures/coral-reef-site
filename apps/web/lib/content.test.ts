@@ -33,7 +33,7 @@ describe("the door's content", () => {
       "Intentset",
       "Streamlane",
       "Driftline",
-      "Where each one fits, from intent to feedback",
+      "Where each one fits, from intent to outcomes",
       "None of the four requires another.",
       "Keeping product intent connected in agentic software development",
       "Why we started Coral Reef Ventures",
