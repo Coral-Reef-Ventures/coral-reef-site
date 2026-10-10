@@ -155,7 +155,7 @@ describe("the functions", () => {
   const functions = (type: "sandbox" | "branch") =>
     ofType(type, "AWS::Lambda::Function").filter(([id]) => id.startsWith("crv"));
 
-  it("are the five, none reserving concurrency (the project's limit of 10 allows none)", () => {
+  it("are the five, none reserving concurrency (none needs a guarantee; the project's quota is 1000)", () => {
     expect(
       functions("branch")
         .map(([id]) => id.replace(/lambda[0-9A-F]{8}$/, ""))
@@ -234,7 +234,7 @@ describe("the alarms", () => {
     for (const alarm of alarms) expect(JSON.stringify(alarm.AlarmActions)).toContain("InterestSubmitted");
     expect(alarms.filter((a) => a.MetricName === "Errors")).toHaveLength(4);
     expect(alarms.filter((a) => a.MetricName === "Throttles")).toHaveLength(4);
-    expect(alarms.find((a) => a.MetricName === "ConcurrentExecutions")?.Threshold).toBe(8);
+    expect(alarms.find((a) => a.MetricName === "ConcurrentExecutions")?.Threshold).toBe(800);
     expect(alarms.find((a) => a.MetricName === "BlockedRequests")?.Threshold).toBe(50);
   });
 });
