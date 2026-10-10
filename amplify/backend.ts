@@ -226,7 +226,8 @@ new CfnWebACLAssociation(dataStack, "DoorWebAclAssociation", {
 });
 
 // Alarms, to the notice topic: an error or a throttle on the form or the access path (a throttled trigger is a failed
-// sign-in), the project's concurrency nearing its limit of 10, and the web ACL blocking a flood.
+// sign-in), the project's concurrency nearing its quota (1000 since 2026-10-05, shared by every app in the project:
+// this one, Streamlane, Driftline and the intentset.org chat), and the web ACL blocking a flood.
 const fiveMinutes = Duration.minutes(5);
 const alarm = (id: string, metric: Metric, threshold: number) =>
   new Alarm(dataStack, id, {
@@ -253,7 +254,7 @@ alarm(
     statistic: "Maximum",
     period: fiveMinutes,
   }),
-  8,
+  800,
 );
 alarm(
   "WebAclBlocked",
