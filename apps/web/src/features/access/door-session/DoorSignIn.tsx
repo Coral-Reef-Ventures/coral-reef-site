@@ -31,7 +31,8 @@ const noticeFor = (search: string): string | null => {
 /**
  * The invitation sign-in (CRV-010). On `/get-involved/` it offers Google, naming the site when the query names a locked
  * one (`?site=`, from a gate's sign-in redirect or its coming-soon page's "Get involved" link); with that request and a live session it silently fetches a ticket and posts it (renewal); with a
- * session and no request it lists the sites to continue to.
+ * session and no request it lists the sites to continue to, each through that site's `/_door/signin`, so the
+ * site starts the ticket exchange and the visitor goes straight in.
  * On `/signed-in/` (`completing`) it first waits for Google's return to finish, then does the same, or, when the sign-in
  * started on an admin page, goes back to it. A person with no invitation is sent back to `/get-involved/` with
  * `?error=NOT_INVITED`, where the form is waiting.
@@ -139,7 +140,9 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
           <ul className={classes.list}>
             {view.grants.map((site) => (
               <li key={site.id}>
-                <a className={classes.continue} href={`https://${site.host}/`}>
+                {/* Through the site's own sign-in, which sets its state and sends the visitor straight back here for a
+                    ticket, so one click lands them inside rather than on the coming-soon page. */}
+                <a className={classes.continue} href={`https://${site.host}/_door/signin?next=%2F`}>
                   Continue to {site.name}
                 </a>
               </li>
