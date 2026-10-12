@@ -353,11 +353,11 @@ test("an invited, signed-in visitor is offered each site they may continue to", 
   await page.goto(`${base()}/signed-in/`);
   await expect(page.getByRole("link", { name: "Continue to Driftline" })).toHaveAttribute(
     "href",
-    "https://driftline.app/",
+    "https://driftline.app/_door/signin?next=%2F",
   );
   await expect(page.getByRole("link", { name: "Continue to Streamlane" })).toHaveAttribute(
     "href",
-    "https://streamlane.app/",
+    "https://streamlane.app/_door/signin?next=%2F",
   );
   await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
 });
