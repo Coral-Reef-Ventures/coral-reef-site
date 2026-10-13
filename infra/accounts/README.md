@@ -18,6 +18,8 @@ The profiles share one Identity Center sign-in: `aws sso login --sso-session crv
   GitHub environment of the same name can assume (`repo:<owner>/<repository>:environment:<dev|staging|prod>`). A
   deploy may start and follow an Amplify Hosting build and deploy CDK stacks through the bootstrap's roles, and nothing
   else. The prod environment requires an approval, so only an approved run reaches prod. The sandbox account has none.
+- `github-data-streamlane`, for Streamlane's data scripts (the demo seed), which only streamlane's `dev` and `staging`
+  GitHub environments may assume: tables, the areas' functions, user lookups and the snapshot bucket.
 - `amplify-backend-deploy`, the service role Amplify Hosting builds with, which a deploy may hand to an app.
 - `crv-build-artifacts-<account>`, where a deploy leaves what a build in the same account reads: Streamlane's backend
   outputs (`streamlane/current/amplify_outputs.json`, and a copy under each commit), kept 90 days. Deploys write it;

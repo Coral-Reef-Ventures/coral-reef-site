@@ -185,6 +185,82 @@ Resources:
             Status: Enabled
             ExpirationInDays: 90
 
+  # Streamlane's data scripts (the demo seed, ADR 0039), run by hand from GitHub in dev and staging only: they write
+  # through the writer's own code, which reads and writes the tables, invokes the areas' functions, looks people up in
+  # the user pool and writes the snapshot bucket. Prod's demo organization is the plan's step 6.
+  StreamlaneDataRole:
+    Type: AWS::IAM::Role
+    Condition: Deploys
+    Properties:
+      RoleName: github-data-streamlane
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidc }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              ForAnyValue:StringEquals:
+                token.actions.githubusercontent.com:sub:
+                  - repo:Coral-Reef-Ventures/streamlane:environment:dev
+                  - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:dev
+                  - repo:Coral-Reef-Ventures/streamlane:environment:staging
+                  - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:staging
+      Policies:
+        - PolicyName: data
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchGetItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:ConditionCheckItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:DescribeTable
+                  - dynamodb:GetItem
+                  - dynamodb:ListTables
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:TransactWriteItems
+                  - dynamodb:UpdateItem
+                Resource: "*"
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*
+              - Effect: Allow
+                Action:
+                  - cognito-idp:AdminGetUser
+                  - cognito-idp:ListUsers
+                  - cognito-idp:DescribeUserPool
+                Resource: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - arn:aws:s3:::amplify-*
+                  - arn:aws:s3:::amplify-*/*
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub arn:aws:s3:::crv-build-artifacts-${AWS::AccountId}/*
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                  - ssm:GetParameters
+                  - ssm:GetParametersByPath
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/streamlane/*
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:ListStacks
+                Resource: "*"
+
   # Every build's own role. Amplify Hosting assumes it to build the app and deploy its Amplify Gen 2 backend.
   AmplifyBackendDeploy:
     Type: AWS::IAM::Role
