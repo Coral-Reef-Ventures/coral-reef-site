@@ -20,8 +20,9 @@ Resources:
       Url: https://token.actions.githubusercontent.com
       ClientIdList: [sts.amazonaws.com]
 
-  # What a deploy may do: start and follow an Amplify Hosting build of a commit (the build itself runs as the app's
-  # service role), and deploy CDK stacks through the bootstrap's own roles. Nothing else.
+  # What a deploy may do: run Amplify Hosting's apps in this account (update an app's settings, upload and start a
+  # deployment, or start a build of a connected app), deploy CDK stacks through the bootstrap's own roles, and read
+  # what `ampx` reads to write a backend's outputs. Nothing else; a door key's own policy adds kms:GetPublicKey.
   DeployPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: Deploys
@@ -30,17 +31,21 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: AmplifyBuilds
+          - Sid: AmplifyApps
+            Effect: Allow
+            Action: amplify:*
+            Resource:
+              - !Sub arn:aws:amplify:*:${AWS::AccountId}:apps/*
+          - Sid: AmplifyList
+            Effect: Allow
+            Action: amplify:ListApps
+            Resource: "*"
+          - Sid: BackendOutputs
             Effect: Allow
             Action:
-              - amplify:GetApp
-              - amplify:ListApps
-              - amplify:GetBranch
-              - amplify:ListBranches
-              - amplify:StartJob
-              - amplify:GetJob
-              - amplify:ListJobs
-              - amplify:StopJob
+              - appsync:GetGraphqlApi
+              - appsync:GetIntrospectionSchema
+              - appsync:ListGraphqlApis
             Resource: "*"
           - Sid: CdkThroughBootstrapRoles
             Effect: Allow
@@ -53,9 +58,9 @@ Resources:
           - Sid: ReadStacks
             Effect: Allow
             Action:
-              - cloudformation:DescribeStacks
-              - cloudformation:DescribeStackEvents
-              - cloudformation:ListStacks
+              - cloudformation:Describe*
+              - cloudformation:Get*
+              - cloudformation:List*
             Resource: "*"
 
   CoralReefSiteDeploy:

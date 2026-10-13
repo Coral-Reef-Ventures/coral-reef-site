@@ -1,0 +1,91 @@
+# Deploys the app to its environments (apps/web/hosting/environments.ts; Streamlane ADR 0087):
+#
+# - dev, on every push to main;
+# - staging, nightly, from the commit dev last deployed successfully, when it is new to staging;
+# - prod, only when the product owner starts this workflow by hand (Actions, Deploy, Run workflow, prod). An agent
+#   never starts it (CLAUDE.md). With no commit given, prod ships what staging last deployed successfully.
+#
+# Each deploy runs in the GitHub environment of the same name, whose AWS_ROLE_ARN only that environment can assume
+# (infra/accounts/baseline.yml), so a deploy can reach only its own account.
+name: Deploy
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 8 * * *" # 03:00 CDT
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Where to deploy
+        type: choice
+        options: [staging, prod]
+        required: true
+      ref:
+        description: The commit to ship (empty for what the environment below last deployed)
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  deployments: read
+  id-token: write
+
+jobs:
+  choose:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.choose.outputs.environment }}
+      sha: ${{ steps.choose.outputs.sha }}
+    steps:
+      - id: choose
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_ENVIRONMENT: ${{ inputs.environment }}
+          INPUT_REF: ${{ inputs.ref }}
+        run: |
+          # The commit an environment last deployed successfully, from GitHub's own deployment records.
+          last() {
+            for id_sha in $(gh api "repos/$GITHUB_REPOSITORY/deployments?environment=$1&per_page=50" --jq '.[] | "\(.id):\(.sha)"'); do
+              state=$(gh api "repos/$GITHUB_REPOSITORY/deployments/${id_sha%%:*}/statuses?per_page=1" --jq '.[0].state // ""')
+              if [ "$state" = success ]; then echo "${id_sha#*:}"; return; fi
+            done
+          }
+          case "$EVENT" in
+            push) environment=dev; sha=$GITHUB_SHA ;;
+            schedule)
+              environment=staging; sha=$(last dev)
+              if [ -n "$sha" ] && [ "$sha" = "$(last staging)" ]; then echo "staging already has $sha"; sha=""; fi ;;
+            workflow_dispatch)
+              environment=$INPUT_ENVIRONMENT
+              if [ -n "$INPUT_REF" ]; then sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$INPUT_REF" --jq .sha)
+              elif [ "$environment" = prod ]; then sha=$(last staging)
+              else sha=$(last dev); fi
+              [ -n "$sha" ] || { echo "Nothing to ship: no successful deploy below $environment"; exit 1; } ;;
+          esac
+          echo "environment=$environment" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Deploying ${sha:-nothing} to $environment"
+
+  deploy:
+    needs: choose
+    if: needs.choose.outputs.sha != ''
+    runs-on: ubuntu-latest
+    environment: ${{ needs.choose.outputs.environment }}
+    concurrency: deploy-${{ needs.choose.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.choose.outputs.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: deploy-${{ needs.choose.outputs.environment }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - run: node scripts/deploy.ts ${{ needs.choose.outputs.environment }}

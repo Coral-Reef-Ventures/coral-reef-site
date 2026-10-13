@@ -10,6 +10,7 @@ import {
   parseAdminOrigin,
   parseCallbackUrls,
   parseDomainPrefix,
+  parseNoticeEmail,
   parseRoleName,
   readAuthConfig,
 } from "./settings.ts";
@@ -77,6 +78,12 @@ describe("the other settings", () => {
     expect(parseRoleName(undefined)).toBeUndefined();
     expect(parseRoleName("crv-amplify-backend-deploy")).toBe("crv-amplify-backend-deploy");
     expect(() => parseRoleName("a role")).toThrow();
+  });
+  it("CRV_NOTICE_EMAIL is hello@ when unset, nobody when empty, and an address otherwise", () => {
+    expect(parseNoticeEmail(undefined)).toBe("hello@coralreefventures.com");
+    expect(parseNoticeEmail("")).toBeUndefined();
+    expect(parseNoticeEmail(" Hello@CoralReefVentures.com ")).toBe("hello@coralreefventures.com");
+    expect(() => parseNoticeEmail("hello")).toThrow();
   });
   it("reads everything from one environment", () => {
     expect(readAuthConfig({ CRV_AUTH_DOMAIN_PREFIX: "crv-door" })).toMatchObject({

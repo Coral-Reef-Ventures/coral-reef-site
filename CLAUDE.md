@@ -98,6 +98,12 @@ the facts the copy must keep.
   `ampx sandbox`, and deletes it after. Gary activated the project's advanced features on 2026-10-06, so the
   organization (`o-unhnb0wshs`, management account 797661577985) and its SCPs are his: these limits are this project's
   own rules now, not AWS's.
+- **The environment accounts** (Streamlane ADR 0087, `infra/accounts/README.md`): `crv-dev`, `crv-staging`,
+  `crv-prod` and `crv-sandbox`, one Identity Center sign-in (`aws sso login --sso-session crv`). The app's dev, staging
+  and prod are Amplify apps with no repository connected (`apps/web/hosting/environments.ts`), deployed only by
+  `.github/workflows/deploy.yml`: dev on every push to main, staging nightly from what dev last shipped. **Prod is
+  started by hand by Gary** (2026-10-12): an agent never starts the workflow for prod and never deploys to the dev,
+  staging or prod accounts itself. coralreefventures.com is still served from the old account until the cutover.
 - **Check DNS over HTTPS** (`https://dns.google/resolve`) or with Route 53's `TestDNSAnswer`, never plain `dig`: this
   machine's network intercepts port 53 and answers wrongly.
 
