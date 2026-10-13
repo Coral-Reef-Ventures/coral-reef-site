@@ -2,7 +2,8 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
   Coral Reef's account baseline (Streamlane ADR 0087, docs/plans/cells-and-accounts.md in the streamlane repository):
   GitHub's OIDC provider and one deploy role per repository, each trusted only by that repository's GitHub environment
-  of the same name as this account's. The sandbox account gets none: agents deploy there with their own sign-in.
+  of the same name as this account's. Each names both forms of GitHub's subject: the repositories use the immutable
+  one (owner and repository ids), and the plain one is kept in case that setting is turned off. The sandbox account gets none: agents deploy there with their own sign-in.
 
 Parameters:
   Environment:
@@ -78,7 +79,9 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/coral-reef-site:environment:${Environment}
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:Coral-Reef-Ventures/coral-reef-site:environment:${Environment}
+                  - !Sub repo:Coral-Reef-Ventures@337009897/coral-reef-site@1402479746:environment:${Environment}
 
   StreamlaneDeploy:
     Type: AWS::IAM::Role
@@ -95,7 +98,9 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/streamlane:environment:${Environment}
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:Coral-Reef-Ventures/streamlane:environment:${Environment}
+                  - !Sub repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:${Environment}
 
   DriftlineDeploy:
     Type: AWS::IAM::Role
@@ -112,7 +117,9 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/driftline:environment:${Environment}
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:Coral-Reef-Ventures/driftline:environment:${Environment}
+                  - !Sub repo:Coral-Reef-Ventures@337009897/driftline@1403608451:environment:${Environment}
 
   IntentsetDeploy:
     Type: AWS::IAM::Role
@@ -129,7 +136,9 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub repo:intentset/intentset:environment:${Environment}
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:intentset/intentset:environment:${Environment}
+                  - !Sub repo:intentset@337154057/intentset@1402454146:environment:${Environment}
 
   # Every build's own role. Amplify Hosting assumes it to build the app and deploy its Amplify Gen 2 backend.
   AmplifyBackendDeploy:
