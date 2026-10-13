@@ -13,6 +13,8 @@ import { doorSites } from "../areas/access/sites.ts";
  * - CRV_ADMIN_ORIGIN: where the notice's admin link and the invitation text point. A constant, never a request header.
  * - CRV_BUILD_ROLE_NAME: the Amplify build role the door key's policy lets read the public key; unset in a sandbox.
  * - CRV_DOOR_TEST_HOSTS: temporary hosts of a locked site under test (areas/access/sites.ts); empty otherwise.
+ * - CRV_NOTICE_EMAIL: the inbox the branch's notice topic subscribes. Unset means hello@coralreefventures.com; empty
+ *   means none, which dev and staging set so their confirmation requests and notices never reach the real inbox.
  */
 
 const localOrigin = "http://localhost:3002";
@@ -104,6 +106,15 @@ export const parseRoleName = (value: string | undefined): string | undefined => 
   return name;
 };
 
+/** CRV_NOTICE_EMAIL: one address, or undefined when set empty. */
+export const parseNoticeEmail = (value: string | undefined): string | undefined => {
+  if (value === undefined) return "hello@coralreefventures.com";
+  const email = value.trim().toLowerCase();
+  if (!email) return undefined;
+  if (!emailShape.test(email)) throw new Error(`CRV_NOTICE_EMAIL "${email}" is not an email address`);
+  return email;
+};
+
 /** Every setting, read from `env` and checked. */
 export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   domainPrefix: parseDomainPrefix(env.CRV_AUTH_DOMAIN_PREFIX),
@@ -111,6 +122,7 @@ export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   adminEmails: parseAdminEmails(env.CRV_ADMIN_EMAILS),
   adminOrigin: parseAdminOrigin(env.CRV_ADMIN_ORIGIN),
   buildRoleName: parseRoleName(env.CRV_BUILD_ROLE_NAME),
+  noticeEmail: parseNoticeEmail(env.CRV_NOTICE_EMAIL),
   testHosts: (env.CRV_DOOR_TEST_HOSTS ?? "").trim(),
   sites: doorSites(env.CRV_DOOR_TEST_HOSTS),
 });

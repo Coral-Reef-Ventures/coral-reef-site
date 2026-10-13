@@ -265,3 +265,15 @@ coralreefventures.com, the door and the locked sites' sign-in down with it, so i
 and the tables keep deletion protection. To remove them too, turn deletion protection off on each table
 (`aws dynamodb update-table --table-name <name> --no-deletion-protection-enabled`), delete it, and schedule the key's
 deletion, deliberately.
+
+## The environment accounts
+
+Since 2026-10-12 the app also has dev, staging and prod in their own accounts (Streamlane ADR 0087,
+`infra/accounts/README.md`): Amplify apps with no repository connected, listed in `environments.ts`, and deployed by
+`.github/workflows/deploy.yml` through `scripts/deploy.ts`. The script does what the build spec above does (the backend
+with `ampx pipeline-deploy`, the export, the door's public key), then applies this folder's headers and rules,
+rendered for the environment's own hosted UI, and uploads `out`. Each app's `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET` are copied from this app's, so the Google client must also allow each environment's hosted UI
+(`https://crv-door-<env>.auth.us-east-2.amazoncognito.com/oauth2/idpresponse`). Dev deploys on every push to main,
+staging nightly, and prod only when Gary starts it. This app stays the one serving coralreefventures.com until the
+cutover.

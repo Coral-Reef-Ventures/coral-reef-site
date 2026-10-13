@@ -110,12 +110,13 @@ if (authConfig.buildRoleName) {
   );
 }
 
-// The notice topic. Only the branch subscribes hello@: a sandbox would send its confirmation request to a real inbox.
+// The notice topic. Only a branch subscribes an inbox, and only prod's names one (CRV_NOTICE_EMAIL): a sandbox, dev or
+// staging would send its confirmation request and its notices to the real inbox.
 const notices = new Topic(dataStack, "InterestSubmitted", {
   topicName: named("crv-interest-submitted"),
   displayName: "Coral Reef Ventures",
 });
-if (branch) notices.addSubscription(new EmailSubscription("hello@coralreefventures.com"));
+if (branch && authConfig.noticeEmail) notices.addSubscription(new EmailSubscription(authConfig.noticeEmail));
 
 // crv-access: every table and its indexes, the user pool's admin calls, signing, and the roles it admits.
 const access = backend.crvAccess.resources.lambda;
