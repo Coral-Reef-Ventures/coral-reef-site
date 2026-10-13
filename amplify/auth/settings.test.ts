@@ -109,6 +109,19 @@ describe("the site registry", () => {
   it.each(["markset:markset.org", "driftline", "driftline:bad host", "driftline:a:b"])("refuses %j", (value) =>
     expect(() => doorSites(value)).toThrow(/CRV_DOOR_TEST_HOSTS/),
   );
+  it("replaces each site's hosts with an environment's own", () => {
+    expect(
+      doorSites("", "streamlane=main.d1.amplifyapp.com,driftline=main.d2.amplifyapp.com").map((s) => [s.id, s.hosts]),
+    ).toEqual([
+      ["streamlane", ["main.d1.amplifyapp.com"]],
+      ["driftline", ["main.d2.amplifyapp.com"]],
+    ]);
+    expect(doorSites("", "driftline=main.d2.amplifyapp.com")[0]?.hosts).toEqual(["streamlane.app"]);
+  });
+  it.each(["markset=markset.org", "driftline", "driftline=bad host", "driftline=a=b"])(
+    "refuses the site hosts %j",
+    (value) => expect(() => doorSites("", value)).toThrow(/CRV_DOOR_SITE_HOSTS/),
+  );
   it("finds a site by id or host, and names one or two in the invitation's words", () => {
     const sites = doorSites("");
     expect(findSite(sites, "streamlane.app")?.id).toBe("streamlane");

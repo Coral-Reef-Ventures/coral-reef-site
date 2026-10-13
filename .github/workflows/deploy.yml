@@ -6,7 +6,10 @@
 #   never starts it (CLAUDE.md). With no commit given, prod ships what staging last deployed successfully.
 #
 # Each deploy runs in the GitHub environment of the same name, whose AWS_ROLE_ARN only that environment can assume
-# (infra/accounts/baseline.yml), so a deploy can reach only its own account.
+# (infra/accounts/baseline.yml), so a deploy can reach only its own account. A successful deploy moves the tag
+# deployed/<environment> to the commit it shipped, which is what the next environment up promotes. (GitHub's own
+# deployment records name the commit the workflow ran on, which for a scheduled or manual run is main's head, not
+# the commit shipped.)
 name: Deploy
 on:
   push:
@@ -26,8 +29,7 @@ on:
         required: false
 
 permissions:
-  contents: read
-  deployments: read
+  contents: write
   id-token: write
 
 jobs:
@@ -44,12 +46,9 @@ jobs:
           INPUT_ENVIRONMENT: ${{ inputs.environment }}
           INPUT_REF: ${{ inputs.ref }}
         run: |
-          # The commit an environment last deployed successfully, from GitHub's own deployment records.
+          # The commit an environment last deployed successfully: its deployed/<environment> tag.
           last() {
-            for id_sha in $(gh api "repos/$GITHUB_REPOSITORY/deployments?environment=$1&per_page=50" --jq '.[] | "\(.id):\(.sha)"'); do
-              state=$(gh api "repos/$GITHUB_REPOSITORY/deployments/${id_sha%%:*}/statuses?per_page=1" --jq '.[0].state // ""')
-              if [ "$state" = success ]; then echo "${id_sha#*:}"; return; fi
-            done
+            gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/deployed/$1" --jq .object.sha 2>/dev/null || true
           }
           case "$EVENT" in
             push) environment=dev; sha=$GITHUB_SHA ;;
@@ -89,3 +88,10 @@ jobs:
           role-session-name: deploy-${{ needs.choose.outputs.environment }}
           aws-region: ${{ vars.AWS_REGION }}
       - run: node scripts/deploy.ts ${{ needs.choose.outputs.environment }}
+      - name: Record what this environment runs
+        env:
+          ENVIRONMENT: ${{ needs.choose.outputs.environment }}
+          SHA: ${{ needs.choose.outputs.sha }}
+        run: |
+          git tag -f "deployed/$ENVIRONMENT" "$SHA"
+          git push -f origin "refs/tags/deployed/$ENVIRONMENT"

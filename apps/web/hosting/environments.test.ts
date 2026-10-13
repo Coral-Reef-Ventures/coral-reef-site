@@ -23,6 +23,12 @@ describe("the environments", () => {
     expect(backendSettings(environments.prod).CRV_NOTICE_EMAIL).toBe("hello@coralreefventures.com");
   });
 
+  it("name each environment's own site hosts", () => {
+    expect(backendSettings(environments.staging).CRV_DOOR_SITE_HOSTS).toBe(
+      "streamlane=main.d36uypg1re137l.amplifyapp.com,driftline=main.d26r6p2ps7cfly.amplifyapp.com",
+    );
+  });
+
   it("call back to the environment's own origin", () => {
     expect(backendSettings(environments.dev).CRV_AUTH_CALLBACK_URLS).toBe(
       "https://main.d8p3mdqo02ww3.amplifyapp.com/signed-in/,https://main.d8p3mdqo02ww3.amplifyapp.com/signout/done/",

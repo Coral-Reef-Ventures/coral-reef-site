@@ -13,6 +13,7 @@ import { doorSites } from "../areas/access/sites.ts";
  * - CRV_ADMIN_ORIGIN: where the notice's admin link and the invitation text point. A constant, never a request header.
  * - CRV_BUILD_ROLE_NAME: the Amplify build role the door key's policy lets read the public key; unset in a sandbox.
  * - CRV_DOOR_TEST_HOSTS: temporary hosts of a locked site under test (areas/access/sites.ts); empty otherwise.
+ * - CRV_DOOR_SITE_HOSTS: an environment's own host for each locked site (areas/access/sites.ts); unset in production.
  * - CRV_NOTICE_EMAIL: the inbox the branch's notice topic subscribes. Unset means hello@coralreefventures.com; empty
  *   means none, which dev and staging set so their confirmation requests and notices never reach the real inbox.
  */
@@ -124,5 +125,5 @@ export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   buildRoleName: parseRoleName(env.CRV_BUILD_ROLE_NAME),
   noticeEmail: parseNoticeEmail(env.CRV_NOTICE_EMAIL),
   testHosts: (env.CRV_DOOR_TEST_HOSTS ?? "").trim(),
-  sites: doorSites(env.CRV_DOOR_TEST_HOSTS),
+  sites: doorSites(env.CRV_DOOR_TEST_HOSTS, env.CRV_DOOR_SITE_HOSTS),
 });

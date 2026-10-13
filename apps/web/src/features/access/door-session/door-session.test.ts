@@ -12,7 +12,7 @@ import {
 } from "./enter.ts";
 import { canonicalNext } from "./next.ts";
 import { postTicket } from "./postTicket.ts";
-import { signoutChainStart } from "./sites.ts";
+import { signoutChainStart, withSiteHosts } from "./sites.ts";
 
 const state = "abcdefghijklmnopqrstuv";
 const query = (extra: Record<string, string> = {}) =>
@@ -224,4 +224,17 @@ describe("postTicket", () => {
 
 it("starts the sign-out walk at a fixed address on the first locked site", () => {
   expect(signoutChainStart()).toBe("https://driftline.app/_door/signout?then=streamlane");
+});
+
+describe("an environment's site hosts", () => {
+  it("replace the production hosts, site by site, and leave the rest", () => {
+    expect(withSiteHosts("")).toEqual([
+      { id: "driftline", host: "driftline.app", name: "Driftline" },
+      { id: "streamlane", host: "streamlane.app", name: "Streamlane" },
+    ]);
+    expect(withSiteHosts("streamlane=main.d1.amplifyapp.com").map((site) => site.host)).toEqual([
+      "driftline.app",
+      "main.d1.amplifyapp.com",
+    ]);
+  });
 });

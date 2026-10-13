@@ -10,7 +10,13 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import { backendSettings, environments, isEnvironmentName, renderHeaders } from "../apps/web/hosting/environments.ts";
+import {
+  backendSettings,
+  environments,
+  isEnvironmentName,
+  renderHeaders,
+  siteHosts,
+} from "../apps/web/hosting/environments.ts";
 
 const name = process.argv[2] ?? "";
 if (!isEnvironmentName(name)) throw new Error(`Usage: node scripts/deploy.ts <dev|staging|prod>, not "${name}"`);
@@ -33,7 +39,7 @@ run(
   ["exec", "ampx", "pipeline-deploy", "--branch", "main", "--app-id", env.appId, "--outputs-out-dir", "apps/web"],
   backendSettings(env),
 );
-run("pnpm", ["--filter", "@crv/web", "build"]);
+run("pnpm", ["--filter", "@crv/web", "build"], { CRV_DOOR_SITE_HOSTS: siteHosts(env) });
 
 // The door's public key, for the locked product sites' builds (apps/web/hosting/README.md, "What the build does").
 const outputs = JSON.parse(readFileSync(path.join(web, "amplify_outputs.json"), "utf8"));
