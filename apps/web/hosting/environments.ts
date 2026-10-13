@@ -18,6 +18,8 @@ export type HostingEnvironment = {
   domainPrefix: string;
   /** The inbox the notice topic subscribes; empty for none. */
   noticeEmail: string;
+  /** Each locked site's host in this environment, served by its own Amplify app in the same account. */
+  sites: { streamlane: string; driftline: string };
 };
 
 export const environments: Record<EnvironmentName, HostingEnvironment> = {
@@ -27,6 +29,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     origin: "https://main.d8p3mdqo02ww3.amplifyapp.com",
     domainPrefix: "crv-door-dev",
     noticeEmail: "",
+    sites: { streamlane: "main.dla8ryj0e2iye.amplifyapp.com", driftline: "main.d1w6lg1l5ckq66.amplifyapp.com" },
   },
   staging: {
     account: "715844023793",
@@ -34,6 +37,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     origin: "https://main.d2ymo0co87lonm.amplifyapp.com",
     domainPrefix: "crv-door-staging",
     noticeEmail: "",
+    sites: { streamlane: "main.d36uypg1re137l.amplifyapp.com", driftline: "main.d26r6p2ps7cfly.amplifyapp.com" },
   },
   prod: {
     account: "027677878969",
@@ -41,6 +45,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     origin: "https://main.d5rsxrpztyob9.amplifyapp.com",
     domainPrefix: "crv-door-prod",
     noticeEmail: "hello@coralreefventures.com",
+    sites: { streamlane: "main.d1zyi0ovnubxlq.amplifyapp.com", driftline: "main.d20enpqzgrjckq.amplifyapp.com" },
   },
 };
 
@@ -49,8 +54,13 @@ export const isEnvironmentName = (value: string): value is EnvironmentName => Ob
 /** The role GitHub deploys as (infra/accounts/baseline.yml), which the door key's policy lets read the public key. */
 export const deployRoleName = "github-deploy-coral-reef-site";
 
+/** `CRV_DOOR_SITE_HOSTS` for an environment: each locked site's host there. */
+export const siteHosts = (env: HostingEnvironment): string =>
+  `streamlane=${env.sites.streamlane},driftline=${env.sites.driftline}`;
+
 /** The backend's settings for an environment, as amplify/auth/settings.ts reads them at synth. */
 export const backendSettings = (env: HostingEnvironment): Record<string, string> => ({
+  CRV_DOOR_SITE_HOSTS: siteHosts(env),
   CRV_AUTH_DOMAIN_PREFIX: env.domainPrefix,
   CRV_AUTH_CALLBACK_URLS: `${env.origin}/signed-in/,${env.origin}/signout/done/`,
   CRV_ADMIN_ORIGIN: env.origin,
@@ -61,8 +71,8 @@ export const backendSettings = (env: HostingEnvironment): Record<string, string>
 const hostedUi = (prefix: string) => `https://${prefix}.auth.us-east-2.amazoncognito.com`;
 
 /**
- * custom-headers.yml for an environment: its own hosted UI in the content security policy, and the flat form, since
- * an app with no repository is not a monorepo app.
+ * custom-headers.yml for an environment: its own hosted UI and its own sites (where the door posts tickets) in the
+ * content security policy, and the flat form, since an app with no repository is not a monorepo app.
  */
 export const renderHeaders = (source: string, env: HostingEnvironment): string => {
   const marker = "applications:\n  - appRoot: apps/web\n";
@@ -74,5 +84,9 @@ export const renderHeaders = (source: string, env: HostingEnvironment): string =
     .map((line) => line.replace(/^ {4}/, ""))
     .join("\n");
   if (!body.includes(hostedUi("crv-door"))) throw new Error("custom-headers.yml no longer names the hosted UI");
-  return body.replaceAll(hostedUi("crv-door"), hostedUi(env.domainPrefix));
+  const formAction = "form-action 'self' https://streamlane.app https://driftline.app";
+  if (!body.includes(formAction)) throw new Error("custom-headers.yml no longer has the form-action this expects");
+  return body
+    .replaceAll(hostedUi("crv-door"), hostedUi(env.domainPrefix))
+    .replace(formAction, `form-action 'self' https://${env.sites.streamlane} https://${env.sites.driftline}`);
 };

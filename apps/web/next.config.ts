@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
   env: {
     CRV_AMPLIFY_OUTPUTS: outputs,
     CRV_STUB: process.env.NEXT_PUBLIC_CRV_STUB === "1" ? "1" : "",
+    // An environment's own host for each locked site (door-session/sites.ts); empty in production.
+    CRV_DOOR_SITE_HOSTS: process.env.CRV_DOOR_SITE_HOSTS ?? "",
     NEXT_PUBLIC_CRV_ADMIN_STUB: process.env.NEXT_PUBLIC_CRV_ADMIN_STUB === "1" ? "1" : "",
   },
   transpilePackages: [
