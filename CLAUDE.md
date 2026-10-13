@@ -91,7 +91,7 @@ the facts the copy must keep.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
 - Don't add dependencies without asking. The ones the door plan names were approved 2026-10-04; anything beyond them
   still needs asking.
-- **AWS: the `coral-reef` profile, us-east-2, every Regional resource.** No Lambda@Edge, no us-east-1 certificate, and the
+- **AWS: the `coral-reef` profile, us-east-2, every Regional resource.** No Lambda@Edge. us-east-1 is used only where a service requires it, such as a CloudFront certificate (allowed since 2026-10-12, Streamlane ADR 0087), and the
   project's Lambda concurrency quota is 1000 (raised 2026-10-05; it was 10), shared by every app in the project, so
   reserved concurrency is possible where a function needs a ceiling or a guarantee (the intentset.org chat has one).
   The ProjectConcurrency alarm fires at 800. An agent deploys only a temporary
