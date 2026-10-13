@@ -52,6 +52,13 @@ Resources:
             Effect: Allow
             Action: s3:GetObject
             Resource: arn:aws:s3:::amplify-*/*
+          - Sid: AmplifyBuildRole
+            Effect: Allow
+            Action: iam:PassRole
+            Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/amplify-backend-deploy
+            Condition:
+              StringEquals:
+                iam:PassedToService: amplify.amazonaws.com
           - Sid: CdkThroughBootstrapRoles
             Effect: Allow
             Action: sts:AssumeRole
@@ -60,6 +67,19 @@ Resources:
             Effect: Allow
             Action: ssm:GetParameter
             Resource: !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/cdk-bootstrap/*
+          - Sid: PublishedNames
+            Effect: Allow
+            Action:
+              - ssm:GetParameter
+              - ssm:GetParameters
+              - ssm:GetParametersByPath
+            Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/streamlane/*
+          - Sid: BuildArtifacts
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+            Resource: !Sub arn:aws:s3:::crv-build-artifacts-${AWS::AccountId}/*
           - Sid: ReadStacks
             Effect: Allow
             Action:
@@ -144,6 +164,27 @@ Resources:
                   - !Sub repo:intentset/intentset:environment:${Environment}
                   - !Sub repo:intentset@337154057/intentset@1402454146:environment:${Environment}
 
+  # What a deploy hands to a build in the same account: a backend's outputs, keyed by commit, which the app's Amplify
+  # build downloads (the plan's decision 3d). Kept 90 days; nothing in it is a secret, but nothing in it is public.
+  BuildArtifacts:
+    Type: AWS::S3::Bucket
+    Condition: Deploys
+    Properties:
+      BucketName: !Sub crv-build-artifacts-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire
+            Status: Enabled
+            ExpirationInDays: 90
+
   # Every build's own role. Amplify Hosting assumes it to build the app and deploy its Amplify Gen 2 backend.
   AmplifyBackendDeploy:
     Type: AWS::IAM::Role
@@ -156,6 +197,14 @@ Resources:
           - Effect: Allow
             Principal: { Service: amplify.amazonaws.com }
             Action: sts:AssumeRole
+      Policies:
+        - PolicyName: build-artifacts
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub arn:aws:s3:::crv-build-artifacts-${AWS::AccountId}/*
 
 Outputs:
   AmplifyServiceRole:
