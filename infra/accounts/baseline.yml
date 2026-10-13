@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Coral Reef's account baseline (Streamlane ADR 0087, docs/plans/cells-and-accounts.md in the streamlane repository):
+  GitHub's OIDC provider and one deploy role per repository, each trusted only by that repository's GitHub environment
+  of the same name as this account's. The sandbox account gets none: agents deploy there with their own sign-in.
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod, sandbox]
+
+Conditions:
+  Deploys: !Not [!Equals [!Ref Environment, sandbox]]
+
+Resources:
+  GitHubOidc:
+    Type: AWS::IAM::OIDCProvider
+    Condition: Deploys
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+
+  # What a deploy may do: start and follow an Amplify Hosting build of a commit (the build itself runs as the app's
+  # service role), and deploy CDK stacks through the bootstrap's own roles. Nothing else.
+  DeployPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: Deploys
+    Properties:
+      ManagedPolicyName: github-deploy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AmplifyBuilds
+            Effect: Allow
+            Action:
+              - amplify:GetApp
+              - amplify:ListApps
+              - amplify:GetBranch
+              - amplify:ListBranches
+              - amplify:StartJob
+              - amplify:GetJob
+              - amplify:ListJobs
+              - amplify:StopJob
+            Resource: "*"
+          - Sid: CdkThroughBootstrapRoles
+            Effect: Allow
+            Action: sts:AssumeRole
+            Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/cdk-hnb659fds-*
+          - Sid: CdkBootstrapVersion
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource: !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/cdk-bootstrap/*
+          - Sid: ReadStacks
+            Effect: Allow
+            Action:
+              - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackEvents
+              - cloudformation:ListStacks
+            Resource: "*"
+
+  CoralReefSiteDeploy:
+    Type: AWS::IAM::Role
+    Condition: Deploys
+    Properties:
+      RoleName: github-deploy-coral-reef-site
+      ManagedPolicyArns: [!Ref DeployPolicy]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidc }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/coral-reef-site:environment:${Environment}
+
+  StreamlaneDeploy:
+    Type: AWS::IAM::Role
+    Condition: Deploys
+    Properties:
+      RoleName: github-deploy-streamlane
+      ManagedPolicyArns: [!Ref DeployPolicy]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidc }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/streamlane:environment:${Environment}
+
+  DriftlineDeploy:
+    Type: AWS::IAM::Role
+    Condition: Deploys
+    Properties:
+      RoleName: github-deploy-driftline
+      ManagedPolicyArns: [!Ref DeployPolicy]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidc }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub repo:Coral-Reef-Ventures/driftline:environment:${Environment}
+
+  IntentsetDeploy:
+    Type: AWS::IAM::Role
+    Condition: Deploys
+    Properties:
+      RoleName: github-deploy-intentset
+      ManagedPolicyArns: [!Ref DeployPolicy]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidc }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub repo:intentset/intentset:environment:${Environment}
+
+  # Every build's own role. Amplify Hosting assumes it to build the app and deploy its Amplify Gen 2 backend.
+  AmplifyBackendDeploy:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: amplify-backend-deploy
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/service-role/AmplifyBackendDeployFullAccess]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: amplify.amazonaws.com }
+            Action: sts:AssumeRole
+
+Outputs:
+  AmplifyServiceRole:
+    Value: !GetAtt AmplifyBackendDeploy.Arn
