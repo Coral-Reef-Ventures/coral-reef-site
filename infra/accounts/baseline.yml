@@ -48,6 +48,10 @@ Resources:
               - appsync:GetIntrospectionSchema
               - appsync:ListGraphqlApis
             Resource: "*"
+          - Sid: BackendModelSchema
+            Effect: Allow
+            Action: s3:GetObject
+            Resource: arn:aws:s3:::amplify-*/*
           - Sid: CdkThroughBootstrapRoles
             Effect: Allow
             Action: sts:AssumeRole
