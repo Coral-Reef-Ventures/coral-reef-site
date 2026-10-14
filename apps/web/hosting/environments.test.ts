@@ -29,6 +29,13 @@ describe("the environments", () => {
     );
   });
 
+  it("name the production domains in prod", () => {
+    expect(backendSettings(environments.prod).CRV_DOOR_SITE_HOSTS).toBe(
+      "streamlane=streamlane.app,driftline=driftline.app",
+    );
+    expect(backendSettings(environments.prod).CRV_ADMIN_ORIGIN).toBe("https://coralreefventures.com");
+  });
+
   it("call back to the environment's own origin", () => {
     expect(backendSettings(environments.dev).CRV_AUTH_CALLBACK_URLS).toBe(
       "https://main.d8p3mdqo02ww3.amplifyapp.com/signed-in/,https://main.d8p3mdqo02ww3.amplifyapp.com/signout/done/",
