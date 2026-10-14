@@ -68,4 +68,14 @@ describe.each(["sandbox", "branch"] as const)("the %s synth", (type) => {
     expect(output).toContain("UserPoolDomain");
     expect(output).toContain(".amazoncognito.com");
   });
+
+  it("signs in at the prefix domain, and on the branch at its own address too", () => {
+    const domains = resourcesOf(nested(type, "auth"), "AWS::Cognito::UserPoolDomain").map(
+      ([, r]) => r.Properties ?? {},
+    );
+    const prefixes = domains.filter((d) => !d.CustomDomainConfig).map((d) => d.Domain);
+    const own = domains.filter((d) => d.CustomDomainConfig);
+    expect(prefixes).toEqual([type === "branch" ? "crv-door" : "crv-door-sandbox"]);
+    expect(own.map((d) => d.Domain)).toEqual(type === "branch" ? ["auth.coralreefventures.com"] : []);
+  });
 });

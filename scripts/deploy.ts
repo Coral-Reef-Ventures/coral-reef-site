@@ -16,6 +16,7 @@ import {
   isEnvironmentName,
   renderHeaders,
   siteHosts,
+  withSignInDomain,
 } from "../apps/web/hosting/environments.ts";
 
 const name = process.argv[2] ?? "";
@@ -39,10 +40,16 @@ run(
   ["exec", "ampx", "pipeline-deploy", "--branch", "main", "--app-id", env.appId, "--outputs-out-dir", "apps/web"],
   backendSettings(env),
 );
+// The app signs in at the environment's own address, not the prefix domain the outputs name (environments.ts).
+const outputsFile = path.join(web, "amplify_outputs.json");
+writeFileSync(
+  outputsFile,
+  `${JSON.stringify(withSignInDomain(JSON.parse(readFileSync(outputsFile, "utf8")), env), null, 2)}\n`,
+);
 run("pnpm", ["--filter", "@crv/web", "build"], { CRV_DOOR_SITE_HOSTS: siteHosts(env) });
 
 // The door's public key, for the locked product sites' builds (apps/web/hosting/README.md, "What the build does").
-const outputs = JSON.parse(readFileSync(path.join(web, "amplify_outputs.json"), "utf8"));
+const outputs = JSON.parse(readFileSync(outputsFile, "utf8"));
 const publicKey = aws([
   "kms",
   "get-public-key",
