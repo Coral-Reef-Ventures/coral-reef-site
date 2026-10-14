@@ -78,4 +78,25 @@ describe.each(["sandbox", "branch"] as const)("the %s synth", (type) => {
     expect(prefixes).toEqual([type === "branch" ? "crv-door" : "crv-door-sandbox"]);
     expect(own.map((d) => d.Domain)).toEqual(type === "branch" ? ["auth.coralreefventures.com"] : []);
   });
+
+  it("keeps every function's logs a month: in its own group, or by a LogRetention on /aws/lambda/<name>", () => {
+    const unbounded: string[] = [];
+    let functions = 0;
+    for (const { file, template } of templates(type)) {
+      const resources = Object.entries(template.Resources ?? {});
+      const kept = new Set(
+        resources
+          .filter(([, r]) => r.Type === "Custom::LogRetention" && r.Properties?.RetentionInDays === 30)
+          .map(([, r]) => JSON.stringify(r.Properties?.LogGroupName)),
+      );
+      for (const [id, r] of resources.filter(([, r]) => r.Type === "AWS::Lambda::Function")) {
+        functions += 1;
+        const own = (r.Properties?.LoggingConfig as Record<string, unknown> | undefined)?.["LogGroup"];
+        const group = JSON.stringify({ "Fn::Join": ["", ["/aws/lambda/", { Ref: id }]] });
+        if (!own && !kept.has(group)) unbounded.push(`${file}: ${id}`);
+      }
+    }
+    expect(functions).toBeGreaterThan(0);
+    expect(unbounded).toEqual([]);
+  });
 });
