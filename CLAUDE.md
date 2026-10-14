@@ -103,7 +103,7 @@ the facts the copy must keep.
   and prod are Amplify apps with no repository connected (`apps/web/hosting/environments.ts`), deployed only by
   `.github/workflows/deploy.yml`: dev on every push to main, staging nightly from what dev last shipped. **Prod is
   started by hand by Gary** (2026-10-12): an agent never starts the workflow for prod and never deploys to the dev,
-  staging or prod accounts itself. coralreefventures.com is still served from the old account until the cutover.
+  staging or prod accounts itself. coralreefventures.com has been prod's since the cutover (2026-10-14).
 - **Check DNS over HTTPS** (`https://dns.google/resolve`) or with Route 53's `TestDNSAnswer`, never plain `dig`: this
   machine's network intercepts port 53 and answers wrongly.
 
@@ -151,6 +151,10 @@ the facts the copy must keep.
   until Driftline has a repository to own it); refresh them there when a product's mark changes.
 
 ## Hosting
+
+**Since the cutover (2026-10-14)** coralreefventures.com, `www` and the zone are prod's (`d5rsxrpztyob9` and
+`Z0528736N9QND8UQUIJC` in `crv-prod`), and so are streamlane.app and driftline.app; what follows is the old
+account's setup, kept until it is retired (Streamlane's plan, step 9).
 
 ADR 0001: the CRV app on the Amplify `WEB` app `coral-reef-site` (`d1fw6blayytium`, branch `main`) in the coral-reef
 project (us-east-2) has served `coralreefventures.com` since 2026-10-05 10:47 CDT, apex and `www`, on an
