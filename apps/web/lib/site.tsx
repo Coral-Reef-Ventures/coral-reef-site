@@ -54,6 +54,7 @@ export const site = createSite({
     links: [
       { label: "The step before intent", href: "/eddy/" },
       { label: "Privacy", href: "/privacy/" },
+      { label: "Terms", href: "/terms/" },
     ],
     trademarks: [],
   },
