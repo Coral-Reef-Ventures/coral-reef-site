@@ -1,5 +1,5 @@
 import { defineBackend } from "@aws-amplify/backend";
-import { Aws, Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
+import { Aws, CfnResource, Duration, Fn, RemovalPolicy, Stack } from "aws-cdk-lib";
 import { Alarm, ComparisonOperator, Metric, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
 import { CfnUserPoolDomain, UserPoolDomain } from "aws-cdk-lib/aws-cognito";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
@@ -9,6 +9,7 @@ import { Key, KeySpec, KeyUsage } from "aws-cdk-lib/aws-kms";
 import type { IFunction } from "aws-cdk-lib/aws-lambda";
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
+import { LogRetention, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 
 import { backupDays } from "./areas/retention.ts";
@@ -287,3 +288,21 @@ backend.addOutput({
     doorSites: authConfig.sites.map((site) => ({ id: site.id, hosts: site.hosts })),
   },
 });
+
+// Last, after everything that adds a function. Our functions name their own month-long groups (functionLogging), but
+// Amplify's and CDK's own (the branch linker, the secret fetcher, the table manager, the bucket deployment) log to
+// /aws/lambda/<name> with no retention, under a privacy page that says logs are deleted after 1 month.
+// The LogRetention provider is itself a function, so a second pass covers it.
+const covered = new Set<CfnResource>();
+for (let pass = 0; pass < 2; pass += 1) {
+  for (const fn of backend.stack.node.root.node.findAll()) {
+    if (!CfnResource.isCfnResource(fn) || fn.cfnResourceType !== "AWS::Lambda::Function" || covered.has(fn)) continue;
+    covered.add(fn);
+    const own = (fn as { loggingConfig?: { logGroup?: unknown } }).loggingConfig?.logGroup;
+    if (own || !fn.node.scope) continue;
+    new LogRetention(fn.node.scope, `${fn.node.id}LogsKeptAMonth`, {
+      logGroupName: Fn.join("", ["/aws/lambda/", fn.ref]),
+      retention: RetentionDays.ONE_MONTH,
+    });
+  }
+}
