@@ -248,7 +248,7 @@ describe("the check's parts", () => {
     expect(hostsOf(driftline, tests).map((checked) => `${checked.host} ${checked.role}`)).toEqual([
       "driftline.app gated",
       "www.driftline.app redirect",
-      "main.d39wmoekppxvpd.amplifyapp.com refused",
+      "main.d20enpqzgrjckq.amplifyapp.com refused",
       "main.tmp1.amplifyapp.com gated",
     ]);
     expect(() => parseTestHosts("markset:markset.org")).toThrow(/<site>:<host>/);

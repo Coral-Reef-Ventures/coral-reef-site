@@ -57,7 +57,7 @@ describe("minting a session", () => {
     );
     expect(await discoverBackend(aws)).toEqual(backend);
     expect(calls[0]).toEqual(
-      expect.arrayContaining(["get-branch", "--app-id", "d1fw6blayytium", "--branch-name", "main"]),
+      expect.arrayContaining(["get-branch", "--app-id", "d5rsxrpztyob9", "--branch-name", "main"]),
     );
   });
 

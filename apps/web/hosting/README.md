@@ -11,6 +11,12 @@ repository. These files are applied to this app only:
 | `custom-headers.yml` | Security headers, a content security policy that names only this app and its AWS endpoints, and immutable caching for hashed assets | `--custom-headers` |
 | `custom-rules.json` | `www` to the apex, and the 404 page | `--custom-rules` |
 
+**Since the cutover (2026-10-14, Streamlane's plan, step 8)** `coralreefventures.com` and `www` are served by prod's
+app, `coral-reef-site` (`d5rsxrpztyob9`) in `crv-prod`, deployed only by `.github/workflows/deploy.yml`
+(`environments.ts`), and its zone is `Z0528736N9QND8UQUIJC` there; the old zone and app stay, unused, until the old
+account is retired (step 9). The door's records were copied to prod's backend, and the identities bound in the old
+user pool bind again at their first sign-in. The rest of this file describes the old app as it was set up.
+
 The design is in `docs/decisions/0001-the-door-and-the-app.md`. The app is `coral-reef-site`, id `d1fw6blayytium`,
 branch `main`. It has served `coralreefventures.com` (apex and `www`) since 2026-10-05 10:47 CDT, and still answers at
 `https://main.d1fw6blayytium.amplifyapp.com`.
@@ -183,12 +189,10 @@ optional site and test host). It is a workflow of its own so a locked site's sta
 repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's OIDC; without it, it runs with
 `--no-session` and warns.
 
-**The role CI needs (in place since 2026-10-06).** In the coral-reef project, us-east-2:
+**The role CI needs** (in `crv-prod` since the cutover, 2026-10-14; in the old project from 2026-10-06), us-east-2:
 
-1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`.
-   Created 2026-10-06 (`aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com
-   --client-id-list sts.amazonaws.com`), once Gary had activated the project's advanced features: until then the
-   project's managed SCP denied `iam:*Provider*`.
+1. An IAM OIDC identity provider for `https://token.actions.githubusercontent.com`, audience `sts.amazonaws.com`:
+   the accounts' baseline makes it (`infra/accounts/`).
 2. A role, `crv-leak-check`, with this trust policy, so only this repository's `main` (the schedule and a manual run)
    can assume it. The repository uses GitHub's immutable subject, which carries the owner's and the repository's ids
    (`repo:Coral-Reef-Ventures@337009897/coral-reef-site@1402479746:...`), so the policy names both forms; with only
@@ -199,7 +203,7 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
      "Version": "2012-10-17",
      "Statement": [{
        "Effect": "Allow",
-       "Principal": { "Federated": "arn:aws:iam::865000063691:oidc-provider/token.actions.githubusercontent.com" },
+       "Principal": { "Federated": "arn:aws:iam::027677878969:oidc-provider/token.actions.githubusercontent.com" },
        "Action": "sts:AssumeRoleWithWebIdentity",
        "Condition": {
          "StringEquals": {
@@ -221,11 +225,11 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
      "Version": "2012-10-17",
      "Statement": [
        { "Sid": "FindTheBackend", "Effect": "Allow", "Action": "amplify:GetBranch",
-         "Resource": "arn:aws:amplify:us-east-2:865000063691:apps/d1fw6blayytium/branches/main" },
+         "Resource": "arn:aws:amplify:us-east-2:027677878969:apps/d5rsxrpztyob9/branches/main" },
        { "Sid": "ReadItsOutputs", "Effect": "Allow", "Action": "cloudformation:DescribeStacks",
-         "Resource": "arn:aws:cloudformation:us-east-2:865000063691:stack/amplify-d1fw6blayytium-main-branch-*/*" },
+         "Resource": "arn:aws:cloudformation:us-east-2:027677878969:stack/amplify-d5rsxrpztyob9-main-branch-*/*" },
        { "Sid": "TheInviteesPassword", "Effect": "Allow", "Action": "cognito-idp:AdminSetUserPassword",
-         "Resource": "arn:aws:cognito-idp:us-east-2:865000063691:userpool/us-east-2_rKIikq747" }
+         "Resource": "arn:aws:cognito-idp:us-east-2:027677878969:userpool/us-east-2_PJsbzeVwo" }
      ]
    }
    ```
@@ -234,7 +238,7 @@ repository variable `CRV_LEAK_CHECK_ROLE_ARN` it assumes that role over GitHub's
    erase or create anyone, which is an admin's job. The sign-in and the ticket need no IAM: they are Cognito's public
    calls and the API with the invitee's own token. A replaced user pool changes the last ARN.
 4. Set the repository variable (not a secret; it names a role, it grants nothing alone):
-   `gh variable set CRV_LEAK_CHECK_ROLE_ARN --repo Coral-Reef-Ventures/coral-reef-site --body arn:aws:iam::865000063691:role/crv-leak-check`,
+   `gh variable set CRV_LEAK_CHECK_ROLE_ARN --repo Coral-Reef-Ventures/coral-reef-site --body arn:aws:iam::027677878969:role/crv-leak-check`,
    then run the workflow by hand once and read its log.
 
 ## Phase 3: status

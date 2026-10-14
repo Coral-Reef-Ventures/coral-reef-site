@@ -29,7 +29,7 @@ import { srpSignIn } from "./srp.ts";
  */
 
 export const defaultInvitee = "crv-check@example.com";
-export const crvAppId = "d1fw6blayytium";
+export const crvAppId = "d5rsxrpztyob9";
 export const region = "us-east-2";
 
 export type Aws = (args: string[]) => Promise<string>;
