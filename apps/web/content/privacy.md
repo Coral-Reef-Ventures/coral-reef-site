@@ -52,7 +52,7 @@ If a workspace connects GitHub, Streamlane keeps the installation, each person's
 
 What a workspace holds is kept while the workspace is in use. A deleted item stays in the trash for 30 days and is then purged; the history keeps the record that it existed. Notifications are deleted after 90 days. Removing someone from a workspace ends their membership there; their profile stays until they ask us to erase it. To have a workspace or your profile erased, write to us (below). Deleted records can remain in backups for up to 35 days, and an earlier version of a changed file for 7 days.
 
-Streamlane's server logs record what happened and internal ids, not your name, email address or what you wrote. They do not yet have a fixed retention period. The one exception is the contact form on streamlane.app: its log holds each message, with the address you gave, for 1 month.
+Streamlane's server logs record what happened and internal ids, not your name, email address or what you wrote, and are deleted after 1 month. The one exception is the contact form on streamlane.app: its log holds each message, with the address you gave, for that same month.
 
 ## Streamlane: what your browser keeps
 
