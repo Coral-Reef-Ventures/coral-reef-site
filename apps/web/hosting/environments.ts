@@ -4,8 +4,9 @@
  * (`.github/workflows/deploy.yml`): dev on every push to main, staging nightly from the commit dev last shipped, and
  * prod only when the product owner starts it by hand.
  *
- * Until the cutover (the plan's step 8), each answers only at its Amplify address, and coralreefventures.com is still
- * served from the old account (`apps/web/hosting/README.md`).
+ * Dev and staging answer only at their Amplify addresses. Prod is named for the domains it takes over at the cutover
+ * (Streamlane's plan, step 8): coralreefventures.com, streamlane.app and driftline.app, served from the old account
+ * until each domain moves to prod's apps (`apps/web/hosting/README.md`).
  */
 export type EnvironmentName = "dev" | "staging" | "prod";
 
@@ -42,10 +43,10 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
   prod: {
     account: "027677878969",
     appId: "d5rsxrpztyob9",
-    origin: "https://main.d5rsxrpztyob9.amplifyapp.com",
+    origin: "https://coralreefventures.com",
     domainPrefix: "crv-door-prod",
     noticeEmail: "hello@coralreefventures.com",
-    sites: { streamlane: "main.d1zyi0ovnubxlq.amplifyapp.com", driftline: "main.d20enpqzgrjckq.amplifyapp.com" },
+    sites: { streamlane: "streamlane.app", driftline: "driftline.app" },
   },
 };
 
