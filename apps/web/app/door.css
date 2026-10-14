@@ -64,6 +64,21 @@ html { scroll-behavior: smooth; }
 }
 body { margin: 0; overflow-wrap: break-word; background: var(--ms-bg); color: var(--ms-fg); font-family: var(--ms-font-body); }
 
+/*
+ * Passing through (door-session/passing.ts): a visit carrying a locked site's request is usually on its way straight
+ * back to the site, so the page is hidden behind "Opening <site>…" until the sign-in has something to show. The
+ * animation shows the page again after six seconds whatever happens, so a failure never leaves it blank.
+ */
+body[data-door-to] > :not(script) { animation: door-reveal 0s 6s both; }
+body[data-door-to]::before {
+  content: "Opening " attr(data-door-to) "…";
+  position: fixed; inset: 0; z-index: 10; display: grid; place-items: center;
+  background: var(--ms-bg); color: var(--ms-fg); font-size: 1.125rem;
+  animation: door-reveal-cover 0s 6s both;
+}
+@keyframes door-reveal { from { visibility: hidden; } to { visibility: visible; } }
+@keyframes door-reveal-cover { from { visibility: visible; } to { visibility: hidden; } }
+
 a { color: inherit; text-decoration-color: var(--crv-intentset); text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--crv-focus); outline-offset: 4px; border-radius: 2px; }

@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import { rootMetadata, rootViewport, SiteFooter, SiteHeader } from "../lib/site.tsx";
 import { socialCardImages } from "../lib/social-card.ts";
 import { schemeScript } from "../lib/scheme.tsx";
+import { doorPassingScript } from "../src/features/access/door-session/index.ts";
 
 // The social card, on top of the shell's root metadata. A page that writes its own openGraph replaces this rather
 // than merging with it, so those pages name the card again themselves.
@@ -25,13 +26,14 @@ export const viewport: Viewport = { ...rootViewport(), colorScheme: "light dark"
 /**
  * The frame every page shares: the skip link, the header (with the scheme control in its bar), the page, the footer. System fonts only:
  * nothing loads from another origin. The theme's variables are a generated stylesheet (app/theme.css), so no page needs a provider or a
- * script to have them, and the scheme script is the only script the frame carries.
+ * script to have them, and the frame carries two scripts: the scheme's, and the door's mark for a visit passing through to a site.
  */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-mantine-color-scheme="light">
       <body>
         <script>{schemeScript}</script>
+        <script>{doorPassingScript}</script>
         <a href="#main" className="skip-link">
           Skip to content
         </a>
