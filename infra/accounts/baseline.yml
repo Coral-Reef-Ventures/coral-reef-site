@@ -185,9 +185,10 @@ Resources:
             Status: Enabled
             ExpirationInDays: 90
 
-  # Streamlane's data scripts (the demo seed, ADR 0039), run by hand from GitHub in dev and staging only: they write
-  # through the writer's own code, which reads and writes the tables, invokes the areas' functions, looks people up in
-  # the user pool and writes the snapshot bucket. Prod's demo organization is the plan's step 6.
+  # Streamlane's data scripts (the demo seed, ADR 0039), run by hand from GitHub: they write through the writer's own
+  # code, which reads and writes the tables, invokes the areas' functions, looks people up in the user pool and writes
+  # the snapshot bucket. Prod's environment may assume it too since 2026-10-14, for the demo organization (Streamlane's
+  # plan, step 6); like a prod deploy, only the product owner starts a prod run.
   StreamlaneDataRole:
     Type: AWS::IAM::Role
     Condition: Deploys
@@ -208,6 +209,8 @@ Resources:
                   - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:dev
                   - repo:Coral-Reef-Ventures/streamlane:environment:staging
                   - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:staging
+                  - repo:Coral-Reef-Ventures/streamlane:environment:prod
+                  - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:prod
       Policies:
         - PolicyName: data
           PolicyDocument:
