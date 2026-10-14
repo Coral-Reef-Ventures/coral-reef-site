@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { backendSettings, environments, isEnvironmentName, renderHeaders } from "./environments.ts";
+import { backendSettings, environments, isEnvironmentName, renderHeaders, withSignInDomain } from "./environments.ts";
 
 const headers = readFileSync(fileURLToPath(new URL("./custom-headers.yml", import.meta.url)), "utf8");
 
@@ -42,10 +42,34 @@ describe("the environments", () => {
     );
   });
 
+  it("each sign in at their own address under coralreefventures.com, with a us-east-1 certificate in their account", () => {
+    for (const env of Object.values(environments)) {
+      const settings = backendSettings(env);
+      expect(settings.CRV_AUTH_DOMAIN).toMatch(/^auth(-dev|-staging)?\.coralreefventures\.com$/);
+      expect(settings.CRV_AUTH_CERTIFICATE_ARN).toMatch(
+        new RegExp(`^arn:aws:acm:us-east-1:${env.account}:certificate/`),
+      );
+    }
+    expect(environments.prod.signInDomain.name).toBe("auth.coralreefventures.com");
+  });
+
+  it("point the outputs' sign-in at that address, leaving the rest", () => {
+    const outputs = {
+      auth: {
+        user_pool_id: "p",
+        oauth: { domain: "crv-door-prod.auth.us-east-2.amazoncognito.com", scopes: ["openid"] },
+      },
+    };
+    expect(withSignInDomain(outputs, environments.prod)).toEqual({
+      auth: { user_pool_id: "p", oauth: { domain: "auth.coralreefventures.com", scopes: ["openid"] } },
+    });
+    expect(() => withSignInDomain({}, environments.prod)).toThrow(/OAuth/);
+  });
+
   it("render the headers flat, naming the environment's own hosted UI", () => {
     const dev = renderHeaders(headers, environments.dev);
     expect(dev.startsWith("customHeaders:\n")).toBe(true);
-    expect(dev).toContain("https://crv-door-dev.auth.us-east-2.amazoncognito.com");
+    expect(dev).toContain("https://auth-dev.coralreefventures.com");
     expect(dev).not.toContain("https://crv-door.auth.");
     expect(dev).toContain('  - pattern: "**"');
   });

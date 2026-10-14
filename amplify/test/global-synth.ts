@@ -27,6 +27,8 @@ const settings = {
     CRV_ADMIN_EMAILS: "gary@coralreefventures.com",
     CRV_ADMIN_ORIGIN: "https://main.d1example.amplifyapp.com",
     CRV_BUILD_ROLE_NAME: "crv-amplify-backend-deploy",
+    CRV_AUTH_DOMAIN: "auth.coralreefventures.com",
+    CRV_AUTH_CERTIFICATE_ARN: "arn:aws:acm:us-east-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
   },
 } as const;
 

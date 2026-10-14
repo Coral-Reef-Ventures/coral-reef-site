@@ -14,6 +14,9 @@ import { doorSites } from "../areas/access/sites.ts";
  * - CRV_BUILD_ROLE_NAME: the Amplify build role the door key's policy lets read the public key; unset in a sandbox.
  * - CRV_DOOR_TEST_HOSTS: temporary hosts of a locked site under test (areas/access/sites.ts); empty otherwise.
  * - CRV_DOOR_SITE_HOSTS: an environment's own host for each locked site (areas/access/sites.ts); unset in production.
+ * - CRV_AUTH_DOMAIN / CRV_AUTH_CERTIFICATE_ARN: the environment's own sign-in address (`auth.coralreefventures.com`,
+ *   `auth-dev.` and `auth-staging.`) and its us-east-1 certificate, both or neither. Unset, as in a sandbox, the pool
+ *   signs in at its prefix domain only.
  * - CRV_NOTICE_EMAIL: the inbox the branch's notice topic subscribes. Unset means hello@coralreefventures.com; empty
  *   means none, which dev and staging set so their confirmation requests and notices never reach the real inbox.
  */
@@ -116,9 +119,31 @@ export const parseNoticeEmail = (value: string | undefined): string | undefined 
   return email;
 };
 
+export type SignInDomain = { name: string; certificateArn: string };
+
+const hostname = /^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+
+/**
+ * The environment's own sign-in address, in place of Cognito's `<prefix>.auth.us-east-2.amazoncognito.com`, so Google
+ * counts one authorized domain, coralreefventures.com, for every environment rather than one per user pool (as
+ * Streamlane's `auth.<base domain>`, its ADR 0087). Its certificate is in us-east-1, as Cognito's CloudFront requires.
+ * Each name's parent is coralreefventures.com, which already resolves, as Cognito requires of a custom domain's parent.
+ */
+export const parseSignInDomain = (env: NodeJS.ProcessEnv): SignInDomain | undefined => {
+  const name = env.CRV_AUTH_DOMAIN?.trim().toLowerCase() ?? "";
+  const certificateArn = env.CRV_AUTH_CERTIFICATE_ARN?.trim() ?? "";
+  if (!name && !certificateArn) return undefined;
+  if (!hostname.test(name)) throw new Error(`CRV_AUTH_DOMAIN is "${name}", which is not a hostname`);
+  if (!/^arn:aws:acm:us-east-1:\d{12}:certificate\/[0-9a-f-]+$/.test(certificateArn)) {
+    throw new Error("CRV_AUTH_CERTIFICATE_ARN must name an ACM certificate in us-east-1, which Cognito requires");
+  }
+  return { name, certificateArn };
+};
+
 /** Every setting, read from `env` and checked. */
 export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   domainPrefix: parseDomainPrefix(env.CRV_AUTH_DOMAIN_PREFIX),
+  signInDomain: parseSignInDomain(env),
   ...parseCallbackUrls(env.CRV_AUTH_CALLBACK_URLS),
   adminEmails: parseAdminEmails(env.CRV_ADMIN_EMAILS),
   adminOrigin: parseAdminOrigin(env.CRV_ADMIN_ORIGIN),

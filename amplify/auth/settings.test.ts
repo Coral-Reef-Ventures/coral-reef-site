@@ -12,8 +12,34 @@ import {
   parseDomainPrefix,
   parseNoticeEmail,
   parseRoleName,
+  parseSignInDomain,
   readAuthConfig,
 } from "./settings.ts";
+
+describe("CRV_AUTH_DOMAIN and CRV_AUTH_CERTIFICATE_ARN", () => {
+  const certificateArn = "arn:aws:acm:us-east-1:027677878969:certificate/f360eb2b-4344-49ce-be8d-40b84b5967ba";
+
+  it("are both set, or neither, as in a sandbox", () => {
+    expect(parseSignInDomain({})).toBeUndefined();
+    expect(
+      parseSignInDomain({ CRV_AUTH_DOMAIN: " Auth.CoralReefVentures.com ", CRV_AUTH_CERTIFICATE_ARN: certificateArn }),
+    ).toEqual({
+      name: "auth.coralreefventures.com",
+      certificateArn,
+    });
+    expect(() => parseSignInDomain({ CRV_AUTH_DOMAIN: "auth.coralreefventures.com" })).toThrow(/us-east-1/);
+    expect(() => parseSignInDomain({ CRV_AUTH_CERTIFICATE_ARN: certificateArn })).toThrow(/not a hostname/);
+  });
+
+  it("refuses a certificate outside us-east-1, which Cognito cannot use", () => {
+    expect(() =>
+      parseSignInDomain({
+        CRV_AUTH_DOMAIN: "auth.coralreefventures.com",
+        CRV_AUTH_CERTIFICATE_ARN: certificateArn.replace("us-east-1", "us-east-2"),
+      }),
+    ).toThrow(/us-east-1/);
+  });
+});
 
 describe("CRV_AUTH_DOMAIN_PREFIX", () => {
   it("takes crv-door and crv-door-sandbox", () => {

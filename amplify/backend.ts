@@ -57,6 +57,17 @@ const domain = backend.auth.resources.userPool.node.children.find((child) => chi
 if (!(domain?.node.defaultChild instanceof CfnUserPoolDomain)) throw new Error("The user pool has no prefix domain");
 domain.node.defaultChild.addPropertyOverride("Domain", authConfig.domainPrefix);
 
+// The environment's own sign-in address beside the prefix (auth/settings.ts, parseSignInDomain): a pool may have one of
+// each. Its DNS record, an alias to the CloudFront distribution Cognito reports, is made by hand once the domain exists
+// (apps/web/hosting/README.md, "The sign-in address"), and scripts/deploy.ts points the app's outputs at it.
+if (authConfig.signInDomain) {
+  new CfnUserPoolDomain(Stack.of(backend.auth.resources.userPool), "SignInDomain", {
+    domain: authConfig.signInDomain.name,
+    userPoolId: backend.auth.resources.userPool.userPoolId,
+    customDomainConfig: { certificateArn: authConfig.signInDomain.certificateArn },
+  });
+}
+
 // The model tables: point-in-time recovery on every one, for the 35 days the privacy page states (Amplify accepts a
 // shorter period, but changing it changes what the privacy page says, decision D3), and TTL where a row expires (plan §2.3a).
 // Every one holds people, their access or what they sent, so on the branch each is retained and protected from

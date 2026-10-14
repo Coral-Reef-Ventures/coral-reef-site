@@ -276,8 +276,26 @@ Since 2026-10-12 the app also has dev, staging and prod in their own accounts (S
 `infra/accounts/README.md`): Amplify apps with no repository connected, listed in `environments.ts`, and deployed by
 `.github/workflows/deploy.yml` through `scripts/deploy.ts`. The script does what the build spec above does (the backend
 with `ampx pipeline-deploy`, the export, the door's public key), then applies this folder's headers and rules,
-rendered for the environment's own hosted UI, and uploads `out`. Each app's `GOOGLE_CLIENT_ID` and
-`GOOGLE_CLIENT_SECRET` are copied from this app's, so the Google client must also allow each environment's hosted UI
-(`https://crv-door-<env>.auth.us-east-2.amazoncognito.com/oauth2/idpresponse`). Dev deploys on every push to main,
-staging nightly, and prod only when Gary starts it. This app stays the one serving coralreefventures.com until the
-cutover.
+rendered for the environment's own sign-in address, and uploads `out`. Each app's `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET` are copied from this app's, so the Google client must also allow each environment's sign-in
+address (below). Dev deploys on every push to main,
+staging nightly, and prod only when Gary starts it. Prod has served coralreefventures.com since the cutover
+(2026-10-14).
+
+### The sign-in address
+
+Since 2026-10-14 each environment signs in at its own address under coralreefventures.com, a Cognito custom domain
+beside the prefix one: `auth-dev.coralreefventures.com`, `auth-staging.coralreefventures.com` and
+`auth.coralreefventures.com` (`signInDomain` in `environments.ts`). Google then counts one authorized domain,
+coralreefventures.com, for all three, where each prefix domain counted as its own. Each name's parent is
+coralreefventures.com, which already resolves, as Cognito requires of a custom domain's parent. `scripts/deploy.ts`
+points the outputs' `oauth.domain` at it, and the headers name it in place of the hosted UI.
+
+Made once per environment, by hand:
+
+1. **The certificate**, in us-east-1 in the environment's account (Cognito's CloudFront requires it), validated by a
+   CNAME in prod's zone `Z0528736N9QND8UQUIJC`. All three were issued on 2026-10-14.
+2. **The Google client's redirect URI**, `https://<address>/oauth2/idpresponse`, before the first deploy that carries it.
+3. **The alias**, after that deploy has created the domain: an A record for the address in prod's zone, aliased to the
+   distribution `aws cognito-idp describe-user-pool-domain --domain <address>` reports (hosted zone `Z2FDTNDATAQYW2`).
+   Until it exists, sign-in in that environment fails.
