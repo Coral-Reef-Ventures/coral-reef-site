@@ -6,6 +6,7 @@ import { doorApi } from "../../../infrastructure/amplify/client.ts";
 import classes from "./DoorSignIn.module.css";
 import { decodeAdminReturn, decodeRequest, type DoorRequest, enter, encodeRequest, readDoorRequest } from "./enter.ts";
 import { getInvolvedPath } from "./forward.ts";
+import { showPage } from "./passing.ts";
 import { postTicket } from "./postTicket.ts";
 import { type LockedSite, siteById } from "./sites.ts";
 
@@ -103,6 +104,11 @@ export const DoorSignIn = ({ completing = false }: { completing?: boolean }) => 
       live = false;
     };
   }, [completing]);
+
+  // Only "working" can end in a ticket and the site; anything else is for the visitor to read, so the page comes back.
+  useEffect(() => {
+    if (view.kind !== "working") showPage();
+  }, [view.kind]);
 
   const signIn = async () => {
     setView({ kind: "working", label: "Opening Google…" });

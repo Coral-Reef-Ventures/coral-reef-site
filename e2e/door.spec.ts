@@ -318,6 +318,32 @@ test("a locked site's request to the door's origin, and an old link to a moved s
   await page.waitForURL(`${base()}/get-involved/?error=NOT_INVITED`);
 });
 
+test("a signed-in visitor passing through to a site sees where they are going, never the form", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("crv-stub-session", "invited");
+    // What the visitor sees as the ticket is posted, kept in window.name, which outlives the navigation.
+    const submit = HTMLFormElement.prototype.submit;
+    HTMLFormElement.prototype.submit = function (this: HTMLFormElement) {
+      const heading = document.getElementById("involved");
+      window.name = JSON.stringify({
+        formSeen: heading?.checkVisibility({ visibilityProperty: true }) ?? false,
+        cover: getComputedStyle(document.body, "::before").content,
+      });
+      submit.call(this);
+    };
+  });
+  await page.route("https://streamlane.app/_door", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "<p>inside</p>" }),
+  );
+  // As the gate sends it: to the door's origin, which forwards to the sign-in with the request unchanged.
+  await page.goto(`${base()}/?site=streamlane&host=streamlane.app&next=%2F&state=${"A".repeat(22)}`);
+  await page.waitForURL("https://streamlane.app/_door");
+  expect(JSON.parse(await page.evaluate(() => window.name))).toEqual({
+    formSeen: false,
+    cover: '"Opening Streamlane…"',
+  });
+});
+
 test("the invitation sign-in names the site that asked, offers Google, and carries the request through it", async ({
   page,
 }) => {
