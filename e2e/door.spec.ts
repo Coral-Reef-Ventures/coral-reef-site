@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/whitepaper/", "/eddy/", "/get-involved/", "/privacy/", "/signout/"];
+const pages = ["/", "/whitepaper/", "/eddy/", "/get-involved/", "/privacy/", "/terms/", "/signout/"];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });
@@ -204,7 +204,7 @@ for (const width of [1100, 1440]) {
   });
 }
 
-for (const path of ["/", "/get-involved/", "/privacy/"]) {
+for (const path of ["/", "/get-involved/", "/privacy/", "/terms/"]) {
   for (const width of [390, 1024, 1200, 1440]) {
     test(`${path}: the page's column lines up with the header at ${width}px`, async ({ page }) => {
       await open(page, path, width, "light");
@@ -238,7 +238,7 @@ test("the skip link moves focus into the main content", async ({ page }) => {
 const contrastScopes: Record<string, string> = { "/admin/": "header, footer, nav[aria-label='Admin']" };
 
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/get-involved/", "/privacy/", "/admin/"]) {
+  for (const path of ["/", "/get-involved/", "/privacy/", "/terms/", "/admin/"]) {
     test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
       await open(page, path, 1440, scheme);
       await page.waitForTimeout(300);

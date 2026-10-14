@@ -193,6 +193,40 @@ describe("the privacy page", () => {
   });
 });
 
+describe("the terms page", () => {
+  const terms = text("terms.md");
+
+  it("names the company, what it covers, the privacy page's part and the one contact address", () => {
+    for (const phrase of [
+      "Coral Reef Ventures, Inc.",
+      "Streamlane and Driftline",
+      "privacy page",
+      "last changed on",
+      "hello@coralreefventures.com",
+    ]) {
+      expect(terms, phrase).toContain(phrase);
+    }
+  });
+});
+
+describe("the privacy page's Streamlane part", () => {
+  const privacy = text("privacy.md");
+
+  it("says what sign-in gives Streamlane, where it is stored, what goes to a model, and how long it is kept", () => {
+    for (const phrase of [
+      "Streamlane: signing in",
+      "your name, your verified email address and the address of your profile picture",
+      "United States (Ohio)",
+      "Amazon Bedrock",
+      "we do not use it to train models",
+      "Streamlane: how long it is kept",
+      "Streamlane sends no email",
+    ]) {
+      expect(privacy, phrase).toContain(phrase);
+    }
+  });
+});
+
 describe("a production build", () => {
   const out = join(import.meta.dirname, "..", "out");
   const walk = (dir: string): string[] =>
