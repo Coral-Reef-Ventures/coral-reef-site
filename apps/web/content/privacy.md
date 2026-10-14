@@ -8,7 +8,7 @@ Privacy
 # What we keep, and for how long
 
 {.lead}
-This page covers the interest form and the invitation sign-in on coralreefventures.com, and Streamlane: its workspaces at an address under streamlane.app, open for now to invited guests. Coral Reef Ventures, LLC runs both. There is no tracking, no analytics and no third-party script on this site or in Streamlane.
+This page covers the interest form and the invitation sign-in on coralreefventures.com, and Streamlane: its workspaces at an address under streamlane.app, open for now to invited guests. Coral Reef Ventures, Inc. runs both. There is no tracking, no analytics and no third-party script on this site or in Streamlane.
 
 ## What the interest form stores
 

@@ -8,7 +8,7 @@ Terms
 # Terms of service
 
 {.lead}
-These terms cover coralreefventures.com, and Streamlane and Driftline while they are open to invited guests: the sites at streamlane.app and driftline.app, and Streamlane's workspaces. They are an agreement between you and Coral Reef Ventures, LLC. By signing in or using any of them, you agree to these terms.
+These terms cover coralreefventures.com, and Streamlane and Driftline while they are open to invited guests: the sites at streamlane.app and driftline.app, and Streamlane's workspaces. They are an agreement between you and Coral Reef Ventures, Inc.. By signing in or using any of them, you agree to these terms.
 
 These terms were last changed on 14 October 2026.
 

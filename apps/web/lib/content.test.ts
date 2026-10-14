@@ -198,7 +198,7 @@ describe("the terms page", () => {
 
   it("names the company, what it covers, the privacy page's part and the one contact address", () => {
     for (const phrase of [
-      "Coral Reef Ventures, LLC",
+      "Coral Reef Ventures, Inc.",
       "Streamlane and Driftline",
       "privacy page",
       "last changed on",
