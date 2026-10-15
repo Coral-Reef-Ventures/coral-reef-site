@@ -17,7 +17,8 @@ The profiles share one Identity Center sign-in: `aws sso login --sso-session crv
 - GitHub's OIDC provider, and a deploy role per repository (`github-deploy-<repository>`) that only that repository's
   GitHub environment of the same name can assume (`repo:<owner>/<repository>:environment:<dev|staging|prod>`). A
   deploy may start and follow an Amplify Hosting build and deploy CDK stacks through the bootstrap's roles, and nothing
-  else. The prod environment requires an approval, so only an approved run reaches prod. The sandbox account has none.
+  else. Only the product owner starts a prod deploy (each repository's CLAUDE.md); no agent does. The sandbox account
+  has none.
 - `github-data-streamlane`, for Streamlane's data scripts (the demo seed), which only streamlane's `dev` and `staging`
   GitHub environments may assume: tables, the areas' functions, user lookups and the snapshot bucket.
 - `amplify-backend-deploy`, the service role Amplify Hosting builds with, which a deploy may hand to an app.
@@ -42,6 +43,7 @@ Each account's Lambda concurrency quota was requested at 1000 on 2026-10-12 (new
 
 Each of the four repositories (coral-reef-site, streamlane, driftline, intentset) has the environments `dev`,
 `staging` and `prod`, each deployable from `main` only, each with the variables `AWS_ROLE_ARN` (that environment's
-`github-deploy-<repository>` role) and `AWS_REGION`. `prod` requires the product owner's approval in the two public
-repositories (coral-reef-site, intentset). GitHub's Team plan offers required reviewers on private repositories only
-under Enterprise, so streamlane's and driftline's `prod` has no approval gate yet (open, 2026-10-12).
+`github-deploy-<repository>` role) and `AWS_REGION`. No `prod` requires a reviewer: starting the run by hand is the
+product owner's approval, the same in all four. GitHub's Team plan offers required reviewers on private repositories
+only under Enterprise, so streamlane's and driftline's never had one, and on 2026-10-14 the product owner dropped the
+one coral-reef-site's and intentset's public repositories had, so a prod deploy no longer waits for a second click.
