@@ -65,13 +65,13 @@ These problems existed before coding agents. Delegation makes them impossible to
 
 Each system a team runs holds part of the answer, and none holds the product's promises.
 
-| Tool | What it holds | What it cannot answer |
-| --- | --- | --- |
-| Work tracker | Who is doing what, and by when | What a change means for the product. A closed ticket is not a kept promise. |
-| Specification for a change | What one change should do, written before it starts | What the product does once many changes have landed. A change's specification usually stops being updated when the change merges. |
-| Documentation and wiki | Explanations for people | Whether they still describe the code, which changes on a different schedule. |
-| Test suite | Checks that ran, and whether they passed | Whether each rule has a check, and whether a result belongs to this commit. |
-| Analytics and observability | What users did and what failed | Which promise is affected, and who owns it. |
+| Tool | What it holds, and what it cannot answer |
+| --- | --- |
+| Work tracker | Who is doing what, and by when. Not what a change means for the product: a closed ticket is not a kept promise. |
+| Specification for a change | What one change should do, written before it starts. Not what the product does once many changes have landed: a change's specification usually stops being updated when the change merges. |
+| Documentation and wiki | Explanations for people. Not whether they still describe the code, which changes on a different schedule. |
+| Test suite | Checks that ran, and whether they passed. Not whether each rule has a check, or whether a result belongs to this commit. |
+| Analytics and observability | What users did and what failed. Not which promise is affected, or who owns it. |
 
 The missing piece is the record all of them could point to: one account of what the product promises, organized by behavior rather than by change, that outlives every change made to it.
 
