@@ -23,12 +23,15 @@ describe("the door's content", () => {
     }
   });
 
-  // The order of the 2026-10-06 rewrite: the outcome, the problem, the four introduced on their cards before anything
-  // shows how they fit, the direction, the whitepaper, the origin story and the contact.
+  // The order of the 2026-10-15 rewrite: the outcome, the shift (writing code is no longer the hard part), the problem
+  // (the product drifts), the four introduced on their cards before anything shows how they fit, the direction, the
+  // whitepaper, the origin story and the contact.
   it("carries the copy in its order", () => {
     const order = [
       "Keep control as agents build your software",
-      "Agents change the code. Your team still answers for the product",
+      "Writing the code is no longer the hard part",
+      "Code outruns review, and the product drifts",
+      "Which product promises changed?",
       "Two open foundations. Two products",
       "Markset",
       "Intentset",
@@ -36,7 +39,7 @@ describe("the door's content", () => {
       "Driftline",
       "Where each one fits, from intent to outcomes",
       "None of the four requires another",
-      "Keeping product intent connected in agentic software development",
+      "Intent is the work: building software when agents write the code",
       "Why we started Coral Reef Ventures",
       "Talk to us",
       "hello@coralreefventures.com",
@@ -75,7 +78,7 @@ describe("the door's content", () => {
     const hero = door.slice(0, door.indexOf("<hr"));
     expect(hero).not.toContain('class="actions"');
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
-    expect(section("Keeping product intent connected")).toContain("Read the whitepaper");
+    expect(section("Intent is the work")).toContain("Read the whitepaper");
     expect(section("Talk to us")).toContain("Take part");
     expect(door).toContain('href="/whitepaper/"');
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBe(2);
