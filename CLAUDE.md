@@ -29,15 +29,18 @@ the facts the copy must keep.
   coral mark and cream text. Every family site's ground carries its own mark's color this way; `e2e/door.spec.ts`
   measures WCAG AA on every text element in both schemes, and a changed dark ground means redrawing the social card. It is the favicon, the header's image and the mark on the
   social card.
-- **The app's pages.** `/` is the door: the outcome, the problem, the four on their cards (Markset and Intentset are
+- **The app's pages.** `/` is the door: the outcome, the shift (writing the code is no longer the hard part), the problem (code outruns
+  review and the product drifts; rewritten 2026-10-15 from Gary's thought-leadership notes), the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, the origin
   story ("Why we exist": the company's voice, unsigned since 2026-10-08, when Gary's signed founder note was rewritten
-  at his request) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
+  at his request; rewritten again 2026-10-15 as a story ending on what the name means, a reef built by countless small
+  builders into one structure that lasts, which Gary confirmed is why the name was chosen) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
   pilot, the worked example and "Where to start" all came off that day, because a dated one-capability experiment and a
   record of a product's emptiest state told a reader how new this is, and the how-to lead was written for an engineer
   on a page read by investors. The evidence lives where its context does, in `/whitepaper/` and in Intentset's adoption
   log; `/get-involved/` is reached from the header's nav and the one button in "Talk to us". `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
-  only there: no PDF beside it. `/get-involved/`
+  only there: no PDF beside it. Rewritten 2026-10-15 at his request around the same thesis, for design partners first and
+  investors second; its status table and adoption figures are dated, so refresh them when a version or the log moves. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
   Gary's request; the header's nav is Whitepaper (added 2026-10-09, so the paper the door sends readers to for its
   evidence is reachable from every page) and then Get involved. A locked site's gate redirects to the door's origin, `/`, with

@@ -39,7 +39,7 @@ own strings are the copy. Copy can be written and changed without approval (Gary
 fact: no domain, link, contact address, price, legal or privacy claim, or claim that is not true today. A product links
 out only to a confirmed destination; the one contact address is hello@coralreefventures.com; the privacy page quotes
 the retention periods in `amplify/areas/retention.ts`, and a changed period is a decision (D3) that changes the page in
-the same commit. The whitepaper is Gary's own text (2026-10-06) and is kept only at
+the same commit. The whitepaper is Gary's own text (2026-10-06, rewritten at his request 2026-10-15) and is kept only at
 `/whitepaper/`, with no PDF beside it. The door's origin story ("Why we exist") was his signed founder note until
 2026-10-08; at his request it carries no byline and no name, and it is written in the company's voice, so the door
 names no person.

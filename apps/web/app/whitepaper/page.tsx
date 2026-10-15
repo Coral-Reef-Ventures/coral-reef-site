@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { DoorDocument } from "../../lib/page.tsx";
 import { socialCardImages } from "../../lib/social-card.ts";
 
-const title = "Keeping product intent connected in agentic software development";
+const title = "Intent is the work: building software when agents write the code";
 const description =
-  "The opportunity and approach behind Coral Reef Ventures: why agentic development makes product intent harder to keep, and how open foundations and focused products can keep it connected.";
+  "When agents write the code, the work that remains is deciding what the product should do, proving it still does, and learning whether it should. Why products drift when code outruns review, and what Coral Reef Ventures is building for it.";
 
 export const metadata: Metadata = {
   title: "Whitepaper",

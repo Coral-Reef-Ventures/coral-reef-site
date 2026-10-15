@@ -8,17 +8,38 @@ Coral Reef Ventures
 # Keep control as agents build your software
 
 {.lead}
-Teams need a durable connection between product intent, execution, verification and real-world outcomes. Coral Reef Ventures is building open foundations and focused tools around that need.
+Agents can now write your code. Deciding what your product should do, and keeping every part of it true to those decisions, is still your team's job. We build open foundations and focused tools for that work.
+
+***
+
+{.eyebrow}
+The shift
+
+## Writing the code is no longer the hard part
+
+{.lead}
+If agents do not write all of your code yet, they soon will. Turning a clear requirement into a working change is now the easy step. The work that remains is the work around the code.
+
+{.questions}
+- **Before the build: decide.** Plan and prioritize, understand the problem, and settle the key decisions in words people can follow, before an agent starts.
+- **After the build: prove it.** Validate what came back, refine it, get it ready to launch, update the documentation and tell the people it affects.
+- **After the release: learn.** Hear from the people using it, and carry what you learn into the next decision.
+
+As agents take on the building, product and engineering meet in the middle: whoever starts a piece of work now decides it, specifies it and judges the result.
 
 ***
 
 {.eyebrow}
 The problem
 
-## Agents change the code. Your team still answers for the product
+## Code outruns review, and the product drifts
 
 {.lead}
-After every change an agent makes, someone still has to answer three questions.
+No one can read every line an agent writes. What slips through is rarely one broken change. It is hundreds of reasonable ones that disagree.
+
+One area of the app handles a case one way and the next area another. The interface grows inconsistent, and customers get confused. In time no one can say what the product is meant to do, because different people and agents made different decisions at different times, and nobody holds them all.
+
+After every change, someone still has to answer three questions.
 
 {.questions}
 1. **Which product promises changed?** A diff shows lines, not behaviors.
@@ -50,18 +71,18 @@ How they fit
 ## Where each one fits, from intent to outcomes
 
 {.lead}
-Those three questions are easier to answer when a change can be followed from the promise it serves to what users experience. Intent, execution and verification each take one step here; outcomes take two, because what a release is meant to do and what users do with it are recorded separately.
+Those three questions are easier to answer when every change can be followed from the decision behind it to what users experience. Review then asks what a change kept, not only what it did.
 
 :::steps{.lifecycle}
-1. **Intent.** Write down what the product promises, and who owns each promise. [Intentset]{.kicker .intentset}
-2. **Execution.** Plan each change and move it forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
+1. **Intent.** Decide what the product promises, the rules it keeps and why, and who owns each promise, before an agent starts. [Intentset]{.kicker .intentset}
+2. **Execution.** Plan, prioritize and move each change forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
 3. **Verification.** See which promises have a check passing on this commit, and which have no check at all. [Intentset]{.kicker .intentset}
 4. **Release.** Record what each release is meant to do for users, before it ships. [Driftline]{.kicker .driftline}
 5. **Feedback.** Watch real users meet it, ask them why when adoption stalls, and take what you learn back to intent. [Driftline]{.kicker .driftline}
 :::
 
 {.foundation}
-**Under every step, Markset.** Records stay readable Markdown that agents write and people review. Intentset's records are already Markset documents.
+**Under every step, Markset.** The plans, records and reports agents write stay readable Markdown that people review. Intentset's records are already Markset documents.
 
 {.note}
 The five steps are a loop, not a line: what you learn from use becomes the next thing you promise. Every connection along it removes a handoff. None of the four requires another, so start where the pain is.
@@ -71,10 +92,10 @@ The five steps are a loop, not a line: what you learn from use becomes the next 
 {.eyebrow}
 Whitepaper
 
-## Keeping product intent connected in agentic software development
+## Intent is the work: building software when agents write the code
 
 {.lead}
-As agents take on more of the implementation, a team still has to know what its product promises, whether a change keeps that promise, and whether users get the result. The whitepaper sets out that problem, the opportunity it creates, and how open foundations and focused products can keep intent, execution, verification and outcomes connected.
+When implementation costs little, the cost moves to deciding, proving and learning. The whitepaper sets out why products drift when code outruns review, why the tools teams already use leave the gap open, and how one reviewed account of what a product promises, kept with the code, closes it.
 
 {.actions}
 [[Read the whitepaper](/whitepaper/)]{.button .primary}
@@ -90,11 +111,13 @@ Why we exist
 ## Why we started Coral Reef Ventures
 
 :::card{.origin}
-Keeping track of what a software product does has always been a challenge, and the past two years of agentic development have magnified it. We built repositories with hundreds of thousands of lines of code, extensive documentation maintained by agents, deliberate architecture, and automated quality gates. Yet answering straightforward questions about product behavior still required investigation. The code and its documentation needed a much tighter connection.
+We have been building software with agents for two years: repositories of hundreds of thousands of lines, documentation the agents kept up, deliberate architecture and automated quality gates. The agents kept getting better at writing code. Knowing what our product did kept getting harder.
 
-The fragmentation extended beyond development. Planning, documentation, support, product analytics, and observability lived in separate systems. Each served a purpose, but connecting what we intended, what we built, and what users experienced took continual effort.
+Simple questions took an investigation. Does this behave the same everywhere? Who decided that, and why? Did this change break something we promised? The answers were spread across code, tickets, docs, support and analytics, and the decisions behind them had been made by different people and agents at different times.
 
-Coral Reef Ventures came out of those experiences: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring real-world outcomes back into product decisions. The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
+So we started writing those decisions down where the agents work, and checking every change against them. We build our own products that way now, with agents doing the work and people deciding what it should be.
+
+We started Coral Reef Ventures because every team building with agents will hit the same wall. The name is the idea: a reef is built by countless small builders, and it grows into one structure that lasts. Software built by many agents can too, when every part is built to the same intent.
 :::
 
 ***
@@ -105,7 +128,7 @@ Next steps
 ## Talk to us
 
 {.statement}
-We are looking for funding, design partners and advisors. Tell us who you are and what you have in mind.
+We are looking for design partners, funding and advisors. Tell us who you are and what you have in mind.
 
 {.actions}
 [[Take part](/get-involved/)]{.button .primary}

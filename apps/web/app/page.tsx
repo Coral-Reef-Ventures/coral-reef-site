@@ -6,7 +6,7 @@ import { socialCardImages } from "../lib/social-card.ts";
 
 const title = "Coral Reef Ventures · Keep control as agents build your software";
 const description =
-  "Coral Reef Ventures is building open foundations and focused tools for a durable connection between product intent, execution, verification and real-world outcomes.";
+  "Agents can now write your code. Deciding what your product should do, and keeping every part of it true to those decisions, is still your team's job. Coral Reef Ventures builds open foundations and focused tools for that work.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
