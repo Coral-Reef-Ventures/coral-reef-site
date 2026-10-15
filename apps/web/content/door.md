@@ -111,11 +111,13 @@ Why we exist
 ## Why we started Coral Reef Ventures
 
 :::card{.origin}
-Keeping track of what a software product does has always been a challenge, and the past two years of agentic development have magnified it. We built repositories with hundreds of thousands of lines of code, extensive documentation maintained by agents, deliberate architecture, and automated quality gates. Yet answering straightforward questions about product behavior still required investigation. The code and its documentation needed a much tighter connection.
+We have been building software with agents for two years: repositories of hundreds of thousands of lines, documentation the agents kept up, deliberate architecture and automated quality gates. The agents kept getting better at writing code. Knowing what our product did kept getting harder.
 
-The fragmentation extended beyond development. Planning, documentation, support, product analytics, and observability lived in separate systems. Each served a purpose, but connecting what we intended, what we built, and what users experienced took continual effort.
+Simple questions took an investigation. Does this behave the same everywhere? Who decided that, and why? Did this change break something we promised? The answers were spread across code, tickets, docs, support and analytics, and the decisions behind them had been made by different people and agents at different times.
 
-Coral Reef Ventures came out of those experiences: open foundations and focused tools that preserve readable documents, connect product intent to implementation, coordinate human and agent work, and bring real-world outcomes back into product decisions. The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.
+So we started writing those decisions down where the agents work, and checking every change against them. We build our own products that way now, with agents doing the work and people deciding what it should be.
+
+We started Coral Reef Ventures because every team building with agents will hit the same wall. The name is the idea: a reef is built by countless small builders, and it grows into one structure that lasts. Software built by many agents can too, when every part is built to the same intent.
 :::
 
 ***

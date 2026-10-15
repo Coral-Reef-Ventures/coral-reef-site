@@ -33,7 +33,8 @@ the facts the copy must keep.
   review and the product drifts; rewritten 2026-10-15 from Gary's thought-leadership notes), the four on their cards (Markset and Intentset are
   open foundations, never "products"; Streamlane and Driftline are products), how they fit, the whitepaper, the origin
   story ("Why we exist": the company's voice, unsigned since 2026-10-08, when Gary's signed founder note was rewritten
-  at his request) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
+  at his request; rewritten again 2026-10-15 as a story ending on what the name means, a reef built by countless small
+  builders into one structure that lasts, which Gary confirmed is why the name was chosen) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
   pilot, the worked example and "Where to start" all came off that day, because a dated one-capability experiment and a
   record of a product's emptiest state told a reader how new this is, and the how-to lead was written for an engineer
   on a page read by investors. The evidence lives where its context does, in `/whitepaper/` and in Intentset's adoption

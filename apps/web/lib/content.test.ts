@@ -93,15 +93,13 @@ describe("the door's content", () => {
     expect(door).not.toMatch(/\bIllustrative\b|Schedule an assessment/);
   });
 
-  // The origin story is the company's voice and carries no byline (2026-10-08): the first and last
-  // sentences pin both ends, and no name appears on the page.
+  // The origin story is the company's voice and carries no byline (2026-10-08), rewritten 2026-10-15 to tell the story
+  // and say what the name means (Gary confirmed both): the first and last sentences pin both ends, and no name appears.
   it("keeps the origin story word for word, unsigned", () => {
     expect(door).toContain(
-      "Keeping track of what a software product does has always been a challenge, and the past two years of agentic development have magnified it.",
+      "We have been building software with agents for two years: repositories of hundreds of thousands of lines, documentation the agents kept up, deliberate architecture and automated quality gates.",
     );
-    expect(door).toContain(
-      "The aim is to help teams retain a coherent understanding of their products as agents take on more of the work.",
-    );
+    expect(door).toContain("Software built by many agents can too, when every part is built to the same intent.");
     expect(door).not.toContain("Gary");
     expect(door).not.toMatch(/\bI’ve\b|\bMy aim\b/);
   });
