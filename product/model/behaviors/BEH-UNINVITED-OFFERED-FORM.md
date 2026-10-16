@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/behavior/0.1
+  spec: '0.2'
+  profile: intentset/behavior/0.2
   id: BEH-UNINVITED-OFFERED-FORM
   type: behavior
   title: An uninvited Google sign-in is refused and offered the form, prefilled

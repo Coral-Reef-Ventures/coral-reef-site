@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/rule/0.1
+  spec: '0.2'
+  profile: intentset/rule/0.2
   id: RULE-TOKEN-NOT-IN-URL
   type: rule
   title: A ticket or token is never in a URL

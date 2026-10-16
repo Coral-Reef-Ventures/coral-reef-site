@@ -1,7 +1,7 @@
 # Intentset configuration (Core §11): the repository scope a conformance claim is about.
 # The model is written ahead of the code, so every record is a draft until a person promotes it. Validated with the
 # released CLI, which is not a dependency of this repository:
-#   pnpm dlx @intentset/cli@0.5.0 validate --level L2
+#   pnpm dlx @intentset/cli@0.8.0 validate --level L2
 repository: "Coral-Reef-Ventures/coral-reef-site"
 scope:
   - "product/**/*.md"

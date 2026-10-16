@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/intent/0.1
+  spec: '0.2'
+  profile: intentset/intent/0.2
   id: INT-ONE-SYSTEM-OF-RECORD
   type: intent
   title: One system holds everyone who has shown interest or been let in
