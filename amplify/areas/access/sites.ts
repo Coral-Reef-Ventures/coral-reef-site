@@ -1,6 +1,7 @@
 /**
  * The site registry: each locked site's id, its name, and the hosts it is served on. A ticket is issued only for a host
- * listed here, and its grant is `site:<the first host>`. `CRV_DOOR_TEST_HOSTS` adds temporary hosts while a locked
+ * listed here, and its grant is `site:<its production host>` in every environment, so a grant outlives a change of the
+ * environment's own host. `CRV_DOOR_TEST_HOSTS` adds temporary hosts while a locked
  * site is tested on a temporary Amplify app (plan Phase 3), as `<site>:<host>` pairs separated by commas; it is empty
  * otherwise. `CRV_DOOR_SITE_HOSTS` replaces each site's hosts with one of an environment's own (dev, staging and prod
  * in their accounts, apps/web/hosting/environments.ts), as `<site>=<host>` pairs; unset, the production hosts stand.
@@ -59,7 +60,8 @@ export const doorSites = (testHosts: string | undefined, siteHosts?: string): Do
 const sitesList = () => productionSites.map((site) => site.id).join(", ");
 
 /** The grant resource that opens a site: `site:<production host>`, whichever of its hosts is asked for. */
-export const grantResource = (site: DoorSite): string => `site:${site.hosts[0]}`;
+export const grantResource = (site: DoorSite): string =>
+  `site:${productionSites.find((known) => known.id === site.id)?.hosts[0] ?? site.hosts[0]}`;
 
 /** A site by its id or by any of its hosts, so an admin view may name sites either way. */
 export const findSite = (sites: readonly DoorSite[], idOrHost: string): DoorSite | undefined =>

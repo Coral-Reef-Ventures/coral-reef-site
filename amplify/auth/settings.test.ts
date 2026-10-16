@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { doorSites, findSite, siteList } from "../areas/access/sites.ts";
+import { doorSites, findSite, grantResource, siteList } from "../areas/access/sites.ts";
 import {
   maxAdminEmailsBytes,
   parseAdminEmails,
@@ -148,6 +148,11 @@ describe("the site registry", () => {
     "refuses the site hosts %j",
     (value) => expect(() => doorSites("", value)).toThrow(/CRV_DOOR_SITE_HOSTS/),
   );
+  it("keys a site's grant by its production host, whatever host the environment serves it on", () => {
+    const [streamlane, driftline] = doorSites("driftline:main.d123.amplifyapp.com", "streamlane=dev.streamlane.app");
+    expect(streamlane && grantResource(streamlane)).toBe("site:streamlane.app");
+    expect(driftline && grantResource(driftline)).toBe("site:driftline.app");
+  });
   it("finds a site by id or host, and names one or two in the invitation's words", () => {
     const sites = doorSites("");
     expect(findSite(sites, "streamlane.app")?.id).toBe("streamlane");
