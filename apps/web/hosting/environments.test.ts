@@ -25,7 +25,7 @@ describe("the environments", () => {
 
   it("name each environment's own site hosts", () => {
     expect(backendSettings(environments.staging).CRV_DOOR_SITE_HOSTS).toBe(
-      "streamlane=main.d36uypg1re137l.amplifyapp.com,driftline=main.d26r6p2ps7cfly.amplifyapp.com",
+      "streamlane=staging.streamlane.app,driftline=main.d26r6p2ps7cfly.amplifyapp.com",
     );
   });
 
