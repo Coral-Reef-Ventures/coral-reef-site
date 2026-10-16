@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/behavior/0.1
+  spec: '0.2'
+  profile: intentset/behavior/0.2
   id: BEH-SECOND-IDENTITY-REFUSED
   type: behavior
   title: 'A second Google identity cannot take an invitee''s address'

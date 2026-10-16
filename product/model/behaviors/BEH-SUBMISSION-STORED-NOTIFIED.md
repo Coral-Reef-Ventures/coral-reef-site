@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/behavior/0.1
+  spec: '0.2'
+  profile: intentset/behavior/0.2
   id: BEH-SUBMISSION-STORED-NOTIFIED
   type: behavior
   title: A submission is stored and Gary is notified

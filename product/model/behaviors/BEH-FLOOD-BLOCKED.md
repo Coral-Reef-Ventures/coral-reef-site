@@ -1,8 +1,8 @@
 ---
 markset: 0
 intentset:
-  spec: '0.1'
-  profile: intentset/behavior/0.1
+  spec: '0.2'
+  profile: intentset/behavior/0.2
   id: BEH-FLOOD-BLOCKED
   type: behavior
   title: A flood of submissions is blocked and cannot flood the inbox
