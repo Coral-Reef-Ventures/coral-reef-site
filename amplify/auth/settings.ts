@@ -150,5 +150,6 @@ export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   buildRoleName: parseRoleName(env.CRV_BUILD_ROLE_NAME),
   noticeEmail: parseNoticeEmail(env.CRV_NOTICE_EMAIL),
   testHosts: (env.CRV_DOOR_TEST_HOSTS ?? "").trim(),
+  siteHosts: (env.CRV_DOOR_SITE_HOSTS ?? "").trim(),
   sites: doorSites(env.CRV_DOOR_TEST_HOSTS, env.CRV_DOOR_SITE_HOSTS),
 });

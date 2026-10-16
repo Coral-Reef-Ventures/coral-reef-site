@@ -21,5 +21,7 @@ export const crvAccess = defineFunction({
     CRV_ADMIN_EMAILS: authConfig.adminEmails.join(","),
     CRV_ADMIN_ORIGIN: authConfig.adminOrigin,
     CRV_DOOR_TEST_HOSTS: authConfig.testHosts,
+    // An environment's own host for each site (apps/web/hosting/environments.ts); empty in production.
+    CRV_DOOR_SITE_HOSTS: authConfig.siteHosts,
   },
 });

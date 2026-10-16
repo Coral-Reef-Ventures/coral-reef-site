@@ -82,7 +82,7 @@ export const handler = createAccess({
     issuer: "https://coralreefventures.com",
     kid: process.env.DOOR_KEY_ID ?? "",
     adminEmails: parseAdminEmails(process.env.CRV_ADMIN_EMAILS ?? ""),
-    sites: doorSites(process.env.CRV_DOOR_TEST_HOSTS),
+    sites: doorSites(process.env.CRV_DOOR_TEST_HOSTS, process.env.CRV_DOOR_SITE_HOSTS),
     doorOrigin: process.env.CRV_ADMIN_ORIGIN ?? "https://coralreefventures.com",
     roles: {
       preSignUp: process.env.PRE_SIGN_UP_ROLE ?? "",

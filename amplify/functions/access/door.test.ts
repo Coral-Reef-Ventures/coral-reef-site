@@ -160,6 +160,22 @@ describe("issueSiteTicket", () => {
     ).rejects.toThrow("EMAIL_CHANGED");
   });
 
+  it("issues for an environment's own host from CRV_DOOR_SITE_HOSTS, under the grant its production host names", async () => {
+    const f = fixture({ sites: doorSites("", "streamlane=dev.streamlane.app") });
+    await invitedAndBound(f, "ada@example.com", "sub-1", ["streamlane"]);
+    const answer = (await f.call(
+      "issueSiteTicket",
+      ticketArgs({ site: "streamlane", host: "dev.streamlane.app" }),
+      userIdentity("sub-1"),
+    )) as { action: string; ticket: string };
+    expect(answer.action).toBe("https://dev.streamlane.app/_door");
+    expect(decode(answer.ticket.split(".")[1] ?? "").aud).toBe("dev.streamlane.app");
+    // The environment's host replaces the production one, which this door no longer issues for.
+    await expect(
+      f.call("issueSiteTicket", ticketArgs({ site: "streamlane", host: "streamlane.app" }), userIdentity("sub-1")),
+    ).rejects.toThrow("UNKNOWN_SITE");
+  });
+
   it("issues for a temporary host listed in CRV_DOOR_TEST_HOSTS, under the site's own grant", async () => {
     const f = fixture({ sites: doorSites("driftline:main.d123.amplifyapp.com") });
     await invitedAndBound(f, "ada@example.com", "sub-1", ["driftline"]);
