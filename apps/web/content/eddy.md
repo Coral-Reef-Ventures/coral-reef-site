@@ -38,7 +38,7 @@ The home page's five steps begin at intent. We think the loop begins one step be
 3. **Execution.** Plan each change and move it forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
 4. **Verification.** See which promises have a check passing on this commit, and which have no check at all. [Intentset]{.kicker .intentset}
 5. **Release.** Record what each release is meant to do for users, before it ships. [Driftline]{.kicker .driftline}
-6. **Feedback.** Watch real users meet it, ask them why when adoption stalls, and take what you learn back to intent. [Driftline]{.kicker .driftline}
+6. **Feedback.** Watch real users meet it, see where adoption stalls and why, and take what you learn back to intent. [Driftline]{.kicker .driftline}
 :::
 
 {.note}
