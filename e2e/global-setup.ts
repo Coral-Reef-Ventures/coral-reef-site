@@ -14,8 +14,6 @@ function buildWeb(dist: string, stubs: { door: boolean; admin: boolean }): strin
       NEXT_PUBLIC_CRV_STUB: stubs.door ? "1" : "",
       NEXT_PUBLIC_CRV_ADMIN_STUB: stubs.admin ? "1" : "",
       CRV_WEB_DIST: dist,
-      // Streamlane's roadmap, stubbed: the specs never read the product (lib/roadmap-snapshot.ts).
-      CRV_ROADMAP_SNAPSHOT: join(root, "e2e", "fixtures", "roadmap-snapshot.json"),
     },
   });
   return join(root, "apps", "web", dist);
@@ -26,8 +24,7 @@ function buildWeb(dist: string, stubs: { door: boolean; admin: boolean }): strin
  * the stub backend (NEXT_PUBLIC_CRV_STUB=1), built beside the real one into apps/web/.e2e-out and served on a free
  * port, which the specs find in CRV_WEB_URL. The admin views in it have no backend, which admin.spec.ts relies on.
  * admin-flows.spec.ts needs the opposite, the admin views over the in-memory stub, so a second export with
- * NEXT_PUBLIC_CRV_ADMIN_STUB=1 goes into apps/web/.e2e-admin-out and is served at CRV_ADMIN_URL. Both render
- * /streamlane/roadmap/ from e2e/fixtures/roadmap-snapshot.json, a stubbed read of Streamlane's planning team.
+ * NEXT_PUBLIC_CRV_ADMIN_STUB=1 goes into apps/web/.e2e-admin-out and is served at CRV_ADMIN_URL.
  */
 export default async function globalSetup(): Promise<() => Promise<void>> {
   const doorOut = buildWeb(".e2e-out", { door: true, admin: false });

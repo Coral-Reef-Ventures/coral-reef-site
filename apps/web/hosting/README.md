@@ -36,14 +36,7 @@ account, then:
 1. **The backend.** `ampx pipeline-deploy` with the environment's settings (`backendSettings` in `environments.ts`,
    read and checked by `amplify/auth/settings.ts`), which writes `amplify_outputs.json` into `apps/web`; the outputs'
    `oauth.domain` is then pointed at the environment's own sign-in address.
-2. **The export**, `pnpm --filter @crv/web build`, with the environment's own site hosts. The build first runs
-   `apps/web/scripts/read-roadmap.ts`, which reads Streamlane's roadmap for `/streamlane/roadmap/` (CRV-015) as a
-   guest of the Streamlane product deployed in the same account. Only prod reads it (`readsRoadmap`): the deploy
-   downloads the product's outputs from `crv-build-artifacts-<account>/streamlane/current/amplify_outputs.json`, which
-   the deploy role may read, and names the file in `CRV_STREAMLANE_OUTPUTS`. Nothing about the read fails the deploy:
-   a missing file or a refused call is logged as `Roadmap: <part> could not be read: <why>.`, and the page then says
-   the roadmap could not be read. Dev's and staging's builds name no outputs, and their pages say they read no
-   roadmap.
+2. **The export**, `pnpm --filter @crv/web build`, with the environment's own site hosts.
 3. **The door's public key.** It reads the key's ARN and id from the outputs (`custom.doorKeyArn`, `custom.doorKid`)
    and pipes `aws kms get-public-key --query PublicKey --output text` (base64 DER) into
    `apps/web/scripts/door-jwks.mjs`, which writes `out/.well-known/crv-door-jwks.json` and fails unless the key is EC on
@@ -197,8 +190,7 @@ Since 2026-10-12 the app has dev, staging and prod in their own accounts (Stream
 `.github/workflows/deploy.yml` through `scripts/deploy.ts` ("What a deploy does", above). Each app's
 `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` were copied from the old app's when the environments were made, so the
 one Google client must allow each environment's sign-in address (below). Dev deploys on every push to main, staging
-nightly, and prod only when Gary starts it, plus a nightly rebuild of the commit prod already runs, so the roadmap is at
-most a day old (CRV-015; the one scheduled prod run, extending streamlane #974's choice to this site). Prod has served coralreefventures.com since the cutover (2026-10-14).
+nightly, and prod only when Gary starts it. Prod has served coralreefventures.com since the cutover (2026-10-14).
 
 ### The sign-in address
 

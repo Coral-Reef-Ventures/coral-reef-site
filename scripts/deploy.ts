@@ -16,7 +16,6 @@ import {
   isEnvironmentName,
   renderHeaders,
   siteHosts,
-  streamlaneOutputsUrl,
   withSignInDomain,
 } from "../apps/web/hosting/environments.ts";
 
@@ -47,20 +46,7 @@ writeFileSync(
   outputsFile,
   `${JSON.stringify(withSignInDomain(JSON.parse(readFileSync(outputsFile, "utf8")), env), null, 2)}\n`,
 );
-// Streamlane's roadmap (CRV-015): the product's outputs from this account's build artifacts, for the build's guest
-// read of its planning team (apps/web/scripts/read-roadmap.ts). A download that fails fails nothing: the read then
-// finds no outputs, logs why, and the page says the roadmap could not be read.
-const roadmap: Record<string, string> = {};
-if (env.readsRoadmap) {
-  const productOutputs = path.join(scratch, "streamlane-outputs.json");
-  try {
-    aws(["s3", "cp", "--quiet", streamlaneOutputsUrl(env), productOutputs]);
-  } catch (error) {
-    console.warn(`Roadmap: Streamlane's outputs could not be downloaded: ${(error as Error).message.split("\n")[0]}`);
-  }
-  roadmap.CRV_STREAMLANE_OUTPUTS = productOutputs;
-}
-run("pnpm", ["--filter", "@crv/web", "build"], { CRV_DOOR_SITE_HOSTS: siteHosts(env), ...roadmap });
+run("pnpm", ["--filter", "@crv/web", "build"], { CRV_DOOR_SITE_HOSTS: siteHosts(env) });
 
 // The door's public key, for the locked product sites' builds (apps/web/hosting/README.md, "What the build does").
 const outputs = JSON.parse(readFileSync(outputsFile, "utf8"));

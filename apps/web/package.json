@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3002",
-    "build": "node scripts/read-roadmap.ts && next build",
+    "build": "next build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -23,9 +23,6 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
-    "@aws-crypto/sha256-js": "5.2.0",
-    "@aws-sdk/credential-providers": "3.1146.0",
-    "@smithy/signature-v4": "5.7.4",
     "@types/node": "24.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
