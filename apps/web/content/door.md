@@ -78,7 +78,7 @@ Those three questions are easier to answer when every change can be followed fro
 2. **Execution.** Plan, prioritize and move each change forward, with people and agents on the same work. [Streamlane]{.kicker .streamlane}
 3. **Verification.** See which promises have a check passing on this commit, and which have no check at all. [Intentset]{.kicker .intentset}
 4. **Release.** Record what each release is meant to do for users, before it ships. [Driftline]{.kicker .driftline}
-5. **Feedback.** Watch real users meet it, ask them why when adoption stalls, and take what you learn back to intent. [Driftline]{.kicker .driftline}
+5. **Feedback.** Watch real users meet it, see where adoption stalls and why, and take what you learn back to intent. [Driftline]{.kicker .driftline}
 :::
 
 {.foundation}
