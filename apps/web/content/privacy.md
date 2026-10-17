@@ -42,7 +42,7 @@ You sign in to Streamlane with Google. Google gives Streamlane your name, your v
 
 ## Streamlane: what you put in it
 
-A workspace holds what its people put in it: work items, docs, comments, files, goals and the rest, with a history of who changed what. It is stored by Amazon Web Services in the United States (Ohio). In Streamlane, only the people in that workspace can see it, as their roles allow. We do not sell it, and we do not use it to train models.
+A workspace holds what its people put in it: work items, docs, comments, files, goals and the rest, with a history of who changed what. It is stored by Amazon Web Services in the United States (Ohio). In Streamlane, only the people in that workspace can see it, as their roles allow. An admin can make a team public, so anyone can read its ideas and roadmap, or make a whole workspace public, so anyone can read it as a viewer does. If you add an insight to a public idea, it carries your name and the team's members can read it; other visitors see only how many insights there are. We do not sell it, and we do not use it to train models.
 
 Some features send part of it to a model. The help assistant sends your question, with passages of Streamlane's published help, to Anthropic's Claude on Amazon Bedrock, and keeps the question nowhere. Writing a query from plain words sends those words and the names of the fields, types and teams the query can use. Search sends each item's title and text to Amazon's Titan embeddings model on Amazon Bedrock to index it. These calls stay within Amazon Bedrock, in the United States.
 
