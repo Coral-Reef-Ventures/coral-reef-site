@@ -26,8 +26,8 @@ import { hostsOf, parseTestHosts, sites } from "./leak-check/sites.ts";
  *                                              a temporary app's host only, before the live flip
  *   pnpm run leak-check --no-session           no AWS at all: the checks without a session and the host checks
  *
- * With a session it needs AWS credentials for the coral-reef project (by hand, `AWS_PROFILE=coral-reef`, and
- * `AWS_CLI` if `aws` on the path is not the one that reads its login) and an invitee an admin has already invited to
+ * With a session it needs AWS credentials for prod, whose backend it mints the session from (by hand,
+ * `AWS_PROFILE=crv-prod`, and `AWS_CLI` if `aws` on the path is not the one that reads its login) and an invitee an admin has already invited to
  * the checked sites from /admin/: `crv-check@example.com`, or `--invitee` / `CRV_LEAK_CHECK_INVITEE`. The check sets
  * that user a fresh password and signs in as it; it never invites, erases or creates anyone (session.ts).
  * CRV_DOOR_TEST_HOSTS adds test hosts in the backend's own format. It exits 1 on any finding and prints no secret: findings name a host, a path and a status.

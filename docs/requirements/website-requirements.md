@@ -75,4 +75,6 @@ Review product claims and availability; confirm outbound links; test responsive 
 verify metadata and broken links. The leak check (`scripts/leak-check.ts`) green on every host of each locked site, daily.
 
 Hosting is decided by ADR 0001: the app on Amplify in the coral-reef project (us-east-2), serving coralreefventures.com
-since 2026-10-05. GitHub Pages served the v0.1 page until the cutover and was turned off on 2026-10-06.
+since 2026-10-05. GitHub Pages served the v0.1 page until the cutover and was turned off on 2026-10-06. (Since
+2026-10-14 the app is served from prod's account, `crv-prod`, under Streamlane ADR 0087; the coral-reef project's
+account was closed on 2026-10-16.)

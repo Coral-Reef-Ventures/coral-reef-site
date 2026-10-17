@@ -94,13 +94,15 @@ the facts the copy must keep.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
 - Don't add dependencies without asking. The ones the door plan names were approved 2026-10-04; anything beyond them
   still needs asking.
-- **AWS: the `coral-reef` profile, us-east-2, every Regional resource.** No Lambda@Edge. us-east-1 is used only where a service requires it, such as a CloudFront certificate (allowed since 2026-10-12, Streamlane ADR 0087), and the
-  project's Lambda concurrency quota is 1000 (raised 2026-10-05; it was 10), shared by every app in the project, so
-  reserved concurrency is possible where a function needs a ceiling or a guarantee (the intentset.org chat has one).
-  The ProjectConcurrency alarm fires at 800. An agent deploys only a temporary
-  `ampx sandbox`, and deletes it after. Gary activated the project's advanced features on 2026-10-06, so the
-  organization (`o-unhnb0wshs`, management account 797661577985) and its SCPs are his: these limits are this project's
-  own rules now, not AWS's.
+- **AWS: us-east-2, every Regional resource, in the environment accounts below.** No Lambda@Edge. us-east-1 is used
+  only where a service requires it, such as a CloudFront certificate (allowed since 2026-10-12, Streamlane ADR 0087).
+  Each account's Lambda concurrency quota is 1000, shared by every app in that account, so reserved concurrency is
+  possible where a function needs a ceiling or a guarantee (the intentset.org chat has one); each environment's
+  backend has a ProjectConcurrency alarm at 800. An agent deploys only a temporary `ampx sandbox`, in `crv-sandbox`,
+  and deletes it after. The old project account (865000063691, the `coral-reef` profile) held everything until the
+  move and was closed on 2026-10-16; no profile, script or setting here names it any more. Gary activated the organization's advanced features
+  on 2026-10-06, so the organization (`o-unhnb0wshs`, management account 797661577985) and its SCPs are his: these
+  limits are this project's own rules now, not AWS's.
 - **The environment accounts** (Streamlane ADR 0087, `infra/accounts/README.md`): `crv-dev`, `crv-staging`,
   `crv-prod` and `crv-sandbox`, one Identity Center sign-in (`aws sso login --sso-session crv`). The app's dev, staging
   and prod are Amplify apps with no repository connected (`apps/web/hosting/environments.ts`), deployed only by
@@ -121,21 +123,23 @@ the facts the copy must keep.
   function writes through the `Store` in `functions/shared/store.ts`, whose conditions are data, so the tests run each
   operation against `test/memory-store.ts` with the same conditions DynamoDB is sent. `amplify/vitest.config.ts`
   synthesizes the backend twice, as a sandbox and as the branch, before its tests, reading no account.
-  `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`; set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` and
-  placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with `ampx sandbox secret set` first, piped from `printf`, not
-  `echo`: the client id goes into the identity pool, which refuses its trailing newline); delete it afterwards with
-  `pnpm exec ampx sandbox delete --identifier crv-agent --profile coral-reef --yes`, with `CRV_AUTH_DOMAIN_PREFIX` still
-  set (the delete synthesizes the backend first, and the settings check refuses it unset), remove the two secrets, and
-  delete the `/aws/lambda/amplify-coralreefsite-crv*` log groups Amplify's own custom-resource functions leave behind (they
+  `pnpm run sandbox` deploys a temporary agent sandbox (`crv-agent`) to the `crv-sandbox` account (650836812608, the
+  agents' own; `aws sso login --sso-session crv` first). Set `CRV_AUTH_DOMAIN_PREFIX=crv-door-sandbox` (the workspace's
+  `.envrc` does) and placeholder `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` with
+  `ampx sandbox secret set <name> --identifier crv-agent --profile crv-sandbox` first, piped from `printf`, not
+  `echo`: the client id goes into the identity pool, which refuses its trailing newline. Delete it afterwards with
+  `pnpm exec ampx sandbox delete --identifier crv-agent --profile crv-sandbox --yes`, with `CRV_AUTH_DOMAIN_PREFIX` still
+  set (the delete synthesizes the backend first, and the settings check refuses it unset), remove the two secrets
+  (`ampx sandbox secret remove <name> --identifier crv-agent --profile crv-sandbox`), and delete the `/aws/lambda/amplify-coralreefsite-crv*` log groups in `crv-sandbox` that Amplify's own custom-resource functions leave behind (they
   are created on first use, so no stack owns them). The key waits KMS's 7 days before it goes. Then move
   `.amplify/artifacts` out of the way: CDK's hotswap cache in it remembers the deleted stacks, and the next
   `ampx sandbox --once` fails with "Stack with id ... does not exist" until it is gone. On the sandbox an
   uninvited AdminCreateUser was refused with `NOT_INVITED` through the whole chain (trigger, AppSync with IAM,
-  crv-access). Measured cold on 2026-10-05, each trigger takes about 2 s of Cognito's 5-second limit (init 0.7 s plus
+  crv-access), first in the old account and again in `crv-sandbox` on 2026-10-16, where `crv-door-sandbox` was free. Measured cold on 2026-10-05, each trigger takes about 2 s of Cognito's 5-second limit (init 0.7 s plus
   1.3 s with crv-access also cold); pre token generation after a warm crv-access takes 1.4 s.
   defineAuth always replaces the Cognito domain prefix with a hash, so `backend.ts` sets the fixed one on the domain
-  resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share the
-  project with the branch.
+  resource. A sandbox names its key alias, topic and web ACL after itself and subscribes no inbox, so it can share an
+  account with other sandboxes (Streamlane's are in `crv-sandbox` too).
 - Node ≥ 22.18. Erasable TypeScript only (no enums, namespaces, parameter properties); import with `.ts` extensions.
 - pnpm (pinned by `packageManager`; moved from npm 2026-10-04 with the lockfile imported). `pnpm test` is Vitest:
   the app and packages, and the backend. `pnpm run e2e` is Playwright, as in Streamlane and Markset's editor:
@@ -155,22 +159,17 @@ the facts the copy must keep.
 
 ## Hosting
 
-**Since the cutover (2026-10-14)** coralreefventures.com, `www` and the zone are prod's (`d5rsxrpztyob9` and
-`Z0528736N9QND8UQUIJC` in `crv-prod`), and so are streamlane.app and driftline.app; what follows is the old
-account's setup, kept until it is retired (Streamlane's plan, step 9).
+coralreefventures.com and `www` are served by prod's Amplify app, `coral-reef-site` (`d5rsxrpztyob9` in `crv-prod`),
+deployed only by `.github/workflows/deploy.yml` (`apps/web/hosting/environments.ts`), and the zone is
+`Z0528736N9QND8UQUIJC` in `crv-prod`; streamlane.app and driftline.app are prod's too. `www` redirects to the apex
+through `custom-rules.json`. `apps/web/hosting/` holds the headers and rules the deploy applies, and its README the
+environments, the sign-in addresses and the leak check. `homepage` in `package.json` (the canonical URL) is
+`https://coralreefventures.com/`. NameSilo (the registrar) points the domain's nameservers at the zone; NameSilo's own
+records are kept, but they point at GitHub Pages and would now serve nothing.
 
-ADR 0001: the CRV app on the Amplify `WEB` app `coral-reef-site` (`d1fw6blayytium`, branch `main`) in the coral-reef
-project (us-east-2) has served `coralreefventures.com` since 2026-10-05 10:47 CDT, apex and `www`, on an
-Amplify-managed certificate; `www` redirects to the apex through `custom-rules.json`. It still answers at
-`https://main.d1fw6blayytium.amplifyapp.com`. `apps/web/hosting/` holds the build spec, headers and rules, applied with
-`update-app`, and its README the custom domain and how to roll it back. `homepage` in `package.json` (the canonical URL)
-is `https://coralreefventures.com/`.
-
-DNS is the Route 53 zone `Z1017162VVBRZ8PDRIQ3` in the coral-reef project; NameSilo (the registrar) points its
-nameservers there. The zone's records were copied from NameSilo's: first the GitHub Pages A records and `www` CNAME,
-replaced at the cutover by the apex ALIAS, the `www` CNAME and the ACM validation CNAME that Amplify wrote itself; then
-Google Workspace's MX, SPF and DKIM, and Google's verification CNAME, unchanged. NameSilo's own records are kept, so
-rolling back is setting its nameservers again.
+History: from 2026-10-05 10:47 CDT to the cutover (2026-10-14) the site was served by the Amplify app `d1fw6blayytium`
+in the old project account (865000063691) with its zone `Z1017162VVBRZ8PDRIQ3`; the zone was deleted and the account
+closed on 2026-10-16 (Streamlane's `docs/plans/cells-and-accounts.md`, step 9).
 
 GitHub Pages, decided earlier on 2026-10-04 (#11), was to stay deployed until 2026-10-19 in case the switch had to be
 undone; Gary retired it early, on 2026-10-06. Phase 2c then deleted the page, its tests and its workflow, and turned Pages off, so there is no longer a Pages

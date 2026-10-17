@@ -16,7 +16,7 @@ export type HostingEnvironment = {
   appId: string;
   /** Where the app is served: the admin links' origin and the sign-in's callbacks. */
   origin: string;
-  /** The Cognito prefix domain, unique across AWS: the old account still holds `crv-door`. */
+  /** The Cognito prefix domain, unique across AWS: the old account held `crv-door` until it was closed (2026-10-16). */
   domainPrefix: string;
   /**
    * Where people sign in (amplify/auth/settings.ts, parseSignInDomain): the environment's own address under
