@@ -3,7 +3,14 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { backendSettings, environments, isEnvironmentName, renderHeaders, withSignInDomain } from "./environments.ts";
+import {
+  backendSettings,
+  environments,
+  isEnvironmentName,
+  renderHeaders,
+  streamlaneOutputsUrl,
+  withSignInDomain,
+} from "./environments.ts";
 
 const headers = readFileSync(fileURLToPath(new URL("./custom-headers.yml", import.meta.url)), "utf8");
 
@@ -15,6 +22,14 @@ describe("the environments", () => {
     }
     expect(isEnvironmentName("prod")).toBe(true);
     expect(isEnvironmentName("sandbox")).toBe(false);
+  });
+
+  // CRV-015: prod's crv holds Streamlane's planning team; dev's and staging's hold none, so their builds read nothing.
+  it("only prod reads Streamlane's roadmap, through the product in its own account", () => {
+    expect(Object.values(environments).filter((env) => env.readsRoadmap)).toEqual([environments.prod]);
+    expect(streamlaneOutputsUrl(environments.prod)).toBe(
+      "s3://crv-build-artifacts-027677878969/streamlane/current/amplify_outputs.json",
+    );
   });
 
   it("only prod subscribes an inbox to the notices", () => {

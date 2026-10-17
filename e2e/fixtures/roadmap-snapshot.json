@@ -1,0 +1,94 @@
+{
+  "state": "read",
+  "team": "https://crv.streamlane.app/teams/SL",
+  "readAt": "2026-10-17",
+  "threshold": "rock",
+  "ideas": [
+    {
+      "key": "SL-112",
+      "title": "Bulk edit, move and transition",
+      "stage": "committed",
+      "size": "rock",
+      "period": { "start": "2026-10-16", "end": "2026-11-06" },
+      "goal": "Streamlane: leave Atlassian completely",
+      "showOnRoadmap": true,
+      "insights": 9,
+      "people": 4
+    },
+    {
+      "key": "SL-111",
+      "title": "Mention notifications",
+      "stage": "inDelivery",
+      "size": "pebble",
+      "period": { "start": "2026-10-16", "end": "2026-11-06" },
+      "showOnRoadmap": true,
+      "insights": 1,
+      "people": 1
+    },
+    {
+      "key": "SL-129",
+      "title": "Move an item between teams, and change a team key, with every link kept",
+      "stage": "committed",
+      "size": "boulder",
+      "period": { "start": "2027-02-08", "end": "2027-03-26" },
+      "goal": "Streamlane: fit the tools a team already uses",
+      "showOnRoadmap": false,
+      "insights": 2
+    },
+    {
+      "key": "SL-150",
+      "title": "A committed pebble the team keeps off its roadmap",
+      "stage": "committed",
+      "size": "pebble",
+      "period": { "start": "2027-02-08", "end": "2027-03-26" },
+      "showOnRoadmap": false,
+      "insights": 0,
+      "people": 0
+    },
+    {
+      "key": "SL-146",
+      "title": "SAML and SCIM",
+      "stage": "committed",
+      "size": "rock",
+      "period": { "start": "2027-07-01", "end": "2027-09-30" },
+      "showOnRoadmap": false,
+      "insights": 3,
+      "people": 3
+    },
+    {
+      "key": "SL-160",
+      "title": "Committed with no target period yet",
+      "stage": "committed",
+      "size": "rock",
+      "showOnRoadmap": false,
+      "insights": 0,
+      "people": 0
+    },
+    {
+      "key": "SL-1",
+      "title": "GitLab as a code host",
+      "stage": "triaged",
+      "size": "rock",
+      "goal": "Streamlane: fit the tools a team already uses",
+      "showOnRoadmap": false,
+      "insights": 0,
+      "people": 0
+    },
+    {
+      "key": "SL-7",
+      "title": "Sprints, velocity, and burndown",
+      "stage": "validated",
+      "size": "boulder",
+      "showOnRoadmap": false,
+      "insights": 12,
+      "people": 5
+    },
+    {
+      "key": "SL-84",
+      "title": "An idea still in the inbox",
+      "stage": "inbox",
+      "showOnRoadmap": false,
+      "insights": 0
+    }
+  ]
+}

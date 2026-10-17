@@ -7,7 +7,17 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/whitepaper/", "/eddy/", "/get-involved/", "/privacy/", "/terms/", "/signout/"];
+// /streamlane/roadmap/ (CRV-015) renders the stubbed read in e2e/fixtures/roadmap-snapshot.json (global-setup.ts).
+const pages = [
+  "/",
+  "/whitepaper/",
+  "/streamlane/roadmap/",
+  "/eddy/",
+  "/get-involved/",
+  "/privacy/",
+  "/terms/",
+  "/signout/",
+];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });
@@ -80,6 +90,99 @@ test("the keyboard reaches the header, its scheme control and then the page in o
   expect(rings.length, "tabbing ended").toBeLessThan(80);
   for (const ring of rings) expect(ring, "a focus stop has no ring").toMatch(/:(solid|auto):(3px|2px|1px)/);
   expect(rings[0]).toContain("A:");
+});
+
+test("CRV-015: the keyboard reaches the roadmap's team link and each idea's Add my insight in reading order, each with a visible focus ring", async ({
+  page,
+}) => {
+  await open(page, "/streamlane/roadmap/", 1440, "light");
+  await page.waitForTimeout(300);
+  const stops: { name: string; ring: string; where: string }[] = [];
+  for (let i = 0; i < 60; i++) {
+    await page.keyboard.press("Tab");
+    const stop = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      if (el === document.body) return null;
+      const style = getComputedStyle(el);
+      return {
+        name: el.getAttribute("aria-label") ?? el.textContent?.trim() ?? "",
+        ring: `${el.tagName}:${style.outlineStyle}:${style.outlineWidth}`,
+        where: el.closest("header") ? "header" : el.closest("main") ? "main" : "other",
+      };
+    });
+    if (stop === null) break;
+    stops.push(stop);
+  }
+  const main = stops.filter((s) => s.where === "main").map((s) => s.name);
+  expect(main).toEqual([
+    "Streamlane's planning team",
+    "Add my insight: Bulk edit, move and transition",
+    "Add my insight: Mention notifications",
+    "Add my insight: Move an item between teams, and change a team key, with every link kept",
+    "Add my insight: SAML and SCIM",
+    "Add my insight: Committed with no target period yet",
+    "Add my insight: Sprints, velocity, and burndown",
+    "Add my insight: GitLab as a code host",
+    "ask about becoming a design partner",
+  ]);
+  // The header comes first, then the page, then the footer.
+  expect(stops.findIndex((s) => s.where === "main")).toBe(5);
+  for (const stop of stops) expect(stop.ring, `${stop.name} has no ring`).toMatch(/:(solid|auto):(3px|2px|1px)/);
+});
+
+test("CRV-015: the roadmap shows the committed ideas on a timeline and the rest by stage, each with its stage and counts", async ({
+  page,
+}) => {
+  await page.goto(`${base()}/streamlane/roadmap/`);
+  await expect(page.locator("h1")).toHaveText("Streamlane's roadmap");
+  await expect(page).toHaveTitle(/^Streamlane's roadmap/);
+  const committed = page.locator("section[aria-labelledby='committed']");
+  await expect(committed.locator(".roadmap-period-name")).toHaveText([
+    "Oct 16 – Nov 6, 2026",
+    "Feb 8 – Mar 26, 2027",
+    "Q3 2027",
+  ]);
+  await expect(committed.locator(".roadmap-period .roadmap-bar")).toHaveCount(3);
+  await expect(committed.getByRole("heading", { level: 3, name: "No target period yet" })).toBeVisible();
+  const waiting = page.locator("section[aria-labelledby='waiting']");
+  await expect(waiting.getByRole("heading", { level: 3 })).toHaveText(["Validated", "Triaged"]);
+
+  const card = page.locator(".roadmap-idea", { hasText: "Bulk edit, move and transition" });
+  await expect(card).toContainText("Committed · Rock");
+  await expect(card).toContainText("Streamlane: leave Atlassian completely");
+  await expect(card).toContainText("9 insights from 4 people");
+  await expect(card.getByRole("link", { name: "Add my insight: Bulk edit, move and transition" })).toHaveAttribute(
+    "href",
+    "https://crv.streamlane.app/SL-112",
+  );
+  await expect(page.locator(".roadmap-idea", { hasText: "Mention notifications" })).toContainText("In delivery");
+  // A people count the build could not read is left out, never guessed.
+  await expect(page.locator(".roadmap-idea", { hasText: "SL-129" }).locator(".roadmap-idea-counts")).toHaveText(
+    "2 insights",
+  );
+  // A pebble kept off the roadmap and an idea still in the inbox are not shown.
+  await expect(page.getByText("A committed pebble the team keeps off its roadmap")).toHaveCount(0);
+  await expect(page.getByText("An idea still in the inbox")).toHaveCount(0);
+
+  // Every link out goes to the public team in the product; streamlane.app itself is never linked.
+  const hrefs = await page.locator("main a").evaluateAll((links) => links.map((a) => (a as HTMLAnchorElement).href));
+  const out = hrefs.filter((href) => !href.startsWith(base()));
+  expect(out.length).toBe(8);
+  for (const href of out) expect(href).toMatch(/^https:\/\/crv\.streamlane\.app\/(teams\/SL|SL-\d+)$/);
+  expect(await page.locator("a[href*='//streamlane.app']").count()).toBe(0);
+});
+
+test("CRV-015: Streamlane's card links to its roadmap here and still reads 'Open to invited guests.'", async ({
+  page,
+}) => {
+  await page.goto(`${base()}/`);
+  const card = page.locator(".product.streamlane");
+  await expect(card).toContainText("Open to invited guests.");
+  await expect(card.getByRole("link")).toHaveCount(1);
+  await expect(card.getByRole("link", { name: "See Streamlane's roadmap" })).toHaveAttribute(
+    "href",
+    "/streamlane/roadmap/",
+  );
 });
 
 /** The header's inner row and the things in it, measured in the page. */
@@ -204,7 +307,7 @@ for (const width of [1100, 1440]) {
   });
 }
 
-for (const path of ["/", "/get-involved/", "/privacy/", "/terms/"]) {
+for (const path of ["/", "/get-involved/", "/streamlane/roadmap/", "/privacy/", "/terms/"]) {
   for (const width of [390, 1024, 1200, 1440]) {
     test(`${path}: the page's column lines up with the header at ${width}px`, async ({ page }) => {
       await open(page, path, width, "light");
@@ -238,9 +341,17 @@ test("the skip link moves focus into the main content", async ({ page }) => {
 const contrastScopes: Record<string, string> = { "/admin/": "header, footer, nav[aria-label='Admin']" };
 
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/get-involved/", "/privacy/", "/terms/", "/admin/"]) {
-    test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
-      await open(page, path, 1440, scheme);
+  // The roadmap (CRV-015) is held to it on a phone too, where its cards fold to one column and fewer months are named.
+  for (const [path, width] of [
+    ...["/", "/get-involved/", "/streamlane/roadmap/", "/privacy/", "/terms/", "/admin/"].map(
+      (p) => [p, 1440] as const,
+    ),
+    ["/streamlane/roadmap/", 390] as const,
+  ]) {
+    test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme at ${width}px`, async ({
+      page,
+    }) => {
+      await open(page, path, width, scheme);
       await page.waitForTimeout(300);
       const failures = await page.evaluate((scope) => {
         const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);

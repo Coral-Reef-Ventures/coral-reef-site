@@ -48,7 +48,11 @@ the facts the copy must keep.
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/eddy/` (2026-10-09) introduces Eddy, in planning, and the loop with
   Capture ahead of Intent; it is reached only from the footer's "The step before intent" (the door's note asking whether the loop starts
   at intent came off the same day, at Gary's request), and Eddy has no card, mark,
-  accent or domain until each is approved. `/privacy/`, `/signed-in/`,
+  accent or domain until each is approved. `/streamlane/roadmap/` (CRV-015, 2026-10-17) is Streamlane's roadmap, read
+  at build from Streamlane's own planning team (`SL` in `crv`, public under Streamlane ADR 0094) as a signed-out guest
+  reads it, and reached from Streamlane's card ("See Streamlane's roadmap"), which still reads "Open to invited
+  guests.": the product owner chose that day to keep streamlane.app locked and show the roadmap here. It is under
+  `/streamlane/` because it is that product's (there is no `/streamlane/` page). `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest.
 - **The frame lines up with the shell.** The color-scheme control is in the header's bar, after the nav and before the
   folded menu's button, through reef's `headerTools` (`@coralreefventures/site` 0.3.0, `lib/site.tsx`); its slot keeps
@@ -58,7 +62,9 @@ the facts the copy must keep.
 - **Product facts live in `apps/web/lib/product-facts.ts` only.** A link exists only where a destination is confirmed
   (markset.org, intentset.org, driftline.app); streamlane.app is a planned destination and renders as text, never as a link.
   The door reads the same table through `apps/web/lib/products.ts`, which drops the two locked products' links and gives
-  them "Open to invited guests." (CRV-003 v0.2).
+  them "Open to invited guests." (CRV-003 v0.2). Streamlane's `roadmap` names its page here and the public team it is
+  read from; the roadmap page links each idea to its page in that team (`https://crv.streamlane.app/SL-n`, "Add my
+  insight"), which a guest may read, and never links streamlane.app (CRV-015).
 - **The social card is drawn by hand and committed** (2026-10-07): `pnpm run social-card` runs
   `scripts/social-card.ts`, which draws `apps/web/public/social-card.png` in a headless Chromium from the mark and
   the constants in `apps/web/lib/social-card.ts`; every page names it through `socialCardImages`, and a page that
@@ -72,7 +78,9 @@ the facts the copy must keep.
   (`__Host-crv_door`, one hour; `__Host-crv_door_state`, 10 minutes during sign-in; `__Host-crv_door_seen`, 30 days,
   holding nothing about who you are, so an expired hour renews without the coming-soon page: Gary kept it 2026-10-05,
   go-ahead §17d, and `/privacy/` says so in his words). The form and the sign-in are
-  allowed; analytics, tag managers, web fonts from another origin and embeds are not.
+  allowed; analytics, tag managers, web fonts from another origin and embeds are not. The roadmap's read is the
+  build's, not the browser's: `apps/web/scripts/read-roadmap.ts` runs before `next build`, signs in to Streamlane's
+  identity pool as a guest and calls its Merged API (`lib/roadmap-guest.ts`), and the page ships the result as HTML.
 - **Access is decided by a grant, and an invitation binds to an identity** (ADR 0001). `AccessGrant` is the one place
   access is decided. An invitation binds to the first Cognito and Google identity that accepts it, never to an address
   alone. `CRV_ADMIN_EMAILS` (gary@coralreefventures.com, the first admin) is the one break-glass path; keep the list
@@ -93,7 +101,9 @@ the facts the copy must keep.
   rollback.
 - **Products are independent.** Nothing may imply one is a prerequisite for another (CRV-004).
 - Don't add dependencies without asking. The ones the door plan names were approved 2026-10-04; anything beyond them
-  still needs asking.
+  still needs asking. The roadmap's guest read (2026-10-17) added `@aws-sdk/credential-providers` 3.1146.0,
+  `@smithy/signature-v4` 5.7.4 and `@aws-crypto/sha256-js` 5.2.0 as `@crv/web` dev dependencies, pinned, each already
+  in the lockfile, under the product owner's standing approval for pinned dependencies.
 - **AWS: us-east-2, every Regional resource, in the environment accounts below.** No Lambda@Edge. us-east-1 is used
   only where a service requires it, such as a CloudFront certificate (allowed since 2026-10-12, Streamlane ADR 0087).
   Each account's Lambda concurrency quota is 1000, shared by every app in that account, so reserved concurrency is
@@ -108,7 +118,13 @@ the facts the copy must keep.
   and prod are Amplify apps with no repository connected (`apps/web/hosting/environments.ts`), deployed only by
   `.github/workflows/deploy.yml`: dev on every push to main, staging nightly from what dev last shipped. **Prod is
   started by hand by Gary** (2026-10-12): an agent never starts the workflow for prod and never deploys to the dev,
-  staging or prod accounts itself. coralreefventures.com has been prod's since the cutover (2026-10-14).
+  staging or prod accounts itself. Prod also rebuilds nightly (04:45 CDT), the commit it already runs
+  (`deployed/prod`) and nothing newer, so `/streamlane/roadmap/` is at most a day old: the one scheduled prod run, which
+  ships nothing new. It extends to this site the product owner's choice for Streamlane's own site on 2026-10-15
+  (streamlane #974, "A day"), and dropping it is removing that schedule from `deploy.yml`. Only prod's build reads the
+  roadmap (`readsRoadmap` in `environments.ts`): `scripts/deploy.ts` downloads Streamlane's product outputs from the
+  account's `crv-build-artifacts-<account>` bucket for it; dev's and staging's `crv` hold no SL team, so their pages say
+  they read no roadmap. coralreefventures.com has been prod's since the cutover (2026-10-14).
 - **Check DNS over HTTPS** (`https://dns.google/resolve`) or with Route 53's `TestDNSAnswer`, never plain `dig`: this
   machine's network intercepts port 53 and answers wrongly.
 

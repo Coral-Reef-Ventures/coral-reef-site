@@ -8,6 +8,8 @@ apps/web/next-env.d.ts
 apps/web/amplify_outputs.json
 apps/web/.e2e-out/
 apps/web/.e2e-admin-out/
+# What the build read of Streamlane's roadmap (apps/web/scripts/read-roadmap.ts).
+apps/web/.roadmap-snapshot.json
 # Amplify: the sandbox's and pipeline's generated files and outputs.
 .amplify/
 amplify_outputs.json

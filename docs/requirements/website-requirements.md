@@ -1,7 +1,8 @@
 # Coral Reef Ventures website requirements v0.2
 
 **Status:** v0.2, accepted. It was proposed on 2026-10-04 (plan step P8), and Gary accepted this file's requirement
-text on 2026-10-06. The decision behind it is
+text on 2026-10-06. CRV-015 was added on 2026-10-17, from the product owner's choice that day to show Streamlane's
+roadmap here while streamlane.app stays locked. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
 2026-10-05. The GitHub Pages page that met v0.1, CRV-007
 included, was deleted with its tests on 2026-10-06, the day after the cutover, ahead of the planned 14 days.
@@ -31,6 +32,7 @@ destinations. This is a concise company site, not a combined product application
 | CRV-012 | Admin views. *New in v0.2.* | Admins (Cognito group) review submissions by status, add notes, invite from a submission with site checkboxes, list, revoke, restore and rebind invitations, delete a person or erase an address, and see Activity |
 | CRV-013 | Notification. *New in v0.2.* | Each submission notifies hello@coralreefventures.com with a link to it in the admin view, at most 10 a day, in plain text with the visitor's words marked as unverified; a failed notice never loses a submission |
 | CRV-014 | The lock. *New in v0.2.* | streamlane.app and driftline.app serve nothing, not even a static asset, to a visitor without a valid door session: a page load gets the gate's own coming-soon page, anything else an empty 401, and a host not allowed a 403; the leak check proves it daily on every host |
+| CRV-015 | Streamlane's public roadmap. *New 2026-10-17, the product owner's choice: streamlane.app stays locked, and its roadmap is readable on this site, which is public.* | `/streamlane/roadmap/` shows what Streamlane's own planning team (`SL` in `crv`, whose Public setting is on; Streamlane ADR 0094) shows a signed-out guest, read at build with no client script: the committed ideas on a timeline by target period when any has one, the ideas not yet committed by horizon (Now, Next, Later) or by stage where none has one, each with its stage and "N insights from M people", as the product's roadmap places them. Each idea links to its page in the product (`https://crv.streamlane.app/SL-n`, "Add my insight"); streamlane.app is never linked. A read that fails says the roadmap could not be read and shows no idea, the build logs which part failed and why, and the build does not fail. Streamlane's card links to the page and still reads "Open to invited guests." In prod the read is at most a day old |
 
 ## Content authority
 
@@ -43,6 +45,12 @@ the same commit. The whitepaper is Gary's own text (2026-10-06, rewritten at his
 `/whitepaper/`, with no PDF beside it. The door's origin story ("Why we exist") was his signed founder note until
 2026-10-08; at his request it carries no byline and no name, and it is written in the company's voice, so the door
 names no person.
+
+Streamlane's roadmap (CRV-015) is not written here: its ideas, stages, goals and counts are read at build from
+Streamlane's own planning team, and the page shows only what a signed-out guest reads there, or that it could not be
+read. The team's address is a product fact (`product-facts.ts`, Streamlane's `roadmap`). Its links go to that team's
+pages in the product, which a guest may read, so they are confirmed destinations; CRV-003's "no product URL" is the
+card's, and the card links only to the page here.
 
 `/get-involved/` and its anchors `#involved` and `#invited` are linked from outside the app, by reef's gate on the
 locked sites' coming-soon page and by the invitation text, so they do not move without those.
@@ -57,8 +65,9 @@ locked sites' coming-soon page and by the invitation text, so they do not move w
   reviewed by people, not written by hand.
 - Driftline's description does not open with "product analytics", which its own positioning rules out.
 - The maturity labels were confirmed 2026-10-04: Markset `Open source · v0`, Intentset `Open source · Early release`.
-- Streamlane and Driftline read "Open to invited guests." for a visitor and link nowhere; a signed-in invitee sees
-  "Continue to Streamlane" or "Continue to Driftline" (CRV-003).
+- Streamlane and Driftline read "Open to invited guests." for a visitor and link to no product URL; a signed-in invitee
+  sees "Continue to Streamlane" or "Continue to Driftline" (CRV-003). Streamlane's card also links to its roadmap on
+  this site, `/streamlane/roadmap/` (CRV-015).
 
 ## Visual direction
 

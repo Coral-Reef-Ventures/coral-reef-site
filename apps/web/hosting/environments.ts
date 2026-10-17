@@ -28,6 +28,12 @@ export type HostingEnvironment = {
   noticeEmail: string;
   /** Each locked site's host in this environment, served by its own Amplify app in the same account. */
   sites: { streamlane: string; driftline: string };
+  /**
+   * Whether the build reads Streamlane's roadmap for /streamlane/roadmap/ (CRV-015), through the Streamlane product
+   * deployed in the same account (`streamlaneOutputsKey`). Prod's alone does: the team it reads, `SL` in `crv`, is
+   * prod's, and dev's and staging's `crv` hold no such team, so their pages say they read no roadmap.
+   */
+  readsRoadmap: boolean;
 };
 
 export const environments: Record<EnvironmentName, HostingEnvironment> = {
@@ -42,6 +48,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     },
     noticeEmail: "",
     sites: { streamlane: "dev.streamlane.app", driftline: "dev.driftline.app" },
+    readsRoadmap: false,
   },
   staging: {
     account: "715844023793",
@@ -54,6 +61,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     },
     noticeEmail: "",
     sites: { streamlane: "staging.streamlane.app", driftline: "staging.driftline.app" },
+    readsRoadmap: false,
   },
   prod: {
     account: "027677878969",
@@ -66,6 +74,7 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
     },
     noticeEmail: "hello@coralreefventures.com",
     sites: { streamlane: "streamlane.app", driftline: "driftline.app" },
+    readsRoadmap: true,
   },
 };
 
@@ -73,6 +82,13 @@ export const isEnvironmentName = (value: string): value is EnvironmentName => Ob
 
 /** The role GitHub deploys as (infra/accounts/baseline.yml), which the door key's policy lets read the public key. */
 export const deployRoleName = "github-deploy-coral-reef-site";
+
+/**
+ * Where Streamlane's deploy leaves its product's outputs in an account's build artifacts (`crv-build-artifacts-<account>`,
+ * infra/accounts/baseline.yml), which the deploy role may read: the identity pool and API a guest read goes through.
+ */
+export const streamlaneOutputsUrl = (env: HostingEnvironment): string =>
+  `s3://crv-build-artifacts-${env.account}/streamlane/current/amplify_outputs.json`;
 
 /** `CRV_DOOR_SITE_HOSTS` for an environment: each locked site's host there. */
 export const siteHosts = (env: HostingEnvironment): string =>

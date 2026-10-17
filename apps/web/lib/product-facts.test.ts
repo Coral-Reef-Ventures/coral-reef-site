@@ -29,6 +29,16 @@ describe("product facts", () => {
     },
   );
 
+  // CRV-015: a roadmap's link is a page here, read from a team in the product; nothing else builds.
+  it.each([
+    { page: "streamlane/roadmap", team: "https://crv.streamlane.app/teams/SL" },
+    { page: "https://streamlane.app/roadmap/", team: "https://crv.streamlane.app/teams/SL" },
+    { page: "/streamlane/roadmap/", team: "http://crv.streamlane.app/teams/SL" },
+    { page: "/streamlane/roadmap/", team: "https://crv.streamlane.app/SL-1" },
+  ])("refuses a roadmap at $page read from $team", (roadmap) => {
+    expect(() => productGrid([{ ...base, roadmap: { text: "See the roadmap", ...roadmap } }])).toThrow();
+  });
+
   it("lists the products in the approved order, each with a distinct accent", () => {
     expect(PRODUCTS.map((p) => p.name)).toEqual(["Markset", "Intentset", "Streamlane", "Driftline"]);
     expect(new Set(PRODUCTS.map((p) => p.slug)).size).toBe(4);
