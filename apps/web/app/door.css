@@ -419,6 +419,51 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
   .ms-document h3 { font-size: 1.75rem; }
 }
 
+/* ---- the roadmap ------------------------------------------------------------------------ */
+/* /streamlane/roadmap/ (CRV-015), drawn at build with no client code (lib/roadmap-view.tsx). The committed ideas sit
+ * under their target period, earliest first, each period with a bar across the months in Streamlane's amber, placed
+ * from --from and --to (0 to 1 across the months shown); the bars and month labels are decoration, since each period's
+ * heading names it in words. The ideas are cards in a grid that folds to one column on a phone. Every text color is one
+ * the door already holds to AA in both schemes. */
+.door[data-page="streamlane-roadmap"] .ms-document > hr ~ * { max-width: none; }
+.roadmap { margin-top: 2.5rem; }
+.roadmap :is(h2, h3, h4, p, ul, ol) { margin: 0; }
+.roadmap :is(h2, h3, h4) { font-family: var(--ms-font-body); color: var(--ms-fg); }
+.roadmap-asof, .roadmap-intro, .roadmap-notice-text, .roadmap-empty { max-width: 42rem; color: var(--ms-fg-muted); }
+.roadmap-notice { padding: 1.25rem 1.5rem; border-left: 3px solid var(--crv-streamlane); background: var(--ms-surface); border-radius: 0 var(--ms-radius) var(--ms-radius) 0; }
+.roadmap-notice-text { color: var(--ms-fg); }
+.roadmap-notice-text + .roadmap-notice-text { margin-top: 0.75rem; }
+.roadmap-asof a, .roadmap-notice a { font-weight: 650; }
+.roadmap-empty { margin-top: 2rem; }
+.roadmap-section { margin-top: 3.5rem; }
+.roadmap-section > h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.15; letter-spacing: -0.035em; font-weight: 620; text-wrap: balance; }
+.roadmap-intro { margin-top: 0.75rem; }
+.roadmap-periods { margin-top: 2rem; padding: 0; list-style: none; }
+.roadmap-period { padding-top: 1.25rem; border-top: 2px solid var(--ms-border); }
+.roadmap-period + .roadmap-period { margin-top: 2.5rem; }
+.roadmap-period-name, .roadmap-group-name { font-size: 1.35rem; line-height: 1.3; letter-spacing: -0.02em; font-weight: 650; }
+.roadmap-track { margin-top: 0.9rem; overflow: hidden; }
+.roadmap-lane { position: relative; height: 0.7rem; border-radius: 999px; background: var(--ms-surface); }
+.roadmap-gridline { position: absolute; top: 0; bottom: 0; left: calc(var(--at) * 100%); width: 1px; background: var(--ms-border); }
+.roadmap-bar { position: absolute; top: 0; bottom: 0; left: calc(var(--from) * 100%); width: max(0.5rem, calc((var(--to) - var(--from)) * 100%)); border-radius: 999px; background: var(--crv-streamlane); }
+.roadmap-months { position: relative; height: 1.4rem; margin-top: 0.3rem; }
+.roadmap-month { position: absolute; top: 0; left: calc(var(--at) * 100%); font-family: var(--ms-font-mono); font-size: 0.68rem; color: var(--ms-fg-muted); white-space: nowrap; }
+@media (max-width: 40rem) {
+  .roadmap-month-minor { display: none; }
+}
+.roadmap-group { margin-top: 2.5rem; }
+.roadmap-section > .roadmap-intro + .roadmap-group { margin-top: 2rem; }
+.roadmap-ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 1rem; margin-top: 1.25rem; padding: 0; list-style: none; }
+.roadmap-idea { display: flex; flex-direction: column; gap: 0.35rem; padding: 1rem 1.1rem 0.25rem; border: 1px solid var(--ms-border); border-top: 3px solid var(--crv-streamlane); border-radius: var(--ms-radius); }
+.roadmap-idea-key, .roadmap-label { font-family: var(--ms-font-mono); font-weight: 600; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.roadmap-idea-key { color: var(--crv-streamlane-text); }
+.roadmap-idea-title { font-size: 1.05rem; line-height: 1.35; font-weight: 650; }
+.roadmap-idea-facts, .roadmap-idea-goal, .roadmap-idea-counts { font-size: 0.9rem; line-height: 1.45; color: var(--ms-fg-muted); }
+.roadmap-idea-counts { color: var(--crv-streamlane-text); font-weight: 600; }
+/* The one action on a card: a whole-height tap target at its foot, with the arrow added here so it is not in its name. */
+.roadmap-add { display: inline-flex; align-items: center; gap: 0.5em; align-self: flex-start; min-height: 2.75rem; margin-top: auto; font-size: 0.9rem; font-weight: 650; }
+.roadmap-add::after { content: "→" / ""; }
+
 /* ---- print ------------------------------------------------------------------------ */
 @media print {
   .skip-link, .ms-document::before, .site-scheme, .door-scheme-slot { display: none; }

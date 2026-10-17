@@ -10,6 +10,11 @@
  * invitation, like streamlane.app, is `plannedDestination` and renders as text. driftline.app gained a
  * `cta` on 2026-10-04, when its site went live with an early-access request.
  *
+ * A product with a public roadmap names it in `roadmap`: the page on this site that shows it, and the team in the
+ * product it is read from, which is public, so the page may link each idea there (CRV-015). Streamlane's is its own
+ * planning team, `SL` in `crv`, whose Public setting is on (Streamlane ADR 0094); the product owner chose on 2026-10-17
+ * to show it here. The card links to the page, not to the product, so it still reads "Open to invited guests." (CRV-003).
+ *
  * docs/requirements/website-requirements.md, "The product cards", has the facts each card must keep.
  */
 
@@ -29,6 +34,11 @@ export interface Product {
   availability?: string;
   /** A destination that is planned but is not yet an invitation; rendered as text, never as a link. */
   plannedDestination?: string;
+  /**
+   * Its public roadmap: the page on this site that shows it (`page`, a path here), the card's words for the link to it,
+   * and the public team in the product it is read from at build (`team`, `https://<organization>/teams/<KEY>`).
+   */
+  roadmap?: { text: string; page: string; team: string };
 }
 
 export const PRODUCTS: Product[] = [
@@ -62,6 +72,11 @@ export const PRODUCTS: Product[] = [
     label: "Product · In development",
     availability: "Not publicly available yet.",
     plannedDestination: "streamlane.app",
+    roadmap: {
+      text: "See Streamlane's roadmap",
+      page: "/streamlane/roadmap/",
+      team: "https://crv.streamlane.app/teams/SL",
+    },
   },
   {
     slug: "driftline",
@@ -103,6 +118,10 @@ export function productGrid(products: Product[] = PRODUCTS): string {
       assertPublicUrl(p);
       lines.push("", `  [[${p.cta.text}](${p.cta.href})]{.cta}`);
     }
+    if (p.roadmap) {
+      assertRoadmap(p);
+      lines.push("", `  [[${p.roadmap.text}](${p.roadmap.page})]{.cta .roadmap-link}`);
+    }
     return lines.join("\n");
   });
   return `:::grid{cols=2 .products}\n${items.join("\n\n")}\n:::`;
@@ -119,3 +138,32 @@ function assertPublicUrl(p: Product): void {
   }
   if (url.protocol !== "https:") throw new Error(`${p.name}: cta href must use https: ${href}`);
 }
+
+/**
+ * A roadmap's page must be a path on this site, ending in a slash as every page here does, and its team an https
+ * address of a team in the product; anything else fails the build.
+ */
+function assertRoadmap(p: Product): void {
+  const roadmap = p.roadmap;
+  if (!roadmap) return;
+  if (!/^\/(?:[a-z0-9-]+\/)+$/.test(roadmap.page)) {
+    throw new Error(`${p.name}: the roadmap's page must be a path here ending in /: ${JSON.stringify(roadmap.page)}`);
+  }
+  let team: URL;
+  try {
+    team = new URL(roadmap.team);
+  } catch {
+    throw new Error(`${p.name}: the roadmap's team is not an absolute URL: ${JSON.stringify(roadmap.team)}`);
+  }
+  if (team.protocol !== "https:" || !/^\/teams\/[A-Z][A-Z0-9]*$/.test(team.pathname) || team.search || team.hash) {
+    throw new Error(`${p.name}: the roadmap's team must be https://<organization>/teams/<KEY>: ${roadmap.team}`);
+  }
+}
+
+/** The product whose roadmap a page shows, by its page's path. */
+export const roadmapProduct = (page: string): Product & { roadmap: NonNullable<Product["roadmap"]> } => {
+  const product = PRODUCTS.find((p) => p.roadmap?.page === page);
+  if (!product?.roadmap) throw new Error(`No product has its roadmap at ${page}`);
+  assertRoadmap(product);
+  return product as Product & { roadmap: NonNullable<Product["roadmap"]> };
+};

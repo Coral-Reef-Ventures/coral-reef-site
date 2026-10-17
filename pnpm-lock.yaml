@@ -111,6 +111,15 @@ importers:
         specifier: 19.3.0
         version: 19.3.0(react@19.3.0)
     devDependencies:
+      '@aws-crypto/sha256-js':
+        specifier: 5.2.0
+        version: 5.2.0
+      '@aws-sdk/credential-providers':
+        specifier: 3.1146.0
+        version: 3.1146.0
+      '@smithy/signature-v4':
+        specifier: 5.7.4
+        version: 5.7.4
       '@types/node':
         specifier: 24.19.0
         version: 24.19.0

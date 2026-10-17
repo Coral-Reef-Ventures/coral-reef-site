@@ -3,7 +3,12 @@
 # - dev, on every push to main;
 # - staging, nightly, from the commit dev last deployed successfully, when it is new to staging;
 # - prod, only when the product owner starts this workflow by hand (Actions, Deploy, Run workflow, prod). An agent
-#   never starts it (CLAUDE.md). With no commit given, prod ships what staging last deployed successfully.
+#   never starts it (CLAUDE.md). With no commit given, prod ships what staging last deployed successfully;
+# - prod again, nightly, rebuilding the commit prod already runs (deployed/prod), so /streamlane/roadmap/, which the
+#   build reads from Streamlane's own planning team (CRV-015), is at most a day old. It ships nothing new: the same
+#   commit, its backend redeployed unchanged and its export rebuilt. It extends to this site the product owner's choice for
+#   Streamlane's own site on 2026-10-15 (streamlane #974: "A day"), the one exception to prod-by-hand; dropping it is
+#   removing the second schedule below.
 #
 # Each deploy runs in the GitHub environment of the same name, whose AWS_ROLE_ARN only that environment can assume
 # (infra/accounts/baseline.yml), so a deploy can reach only its own account. A successful deploy moves the tag
@@ -11,11 +16,17 @@
 # deployment records name the commit the workflow ran on, which for a scheduled or manual run is main's head, not
 # the commit shipped.)
 name: Deploy
+# Names the environment in the runs list, which otherwise titles every scheduled run the same.
+run-name: >-
+  Deploy: ${{ github.event_name == 'workflow_dispatch' && inputs.environment
+  || github.event.schedule == '45 9 * * *' && 'prod (nightly refresh)'
+  || github.event_name == 'schedule' && 'staging (nightly)' || 'dev' }}${{ inputs.ref && format(' at {0}', inputs.ref) || '' }}
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 8 * * *" # 03:00 CDT
+    - cron: "0 8 * * *" # 03:00 CDT: staging, from what dev last deployed
+    - cron: "45 9 * * *" # 04:45 CDT: prod rebuilds the commit it runs, for the roadmap (CRV-015; streamlane #974)
   workflow_dispatch:
     inputs:
       environment:
@@ -43,6 +54,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
           INPUT_ENVIRONMENT: ${{ inputs.environment }}
           INPUT_REF: ${{ inputs.ref }}
         run: |
@@ -53,8 +65,13 @@ jobs:
           case "$EVENT" in
             push) environment=dev; sha=$GITHUB_SHA ;;
             schedule)
-              environment=staging; sha=$(last dev)
-              if [ -n "$sha" ] && [ "$sha" = "$(last staging)" ]; then echo "staging already has $sha"; sha=""; fi ;;
+              if [ "$SCHEDULE" = "45 9 * * *" ]; then
+                # Prod's nightly refresh: the commit prod already runs, never a newer one.
+                environment=prod; sha=$(last prod)
+              else
+                environment=staging; sha=$(last dev)
+                if [ -n "$sha" ] && [ "$sha" = "$(last staging)" ]; then echo "staging already has $sha"; sha=""; fi
+              fi ;;
             workflow_dispatch)
               environment=$INPUT_ENVIRONMENT
               if [ -n "$INPUT_REF" ]; then sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$INPUT_REF" --jq .sha)
