@@ -4,9 +4,9 @@
  * (`.github/workflows/deploy.yml`): dev on every push to main, staging nightly from the commit dev last shipped, and
  * prod only when the product owner starts it by hand.
  *
- * The door's dev and staging answer only at their Amplify addresses, as Driftline's sites there do. Streamlane's sites
- * there are at dev.streamlane.app and staging.streamlane.app since 2026-10-16, as prod's is at streamlane.app
- * (Streamlane's apps/site/hosting/README.md, "Each environment's address"). Prod is named for the domains it took over at the cutover
+ * Each environment answers at its own name under each domain, as prod does at the domain itself: the door at
+ * dev.coralreefventures.com and staging.coralreefventures.com, and the locked sites at dev.streamlane.app and
+ * dev.driftline.app, or staging's (README.md, "Each environment's address"; since 2026-10-17). Prod is named for the domains it took over at the cutover
  * (Streamlane's plan, step 8): coralreefventures.com, streamlane.app and driftline.app.
  */
 export type EnvironmentName = "dev" | "staging" | "prod";
@@ -34,26 +34,26 @@ export const environments: Record<EnvironmentName, HostingEnvironment> = {
   dev: {
     account: "171180525205",
     appId: "d8p3mdqo02ww3",
-    origin: "https://main.d8p3mdqo02ww3.amplifyapp.com",
+    origin: "https://dev.coralreefventures.com",
     domainPrefix: "crv-door-dev",
     signInDomain: {
       name: "auth-dev.coralreefventures.com",
       certificateArn: "arn:aws:acm:us-east-1:171180525205:certificate/8604a64f-33bd-44e1-b9d1-2c0c112f9670",
     },
     noticeEmail: "",
-    sites: { streamlane: "dev.streamlane.app", driftline: "main.d1w6lg1l5ckq66.amplifyapp.com" },
+    sites: { streamlane: "dev.streamlane.app", driftline: "dev.driftline.app" },
   },
   staging: {
     account: "715844023793",
     appId: "d2ymo0co87lonm",
-    origin: "https://main.d2ymo0co87lonm.amplifyapp.com",
+    origin: "https://staging.coralreefventures.com",
     domainPrefix: "crv-door-staging",
     signInDomain: {
       name: "auth-staging.coralreefventures.com",
       certificateArn: "arn:aws:acm:us-east-1:715844023793:certificate/a6297034-d8b3-44db-837a-8bdb20ff8255",
     },
     noticeEmail: "",
-    sites: { streamlane: "staging.streamlane.app", driftline: "main.d26r6p2ps7cfly.amplifyapp.com" },
+    sites: { streamlane: "staging.streamlane.app", driftline: "staging.driftline.app" },
   },
   prod: {
     account: "027677878969",

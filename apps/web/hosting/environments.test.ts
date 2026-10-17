@@ -25,7 +25,7 @@ describe("the environments", () => {
 
   it("name each environment's own site hosts", () => {
     expect(backendSettings(environments.staging).CRV_DOOR_SITE_HOSTS).toBe(
-      "streamlane=staging.streamlane.app,driftline=main.d26r6p2ps7cfly.amplifyapp.com",
+      "streamlane=staging.streamlane.app,driftline=staging.driftline.app",
     );
   });
 
@@ -38,7 +38,7 @@ describe("the environments", () => {
 
   it("call back to the environment's own origin", () => {
     expect(backendSettings(environments.dev).CRV_AUTH_CALLBACK_URLS).toBe(
-      "https://main.d8p3mdqo02ww3.amplifyapp.com/signed-in/,https://main.d8p3mdqo02ww3.amplifyapp.com/signout/done/",
+      "https://dev.coralreefventures.com/signed-in/,https://dev.coralreefventures.com/signout/done/",
     );
   });
 

@@ -209,3 +209,24 @@ Made once per environment, by hand:
 3. **The alias**, after that deploy has created the domain: an A record for the address in prod's zone, aliased to the
    distribution `aws cognito-idp describe-user-pool-domain --domain <address>` reports (hosted zone `Z2FDTNDATAQYW2`).
    Until it exists, sign-in in that environment fails.
+
+### Each environment's address
+
+Each environment answers at its own name under each domain, as prod does at the domain itself. The door is at
+`dev.coralreefventures.com` and `staging.coralreefventures.com`, Streamlane's site at `dev.streamlane.app` and
+`staging.streamlane.app`, and Driftline's at `dev.driftline.app` and `staging.driftline.app` (since 2026-10-16 and
+2026-10-17). Before that, dev and staging answered only at their Amplify addresses. `environments.ts` names the door's
+`origin` and each site's host. The sites' own `apps/site/hosting/environments.json` names the door they are locked
+behind and their own host.
+
+Streamlane's dev and staging zones are their own accounts' (its `apps/site/hosting/claim-apex.sh`).
+coralreefventures.com and driftline.app have one zone each, in prod. So `claim-env-domains.sh` adds an environment's
+names to its door's and its Driftline site's Amplify apps, once, signed in to that environment's account and to prod's.
+It writes the certificate and address records Amplify asks for into prod's zones, and waits until both are available.
+Run it before the change that names the addresses merges. Each door then signs its tickets as its new origin, and the
+sites follow on their own next deploys: until a site has deployed, its sign-in in that environment fails.
+
+```sh
+apps/web/hosting/claim-env-domains.sh dev
+apps/web/hosting/claim-env-domains.sh staging
+```
