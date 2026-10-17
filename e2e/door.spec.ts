@@ -341,9 +341,17 @@ test("the skip link moves focus into the main content", async ({ page }) => {
 const contrastScopes: Record<string, string> = { "/admin/": "header, footer, nav[aria-label='Admin']" };
 
 for (const scheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/get-involved/", "/streamlane/roadmap/", "/privacy/", "/terms/", "/admin/"]) {
-    test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme`, async ({ page }) => {
-      await open(page, path, 1440, scheme);
+  // The roadmap (CRV-015) is held to it on a phone too, where its cards fold to one column and fewer months are named.
+  for (const [path, width] of [
+    ...["/", "/get-involved/", "/streamlane/roadmap/", "/privacy/", "/terms/", "/admin/"].map(
+      (p) => [p, 1440] as const,
+    ),
+    ["/streamlane/roadmap/", 390] as const,
+  ]) {
+    test(`${path}: every text element meets WCAG AA contrast in the ${scheme} scheme at ${width}px`, async ({
+      page,
+    }) => {
+      await open(page, path, width, scheme);
       await page.waitForTimeout(300);
       const failures = await page.evaluate((scope) => {
         const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
