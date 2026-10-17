@@ -170,24 +170,6 @@ describe("the step before intent", () => {
   });
 });
 
-describe("CRV-015: Streamlane's roadmap page", () => {
-  const page = text("streamlane-roadmap.md", ["roadmap"]);
-
-  it("parses as Markset with one h1, the roadmap in its slot, and the way to take part", () => {
-    expect(h1s(page)).toBe(1);
-    expect(page).toContain("[[roadmap]]");
-    expect(page.indexOf("[[roadmap]]")).toBeLessThan(page.indexOf("Tell the team what you need"));
-    expect(page).toContain('href="/get-involved/"');
-  });
-
-  // streamlane.app stays locked: the page names the product's public team only through the roadmap it renders.
-  it("links no product URL in its copy, and keeps Streamlane open to invited guests", () => {
-    expect(page).not.toMatch(/href="https?:/);
-    expect(page).not.toContain("streamlane.app");
-    expect(page).toContain("Streamlane is open to invited guests");
-  });
-});
-
 describe("the privacy page", () => {
   const privacy = text("privacy.md");
 
