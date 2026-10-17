@@ -19,6 +19,7 @@ import { ulid } from "../shared/ids.ts";
 import { tableEnvironment } from "../shared/tables.ts";
 import { createAccess } from "./access.ts";
 import type { Directory } from "./context.ts";
+import { ticketIssuer } from "./issuer.ts";
 
 const env = (name: string): string => {
   const value = process.env[name];
@@ -79,7 +80,7 @@ export const handler = createAccess({
     return result.Signature;
   },
   config: {
-    issuer: "https://coralreefventures.com",
+    issuer: ticketIssuer(process.env.CRV_ADMIN_ORIGIN),
     kid: process.env.DOOR_KEY_ID ?? "",
     adminEmails: parseAdminEmails(process.env.CRV_ADMIN_EMAILS ?? ""),
     sites: doorSites(process.env.CRV_DOOR_TEST_HOSTS, process.env.CRV_DOOR_SITE_HOSTS),
