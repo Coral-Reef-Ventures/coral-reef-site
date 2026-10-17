@@ -69,7 +69,7 @@ export const PRODUCTS: Product[] = [
     area: "Usage",
     tagline: "Know whether what you shipped is working.",
     description:
-      "Knows what each release is meant to do, and watches real users meet it. When adoption stalls it asks them why, traces errors to the team that owns them, and runs feature flags and betas.",
+      "Knows what each release is meant to do, and watches real users meet it. It routes every failure to the team that owns it, gates rollouts on the behaviors they cover, and sends what it finds back as work.",
     label: "Product · In planning",
     availability: "Early access by request.",
     cta: { text: "Visit Driftline", href: "https://driftline.app" },
