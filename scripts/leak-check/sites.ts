@@ -21,7 +21,7 @@ export const sites: readonly LockedSite[] = [
     apex: "driftline.app",
     appId: "d20enpqzgrjckq",
     locked: true,
-    pages: ["/", "/product/", "/pricing/", "/compare/", "/continuity/", "/not-yet/", "/roadmap/", "/early-access/"],
+    pages: ["/", "/product/", "/pricing/", "/compare/", "/continuity/", "/roadmap/", "/early-access/"],
   },
   {
     id: "streamlane",
@@ -34,7 +34,6 @@ export const sites: readonly LockedSite[] = [
       "/product/",
       "/compare/",
       "/continuity/",
-      "/not-yet/",
       "/contact/",
       "/roadmap/",
       "/demo/",
