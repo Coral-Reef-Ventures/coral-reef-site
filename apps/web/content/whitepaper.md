@@ -127,18 +127,18 @@ Markset adds a small, closed vocabulary of layout to Markdown, with tooling that
 
 ### Coordination and learning point at the same account
 
-Work management tools organize around a team, a project and a person, which answers who is doing what by when but not what a change means for the product. The model offers a second axis through the same work, and Streamlane is being developed to use it. A model is only as useful as it is current, so the connections we propose to build first, none of which exists yet, are the ones that make it cheaper to maintain:
+Work management tools organize around a team, a project and a person, which answers who is doing what by when but not what a change means for the product. The model offers a second axis through the same work, and Streamlane is being developed to use it. A model is only as useful as it is current, so the first connections Streamlane has built, ahead of its release, are the ones that make it cheaper to maintain:
 
-- **Agents handed the model with the work.** An agent assigned an item receives the behaviors, rules, checks and decisions that govern the code it is about to change. Intentset already hands an agent that context for a file or a record, in the repository and through a read-only server; the hand-off through a work item is what is missing. [[2]](#sources-and-scope)
-- **Drift as assigned work.** Intentset already reports each slice whose code changed without its records. That report is more likely to be acted on as an item with an owner than as a failing step in a pipeline.
+- **Agents handed the model with the work.** An agent assigned an item receives the behaviors, rules, checks and decisions that govern the code it is about to change. An agent started from an item is told to load the owning slice through Intentset's tools before it changes code, and the records it drafts show on the item for a person to approve. [[2]](#sources-and-scope)
+- **Drift as assigned work.** Intentset reports each slice whose code changed without its records, and Streamlane turns each one into an item in its owning team's triage, because a report is more likely to be acted on as an item with an owner than as a failing step in a pipeline.
 
-Grouping and release readiness stated by behavior come after. One rule holds throughout: completing work never asserts that a promise is kept. A tool that infers product state from work state reintroduces the drift the model exists to expose.
+Release readiness stated by behavior followed, judged at the release's commit and read only for now. One rule holds throughout: completing work never asserts that a promise is kept. A tool that infers product state from work state reintroduces the drift the model exists to expose.
 
 Driftline is planned to close the loop: each release carries what it is meant to do for users, and what users then experience, failures and stalled adoption included, is related to the behavior and the owner it concerns.
 
 ## A change followed through the lifecycle
 
-Consider the team behind the scheduling example adding scheduled assessments to a learning app. A teacher sets a future release time for an assessment, and students gain access only then. This is an illustration, not a customer result, and steps 2 and 4 depend on integrations that are proposed rather than built.
+Consider the team behind the scheduling example adding scheduled assessments to a learning app. A teacher sets a future release time for an assessment, and students gain access only then. This is an illustration, not a customer result, and step 4 depends on Driftline, which is still being built.
 
 :::steps
 1. **Decide the behavior and its rules.** A product owner and an agent draft the behavior in Intentset, with rules for time handling, cancellation and a teacher who loses access before the release time, and the product owner approves it. Open questions stay visible, and each one settled becomes a decision record, alternatives included.
@@ -150,12 +150,12 @@ Consider the team behind the scheduling example adding scheduled assessments to 
 
 ## What exists today
 
-| Offering | Status on 2026-10-15 |
+| Offering | Status on 2026-10-19 |
 | --- | --- |
 | Markset | Open source, v0. The site lists reference version 0.4.2, with tooling for authoring, checking and rendering. |
-| Intentset | Open source. Specifications in review, with reference toolchain 0.7.0 published to try them against. |
+| Intentset | Open source. Specifications at v0.2, drafts in review, with reference toolchain 0.8.0 published to try them against. |
 | Streamlane | In development. Open to invited guests. |
-| Driftline | In planning, with its model written ahead of its code. Open to invited guests. |
+| Driftline | In planning. Its model was written ahead of its code, and its first capabilities are being built against Streamlane's evidence. Open to invited guests. |
 
 These are published project statuses, not evidence of customer adoption or of a finished, connected platform. Versions and availability will change. [[1–3]](#sources-and-scope)
 
@@ -175,6 +175,7 @@ Intentset keeps a public log of its adoption in Streamlane and Driftline, Coral 
 - **The checks are a gate, not a report.** Since 2026-10-06 they have been a required step on every Streamlane pull request, drift check included.
 - **The baseline reached zero.** The 472 violations present when the check went on were gone by 2026-10-11, including a dependency loop that had joined 25 of Streamlane's 39 slices. Any new violation now fails before it merges.
 - **A model can come first.** Driftline's model was written before its code, so its first commits were checked against promises that already existed.
+- **The model grew with the product.** By 2026-10-19 Streamlane's model held 1,282 records across 56 slices, and 312 of its 318 behaviors had a check linked. Its unit and contract results are read in on every commit, its browser tests at each release, and a production deploy is refused for a commit no full, passing browser run covers. The baseline has stayed at zero.
 
 These show verification gaps and structural drift made visible in real repositories. They are internal, on unreleased products, and show no measured reduction in defects or review time yet. That is what a design partnership would measure.
 
@@ -205,7 +206,7 @@ We are looking for design partners: engineering and product teams that already d
 
 ## Sources and scope
 
-Project descriptions and statuses were reviewed on 2026-10-15; the adoption figures are as the adoption log records them on 2026-10-11. The connected lifecycle, the proposed integrations and the commercial opportunity are Coral Reef's proposed direction. External sources establish what agents can do and the need to evaluate them; they do not validate Coral Reef's approach.
+Project descriptions and statuses were reviewed on 2026-10-19; the adoption figures are as the adoption log records them, counted on 2026-10-11 and, for the model's size and evidence, on 2026-10-19. The connected lifecycle, the proposed integrations and the commercial opportunity are Coral Reef's proposed direction. External sources establish what agents can do and the need to evaluate them; they do not validate Coral Reef's approach.
 
 1. Coral Reef Ventures: [coralreefventures.com](https://coralreefventures.com/)
 2. Intentset project overview, adoption log and guidance for running an adoption: [intentset.org](https://intentset.org/), [intentset.org/pilot/](https://intentset.org/pilot/), [intentset.org/adopt/](https://intentset.org/adopt/)
