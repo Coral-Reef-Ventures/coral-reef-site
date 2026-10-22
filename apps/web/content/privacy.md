@@ -48,6 +48,10 @@ Some features send part of it to a model. The help assistant sends your question
 
 If a workspace connects GitHub, Streamlane keeps the installation, each person's linked GitHub login, and each pull request's title, author, reviewers and address. If it connects Slack, Streamlane keeps the workspace's connection, the channels it is bound to, the threads it syncs, and which Slack person is which Streamlane person, matched by email address. Streamlane sends no email.
 
+## Streamlane: the demo
+
+Streamlane's demo workspace, Ottervale, can be read without signing in. If you sign in at the demo, you get a copy of it of your own, and we record your name, your email address, when you first and last signed in there, and the copy you were given and when it was removed. A copy nobody signs in to for 14 days is removed; the record of your sign-ins is kept until we remove it, or until you ask us to erase it.
+
 ## Streamlane: how long it is kept
 
 What a workspace holds is kept while the workspace is in use. A deleted item stays in the trash for 30 days and is then purged; the history keeps the record that it existed. Notifications are deleted after 90 days. Removing someone from a workspace ends their membership there; their profile stays until they ask us to erase it. To have a workspace or your profile erased, write to us (below). Deleted records can remain in backups for up to 35 days, and an earlier version of a changed file for 7 days.

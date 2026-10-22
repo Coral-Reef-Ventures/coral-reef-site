@@ -223,6 +223,8 @@ describe("the privacy page's Streamlane part", () => {
       "Streamlane: how long it is kept",
       "Streamlane sends no email",
       "are deleted after 1 month",
+      "Streamlane: the demo",
+      "A copy nobody signs in to for 14 days is removed",
     ]) {
       expect(privacy, phrase).toContain(phrase);
     }
