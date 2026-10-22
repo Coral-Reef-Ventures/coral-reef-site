@@ -68,6 +68,11 @@ the facts the copy must keep.
   (`socialCard` in `lib/site.tsx`) stays unused: it fetches a web font from Google at build time, which would put
   another origin in the build. Redraw the card when the mark, the headline or the colours change;
   `apps/web/lib/social-card.test.ts` holds the committed file to the size the pages claim.
+- **The social profile images are drawn the same way** (2026-10-22): `pnpm run social-profiles` runs
+  `scripts/social-profiles.ts`, which draws `packages/brand/social/` (the profile picture every network uses, the X and
+  Bluesky banner, the LinkedIn cover) from the mark, the card's headline and colors, and the product table's names in
+  `door.css`'s dark accents, at twice each network's size. Redraw them with the card; `scripts/social-profiles.test.ts`
+  holds the sizes and the accents.
 - **The app: no tracking, no external font, no third-party script** (CRV-011). Nothing loads from another origin but
   the AWS endpoints the form and sign-in call. The browser stores only the sign-in tokens, the form's guest identity id
   and the scheme word, and coralreefventures.com sets no cookie. The locked sites set three, all the door's
