@@ -16,6 +16,7 @@
     "e2e": "playwright test",
     "leak-check": "node scripts/leak-check.ts",
     "social-card": "node scripts/social-card.ts",
+    "social-profiles": "node scripts/social-profiles.ts",
     "intentset": "pnpm dlx @intentset/cli@0.8.0 validate --level L2",
     "sandbox": "ampx sandbox --identifier crv-agent --profile crv-sandbox --once"
   },
