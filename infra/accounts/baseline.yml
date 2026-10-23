@@ -125,6 +125,10 @@ Resources:
                 token.actions.githubusercontent.com:sub:
                   - !Sub repo:Coral-Reef-Ventures/streamlane:environment:${Environment}
                   - !Sub repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:${Environment}
+                  # The public site's own environments (Streamlane SL-326): its deploys report site-<env>, so a
+                  # site deploy is never read as the product's.
+                  - !Sub repo:Coral-Reef-Ventures/streamlane:environment:site-${Environment}
+                  - !Sub repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:site-${Environment}
 
   DriftlineDeploy:
     Type: AWS::IAM::Role

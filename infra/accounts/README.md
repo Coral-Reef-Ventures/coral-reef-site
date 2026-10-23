@@ -47,3 +47,8 @@ Each of the four repositories (coral-reef-site, streamlane, driftline, intentset
 product owner's approval, the same in all four. GitHub's Team plan offers required reviewers on private repositories
 only under Enterprise, so streamlane's and driftline's never had one, and on 2026-10-14 the product owner dropped the
 one coral-reef-site's and intentset's public repositories had, so a prod deploy no longer waits for a second click.
+
+streamlane also has `site-dev`, `site-staging` and `site-prod` (2026-10-22, Streamlane SL-326), set up the same way
+and holding the same `github-deploy-streamlane` role, which trusts both names in each account. Its public site deploys
+in them once the repository variable `SITE_ENVIRONMENT_PREFIX` is `site-`, so Streamlane never reads a site deploy as
+the product's.
