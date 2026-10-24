@@ -17,7 +17,7 @@ describe("the model tables", () => {
   const named = (model: string) =>
     tables.find(([, table]) => JSON.stringify(props(table).tableName).includes(`"${model}-`))?.[1];
 
-  it("are the six models, each with point-in-time recovery for the period the privacy page states", () => {
+  it("are the seven models, each with point-in-time recovery for the period the privacy page states", () => {
     expect(tables).toHaveLength(models.length);
     for (const model of models) {
       expect(props(named(model)).pointInTimeRecoverySpecification, model).toEqual({
@@ -44,10 +44,10 @@ describe("the model tables", () => {
     }
   });
 
-  it("expire Submission and Activity rows by expiresAt, and nothing else", () => {
+  it("expire Submission, Activity and PageCount rows by expiresAt, and nothing else", () => {
     for (const model of models) {
       const ttl = props(named(model)).timeToLiveSpecification;
-      if (model === "Submission" || model === "Activity") {
+      if (model === "Submission" || model === "Activity" || model === "PageCount") {
         expect(ttl, model).toEqual({ attributeName: "expiresAt", enabled: true });
       } else {
         expect(ttl, model).toBeUndefined();
@@ -155,12 +155,12 @@ describe("the functions", () => {
   const functions = (type: "sandbox" | "branch") =>
     ofType(type, "AWS::Lambda::Function").filter(([id]) => id.startsWith("crv"));
 
-  it("are the five, none reserving concurrency (none needs a guarantee; the project's quota is 1000)", () => {
+  it("are the six, none reserving concurrency (none needs a guarantee; the project's quota is 1000)", () => {
     expect(
       functions("branch")
         .map(([id]) => id.replace(/lambda[0-9A-F]{8}$/, ""))
         .sort(),
-    ).toEqual(["crvaccess", "crvinterest", "crvpresignup", "crvpretokengeneration", "crvretention"]);
+    ).toEqual(["crvaccess", "crvinterest", "crvpresignup", "crvpretokengeneration", "crvretention", "crvvisits"]);
     for (const [id, fn] of functions("branch")) {
       expect(props(fn).ReservedConcurrentExecutions, id).toBeUndefined();
       expect(props(fn).Runtime, id).toBe("nodejs24.x");
@@ -169,7 +169,7 @@ describe("the functions", () => {
 
   it("log JSON and keep it one month", () => {
     const groups = ofType("branch", "AWS::Logs::LogGroup").filter(([id]) => id.startsWith("crv"));
-    expect(groups).toHaveLength(5);
+    expect(groups).toHaveLength(6);
     for (const [id, group] of groups) expect(props(group).RetentionInDays, id).toBe(30);
     for (const [id, fn] of functions("branch")) {
       expect((props(fn).LoggingConfig as { LogFormat?: string })?.LogFormat, id).toBe("JSON");
@@ -227,13 +227,68 @@ describe("the functions", () => {
   });
 });
 
+describe("crv-visits", () => {
+  const statements = (type: "sandbox" | "branch", prefix: string) =>
+    resourcesOf(nested(type, "data"), "AWS::IAM::Policy")
+      .filter(([id]) => id.startsWith(prefix))
+      .flatMap(
+        ([, policy]) =>
+          (props(policy).PolicyDocument as { Statement: { Action: string | string[]; Resource: unknown }[] }).Statement,
+      );
+  const actions = (type: "sandbox" | "branch", prefix: string) =>
+    new Set(statements(type, prefix).flatMap((s) => [s.Action].flat()));
+
+  it("may only put PageCount rows and ask Amplify for its own app's access logs", () => {
+    expect(actions("branch", "crvvisits")).toEqual(new Set(["dynamodb:PutItem", "amplify:GenerateAccessLogs"]));
+    const put = statements("branch", "crvvisits").find((s) => s.Action === "dynamodb:PutItem");
+    expect(JSON.stringify(put?.Resource)).toContain("PageCount");
+    expect(JSON.stringify(put?.Resource)).not.toMatch(/Activity|Person|Submission|Invitation|AccessGrant/);
+    const logs = statements("branch", "crvvisits").find((s) => s.Action === "amplify:GenerateAccessLogs");
+    const resources = JSON.stringify(logs?.Resource);
+    expect(resources).toContain(":apps/d1example");
+    expect(resources).toContain(":apps/d1example/*");
+  });
+
+  it("gets no Amplify grant in a sandbox, which has no hosted app to count", () => {
+    expect(actions("sandbox", "crvvisits")).toEqual(new Set(["dynamodb:PutItem"]));
+  });
+
+  it("is told where the logs are and which table to write, and nothing else of the backend's", () => {
+    const [[, fn] = ["", { Type: "" }]] = ofType("branch", "AWS::Lambda::Function").filter(([id]) =>
+      id.startsWith("crvvisits"),
+    );
+    const variables = (props(fn).Environment as { Variables: Record<string, unknown> }).Variables;
+    expect(variables).toMatchObject({
+      CRV_VISITS_APP_ID: "d1example",
+      CRV_VISITS_DOMAIN: "coralreefventures.com",
+      CRV_VISITS_HOST: "coralreefventures.com",
+    });
+    expect(Object.keys(variables).filter((name) => name.startsWith("TABLE_"))).toEqual(["TABLE_PAGE_COUNT"]);
+  });
+
+  it("runs every day, as crv-retention does", () => {
+    const schedules = ofType("branch", "AWS::Scheduler::Schedule").map(([, schedule]) => props(schedule));
+    const target = (name: string) => schedules.find((schedule) => JSON.stringify(schedule.Target).includes(name));
+    expect(target("crvvisits")).toMatchObject({
+      ScheduleExpression: "cron(0 0 * * ? *)",
+      ScheduleExpressionTimezone: "UTC",
+    });
+    expect(target("crvvisits")?.ScheduleExpression).toBe(target("crvretention")?.ScheduleExpression);
+  });
+
+  it("leaves crv-access out of the page counts, which hold nobody", () => {
+    const access = statements("branch", "crvaccess").filter((s) => JSON.stringify(s.Action).includes("dynamodb:"));
+    expect(JSON.stringify(access)).not.toContain("PageCount");
+  });
+});
+
 describe("the alarms", () => {
-  it("watch errors and throttles on the form and the access path, the project's concurrency and WAF blocks", () => {
+  it("watch errors and throttles on the form, the access path and the page count, the project's concurrency and WAF blocks", () => {
     const alarms = ofType("branch", "AWS::CloudWatch::Alarm").map(([, alarm]) => props(alarm));
-    expect(alarms).toHaveLength(10);
+    expect(alarms).toHaveLength(12);
     for (const alarm of alarms) expect(JSON.stringify(alarm.AlarmActions)).toContain("InterestSubmitted");
-    expect(alarms.filter((a) => a.MetricName === "Errors")).toHaveLength(4);
-    expect(alarms.filter((a) => a.MetricName === "Throttles")).toHaveLength(4);
+    expect(alarms.filter((a) => a.MetricName === "Errors")).toHaveLength(5);
+    expect(alarms.filter((a) => a.MetricName === "Throttles")).toHaveLength(5);
     expect(alarms.find((a) => a.MetricName === "ConcurrentExecutions")?.Threshold).toBe(800);
     expect(alarms.find((a) => a.MetricName === "BlockedRequests")?.Threshold).toBe(50);
   });

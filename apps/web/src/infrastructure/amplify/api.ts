@@ -1,7 +1,8 @@
 /**
  * What the admin views need from the backend, as plain types and one interface. The views import this and never the
  * generated client, so they build and test before the schema (PR 1.3) exists. Names and fields follow the plan's
- * §2.3: Submission, Invitation, AccessGrant and Activity, and the custom operations that act on them.
+ * §2.3: Submission, Invitation, AccessGrant and Activity, and the custom operations that act on them; and PageCount
+ * (CRV-017).
  */
 
 export const SITES = ["streamlane.app", "driftline.app"] as const;
@@ -66,6 +67,12 @@ export type Activity = {
   detail?: Record<string, unknown>;
 };
 
+/**
+ * One day's requests for one page from one referring site (CRV-017): `referrer` is a hostname without `www.`, `direct`
+ * when the request named none, `internal` for the site's own pages, or `other`. An aggregate, never a visitor.
+ */
+export type PageCount = { day: string; path: string; referrer: string; count: number };
+
 export type InviteInput = { email: string; sites: SiteId[]; submissionId?: string; note?: string };
 export type InviteResult = { invitation: Invitation; text: string };
 export type ActivityQuery = { area?: ActivityArea; personId?: string; subjectId?: string; limit?: number };
@@ -84,6 +91,8 @@ export interface AdminApi {
   deletePerson(personId: string): Promise<void>;
   eraseEmail(email: string): Promise<void>;
   listActivity(query?: ActivityQuery): Promise<Activity[]>;
+  /** The page counts of `site` (a host) from `from` to `to`, both UTC days (YYYY-MM-DD) and both included. */
+  listPageCounts(site: string, from: string, to: string): Promise<PageCount[]>;
 }
 
 /**

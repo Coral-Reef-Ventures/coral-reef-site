@@ -5,6 +5,7 @@
   "type": "module",
   "description": "The Coral Reef Ventures app's backend: Amplify Gen 2 in us-east-2 (docs/decisions/0001-the-door-and-the-app.md).",
   "dependencies": {
+    "@aws-sdk/client-amplify": "3.1141.0",
     "@aws-sdk/client-cognito-identity-provider": "3.1141.0",
     "@aws-sdk/client-dynamodb": "3.1141.0",
     "@aws-sdk/client-kms": "3.1141.0",

@@ -78,6 +78,12 @@ export const deployRoleName = "github-deploy-coral-reef-site";
 export const siteHosts = (env: HostingEnvironment): string =>
   `streamlane=${env.sites.streamlane},driftline=${env.sites.driftline}`;
 
+/**
+ * The domain association crv-visits asks Amplify for access logs under (CRV-017): coralreefventures.com in every
+ * environment, prod's at the domain itself and dev's and staging's with their own prefix (claim-env-domains.sh).
+ */
+export const visitsDomain = "coralreefventures.com";
+
 /** The backend's settings for an environment, as amplify/auth/settings.ts reads them at synth. */
 export const backendSettings = (env: HostingEnvironment): Record<string, string> => ({
   CRV_DOOR_SITE_HOSTS: siteHosts(env),
@@ -88,6 +94,9 @@ export const backendSettings = (env: HostingEnvironment): Record<string, string>
   CRV_ADMIN_ORIGIN: env.origin,
   CRV_BUILD_ROLE_NAME: deployRoleName,
   CRV_NOTICE_EMAIL: env.noticeEmail,
+  CRV_VISITS_APP_ID: env.appId,
+  CRV_VISITS_DOMAIN: visitsDomain,
+  CRV_VISITS_HOST: new URL(env.origin).host,
 });
 
 const hostedUi = (prefix: string) => `https://${prefix}.auth.us-east-2.amazoncognito.com`;

@@ -85,6 +85,12 @@ the facts the copy must keep.
   holding nothing about who you are, so an expired hour renews without the coming-soon page: Gary kept it 2026-10-05,
   go-ahead §17d, and `/privacy/` says so in his words). The form and the sign-in are
   allowed; analytics, tag managers, web fonts from another origin and embeds are not.
+- **Page counts are aggregates from the host's logs, never a visitor** (CRV-017, proposed 2026-10-24). `crv-visits`
+  (`amplify/functions/visits/`) runs daily, asks Amplify's `GenerateAccessLogs` for the last two UTC days of its own
+  app's logs (`CRV_VISITS_APP_ID`, `CRV_VISITS_DOMAIN`, `CRV_VISITS_HOST`, set by `backendSettings`; unset in a sandbox,
+  where it counts nothing), and writes PageCount rows of day, page, referring hostname and count, kept 13 months. It
+  never stores or logs an address, a user agent, a referrer's path or a row of the log. Admins see the last 30 days at
+  `/admin/visits/` (`features/visits/page-counts`). Nothing runs in the browser, so CRV-011 holds.
 - **Access is decided by a grant, and an invitation binds to an identity** (ADR 0001). `AccessGrant` is the one place
   access is decided. An invitation binds to the first Cognito and Google identity that accepts it, never to an address
   alone. `CRV_ADMIN_EMAILS` (gary@coralreefventures.com, the first admin) is the one break-glass path; keep the list
@@ -127,9 +133,9 @@ the facts the copy must keep.
 ## Toolchain
 
 - **The backend** (`amplify/`, plan §2.1 to §2.4) is Amplify Gen 2 in us-east-2: auth with two triggers in the `auth`
-  group, a schema of three areas (`areas/people`, `areas/interest`, `areas/access`), and three functions in the `data`
-  group (`crv-access`, the named handler for every operation but the form's; `crv-interest`, the form's; `crv-retention`,
-  the daily sweep). Its settings are environment variables read and checked at synth (`auth/settings.ts`). The triggers
+  group, a schema of four areas (`areas/people`, `areas/interest`, `areas/access`, `areas/visits`), and four functions in
+  the `data` group (`crv-access`, the named handler for every operation but the form's; `crv-interest`, the form's;
+  `crv-retention`, the daily sweep; `crv-visits`, the daily page count). Its settings are environment variables read and checked at synth (`auth/settings.ts`). The triggers
   touch no table: they call `checkAdmission` and `admitSignIn` through `allow.resource` and the data client, so nothing
   in the auth stack points at the data stack, and `auth/wiring.test.ts` synthesizes the backend to hold that. Every
   function writes through the `Store` in `functions/shared/store.ts`, whose conditions are data, so the tests run each

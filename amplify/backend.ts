@@ -22,6 +22,7 @@ import { crvAccess } from "./functions/access/resource.ts";
 import { crvInterest } from "./functions/interest/resource.ts";
 import { limits } from "./functions/interest/limits.ts";
 import { crvRetention } from "./functions/retention/resource.ts";
+import { crvVisits } from "./functions/visits/resource.ts";
 import { models } from "./functions/shared/models.ts";
 import { tableVariable } from "./functions/shared/tables.ts";
 
@@ -37,6 +38,7 @@ const backend = defineBackend({
   crvAccess,
   crvInterest,
   crvRetention,
+  crvVisits,
   preSignUp,
   preTokenGeneration,
 });
@@ -81,7 +83,7 @@ for (const [name, table] of Object.entries(backend.data.resources.cfnResources.a
     table.deletionProtectionEnabled = true;
   }
   table.pointInTimeRecoverySpecification = { pointInTimeRecoveryEnabled: true, recoveryPeriodInDays: backupDays };
-  if (name === "Submission" || name === "Activity") {
+  if (name === "Submission" || name === "Activity" || name === "PageCount") {
     table.timeToLiveAttribute = { attributeName: "expiresAt", enabled: true };
   }
 }
@@ -130,9 +132,11 @@ const notices = new Topic(dataStack, "InterestSubmitted", {
 });
 if (branch && authConfig.noticeEmail) notices.addSubscription(new EmailSubscription(authConfig.noticeEmail));
 
-// crv-access: every table and its indexes, the user pool's admin calls, signing, and the roles it admits.
+// crv-access: every table but the page counts, which hold nobody, and their indexes, the user pool's admin calls,
+// signing, and the roles it admits.
 const access = backend.crvAccess.resources.lambda;
 for (const model of models) {
+  if (model === "PageCount") continue;
   const modelTable = table(model);
   modelTable.grantReadWriteData(access);
   // Amplify's tables are imported references, so the grant above does not cover their indexes.
@@ -180,6 +184,21 @@ rateLimits.grant(interest, "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Upd
 backend.crvInterest.addEnvironment("RATE_LIMITS_TABLE", rateLimits.tableName);
 notices.grantPublish(interest);
 backend.crvInterest.addEnvironment("NOTICE_TOPIC_ARN", notices.topicArn);
+
+// crv-visits (CRV-017): it may only put PageCount rows, and ask Amplify for this environment's own app's access logs.
+// A sandbox has no hosted app and no settings, so it gets no Amplify grant and counts nothing.
+const visits = backend.crvVisits.resources.lambda;
+table("PageCount").grant(visits, "dynamodb:PutItem");
+backend.crvVisits.addEnvironment(tableVariable("PageCount"), table("PageCount").tableName);
+if (authConfig.visits) {
+  const app = `arn:${Aws.PARTITION}:amplify:${Aws.REGION}:${Aws.ACCOUNT_ID}:apps/${authConfig.visits.appId}`;
+  visits.addToRolePolicy(
+    new PolicyStatement({ actions: ["amplify:GenerateAccessLogs"], resources: [app, `${app}/*`] }),
+  );
+  backend.crvVisits.addEnvironment("CRV_VISITS_APP_ID", authConfig.visits.appId);
+  backend.crvVisits.addEnvironment("CRV_VISITS_DOMAIN", authConfig.visits.domain);
+  backend.crvVisits.addEnvironment("CRV_VISITS_HOST", authConfig.visits.host);
+}
 
 // The regional WAF web ACL on the AppSync API (plan §2.4), so nothing goes in us-east-1. One rule blocks an address
 // sending more than 10 submitInterest requests in 5 minutes (10 is WAF's lowest limit); the other, more than 300
@@ -238,8 +257,8 @@ new CfnWebACLAssociation(dataStack, "DoorWebAclAssociation", {
   webAclArn: webAcl.attrArn,
 });
 
-// Alarms, to the notice topic: an error or a throttle on the form or the access path (a throttled trigger is a failed
-// sign-in), the project's concurrency nearing its quota (1000 since 2026-10-05, shared by every app in the project:
+// Alarms, to the notice topic: an error or a throttle on the form, the access path (a throttled trigger is a failed
+// sign-in) or the page count, the project's concurrency nearing its quota (1000 since 2026-10-05, shared by every app in the project:
 // this one, Streamlane, Driftline and the intentset.org chat), and the web ACL blocking a flood.
 const fiveMinutes = Duration.minutes(5);
 const alarm = (id: string, metric: Metric, threshold: number) =>
@@ -255,6 +274,7 @@ for (const [label, fn] of [
   ["Access", access],
   ["PreSignUp", backend.preSignUp.resources.lambda],
   ["PreTokenGeneration", backend.preTokenGeneration.resources.lambda],
+  ["Visits", visits],
 ] as const) {
   alarm(`${label}Errors`, fn.metricErrors({ period: fiveMinutes, statistic: "Sum" }), 1);
   alarm(`${label}Throttles`, fn.metricThrottles({ period: fiveMinutes, statistic: "Sum" }), 1);

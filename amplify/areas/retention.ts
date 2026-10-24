@@ -21,6 +21,8 @@ export const retention = {
   signedIn: { seconds: 365 * day, words: "12 months" },
   /** Activity `access.ticket_issued`. */
   ticketIssued: { seconds: 90 * day, words: "90 days" },
+  /** A PageCount row (CRV-017): one day's requests for one page from one site, counted from the host's logs. */
+  pageCount: { seconds: 395 * day, words: "13 months" },
   /** Rate-limit counters. */
   rateCounter: { seconds: 1 * day, words: "24 hours" },
   /** The daily key that rate-limit counters are hashed under: a day of use and a day of grace. */

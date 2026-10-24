@@ -50,3 +50,32 @@ test("a submission not yet invited cannot be set to invited by hand", async ({ p
   await expect(page.getByRole("option", { name: "Declined" })).toBeVisible();
   await expect(page.getByRole("option", { name: "Invited" })).toHaveCount(0);
 });
+
+test("the Visits view shows page requests by day, page and referring site, and says they are not people", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${admin()}/admin/visits/`);
+  await expect(page.getByRole("heading", { name: "Visits", level: 1 })).toBeVisible();
+  await expect(
+    page.getByText(/counted each day from the host's own access logs, with known bots left out/),
+  ).toBeVisible();
+  await expect(page.getByText(/These are requests, not people/)).toBeVisible();
+
+  const days = page.getByRole("table", { name: "Requests each day" });
+  await expect(days.getByRole("row")).toHaveCount(31);
+  await expect(page.getByText(/page requests in the last 30 days\./)).toBeVisible();
+  await expect(
+    page.getByRole("table", { name: "Most requested pages" }).getByRole("cell", { name: "/whitepaper/" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("table", { name: "Referring sites" }).getByRole("cell", { name: "This site" }),
+  ).toBeVisible();
+
+  await page.getByText("7 days", { exact: true }).click();
+  await expect(days.getByRole("row")).toHaveCount(8);
+  await expect(page.getByText(/page requests in the last 7 days\./)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Visits" })).toHaveAttribute("href", "/admin/visits/");
+  expect(errors).toEqual([]);
+});

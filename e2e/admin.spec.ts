@@ -6,7 +6,7 @@
 import { expect, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const views = ["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/submission/?id=01A"];
+const views = ["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/visits/", "/admin/submission/?id=01A"];
 
 for (const path of views) {
   test(`${path} says the backend is not connected, and does not crash`, async ({ page }) => {

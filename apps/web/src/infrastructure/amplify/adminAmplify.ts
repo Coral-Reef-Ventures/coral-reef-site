@@ -8,6 +8,7 @@ import {
   type Invitation,
   type InvitationStatus,
   type Interest,
+  type PageCount,
   SITES,
   type SiteId,
   SUBMISSION_STATUSES,
@@ -17,7 +18,7 @@ import {
 
 /**
  * The AdminApi over the deployed backend (plan §2.3): the generated admin-read queries of Submission, Invitation,
- * AccessGrant and Activity, by their secondary indexes, and the admin mutations crv-access handles. Every call is made
+ * AccessGrant, Activity and PageCount, by their secondary indexes, and the admin mutations crv-access handles. Every call is made
  * with the signed-in admin's user pool token. The views get exactly what the stub (adminStub.ts) gives them: optional
  * fields absent rather than null, an Invitation's `sites` from its person's active grants and `bound` from its
  * `cognitoSub`, lists newest first.
@@ -38,6 +39,8 @@ export const MAX_ROWS = 500;
 export const MAX_GRANTS = 5000;
 export const MAX_PAGES = 50;
 export const DEFAULT_ACTIVITY = 100;
+/** The most page counts one range returns: crv-visits keeps at most 500 rows a day, and the view asks for 30 days. */
+export const MAX_PAGE_COUNTS = 20_000;
 
 const codeShape = /^[A-Z][A-Z0-9_]{1,63}$/;
 
@@ -401,6 +404,32 @@ export function createAmplifyAdminApi(client: GraphqlClient): AdminApi {
     return data.listActivityByArea;
   };
 
+  const pageCountsPage = async (
+    site: string,
+    from: string,
+    to: string,
+    limit: number,
+    nextToken: string | undefined,
+  ) => {
+    const data = await call<{ listPageCountsBySite: Page<PageCount> }>(
+      /* GraphQL */ `
+        query ListPageCountsBySite($site: String!, $day: ModelStringKeyConditionInput, $limit: Int, $nextToken: String) {
+          listPageCountsBySite(site: $site, day: $day, limit: $limit, nextToken: $nextToken) {
+            items {
+              day
+              path
+              referrer
+              count
+            }
+            nextToken
+          }
+        }
+      `,
+      { site, day: { between: [from, to] }, limit, nextToken },
+    );
+    return data.listPageCountsBySite;
+  };
+
   const mutateInvitation = async <K extends string>(field: K, query: string, variables: Record<string, unknown>) => {
     const data = await call<Record<K, RawInvitationView>>(query, variables);
     return viewOf(data[field]);
@@ -655,6 +684,16 @@ export function createAmplifyAdminApi(client: GraphqlClient): AdminApi {
         .sort((a, b) => b.at.localeCompare(a.at) || b.id.localeCompare(a.id))
         .slice(0, max)
         .map(activityOf);
+    },
+
+    async listPageCounts(site, from, to) {
+      const rows = await collect<PageCount>(
+        (limit, nextToken) => pageCountsPage(site, from, to, limit, nextToken),
+        MAX_PAGE_COUNTS,
+        () => true,
+        1000,
+      );
+      return rows.map(({ day, path, referrer, count }) => ({ day, path, referrer, count }));
     },
   };
 }

@@ -19,6 +19,9 @@ import { doorSites } from "../areas/access/sites.ts";
  *   signs in at its prefix domain only.
  * - CRV_NOTICE_EMAIL: the inbox the branch's notice topic subscribes. Unset means hello@coralreefventures.com; empty
  *   means none, which dev and staging set so their confirmation requests and notices never reach the real inbox.
+ * - CRV_VISITS_APP_ID / CRV_VISITS_DOMAIN / CRV_VISITS_HOST: where crv-visits reads the access logs it counts pages
+ *   from (CRV-017): the environment's Amplify app, the domain associated with it, and the host its pages are served
+ *   at. All three or none; unset, as in a sandbox, crv-visits counts nothing.
  */
 
 const localOrigin = "http://localhost:3002";
@@ -140,6 +143,26 @@ export const parseSignInDomain = (env: NodeJS.ProcessEnv): SignInDomain | undefi
   return { name, certificateArn };
 };
 
+export type VisitsSettings = { appId: string; domain: string; host: string };
+
+/**
+ * Where crv-visits reads the host's access logs (CRV-017): an Amplify app id, the domain association the logs are asked
+ * for, and the host that counts as the site, which is the domain or a name under it.
+ */
+export const parseVisits = (env: Record<string, string | undefined>): VisitsSettings | undefined => {
+  const appId = env.CRV_VISITS_APP_ID?.trim() ?? "";
+  const domain = env.CRV_VISITS_DOMAIN?.trim().toLowerCase() ?? "";
+  const host = env.CRV_VISITS_HOST?.trim().toLowerCase() ?? "";
+  if (!appId && !domain && !host) return undefined;
+  if (!/^d[a-z0-9]{1,19}$/.test(appId)) throw new Error(`CRV_VISITS_APP_ID "${appId}" is not an Amplify app id`);
+  if (!hostname.test(domain)) throw new Error(`CRV_VISITS_DOMAIN "${domain}" is not a domain`);
+  if (!hostname.test(host)) throw new Error(`CRV_VISITS_HOST "${host}" is not a hostname`);
+  if (host !== domain && !host.endsWith(`.${domain}`)) {
+    throw new Error(`CRV_VISITS_HOST "${host}" is not ${domain} or a name under it`);
+  }
+  return { appId, domain, host };
+};
+
 /** Every setting, read from `env` and checked. */
 export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   domainPrefix: parseDomainPrefix(env.CRV_AUTH_DOMAIN_PREFIX),
@@ -149,6 +172,7 @@ export const readAuthConfig = (env: NodeJS.ProcessEnv) => ({
   adminOrigin: parseAdminOrigin(env.CRV_ADMIN_ORIGIN),
   buildRoleName: parseRoleName(env.CRV_BUILD_ROLE_NAME),
   noticeEmail: parseNoticeEmail(env.CRV_NOTICE_EMAIL),
+  visits: parseVisits(env),
   testHosts: (env.CRV_DOOR_TEST_HOSTS ?? "").trim(),
   siteHosts: (env.CRV_DOOR_SITE_HOSTS ?? "").trim(),
   sites: doorSites(env.CRV_DOOR_TEST_HOSTS, env.CRV_DOOR_SITE_HOSTS),

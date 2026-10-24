@@ -5,6 +5,7 @@ import type {
   Invitation,
   InvitationStatus,
   InviteInput,
+  PageCount,
   SiteId,
   Submission,
   SubmissionStatus,
@@ -20,6 +21,7 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
   let submissions: Submission[] = [];
   let invitations: Invitation[] = [];
   let activity: Activity[] = [];
+  let pageCounts: PageCount[] = [];
   let counter = 0;
 
   const nextId = () => `01STUB${String(++counter).padStart(6, "0")}`;
@@ -114,6 +116,19 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
         sites: ["driftline.app"],
       },
     ];
+    // Invented page counts for the last 40 days, from referrers under .example so nobody takes them for real traffic.
+    pageCounts = [];
+    for (let days = 1; days <= 40; days += 1) {
+      const day = ago(days).slice(0, 10);
+      const wave = (days * 7) % 11;
+      pageCounts.push(
+        { day, path: "/", referrer: "direct", count: 20 + wave },
+        { day, path: "/", referrer: "search.example", count: 5 + (wave % 4) },
+        { day, path: "/whitepaper/", referrer: "internal", count: 8 + (wave % 5) },
+        { day, path: "/get-involved/", referrer: "internal", count: 3 + (wave % 3) },
+      );
+      if (days % 3 === 0) pageCounts.push({ day, path: "/whitepaper/", referrer: "news.example", count: 12 });
+    }
     activity = [];
     log("interest.submitted", "interest", "Submission", "01STUB-S1");
     log("access.invited", "access", "Invitation", "eli@example.com", "01STUB-P2");
@@ -250,6 +265,9 @@ export function createStubApi(now: () => Date = () => new Date()): AdminApi & { 
         .filter((a) => !subjectId || a.subjectId === subjectId)
         .slice(0, limit)
         .map((a) => ({ ...a }));
+    },
+    async listPageCounts(_site, from, to) {
+      return pageCounts.filter((row) => row.day >= from && row.day <= to).map((row) => ({ ...row }));
     },
   };
 }
