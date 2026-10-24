@@ -80,7 +80,7 @@ the facts the copy must keep.
   holding nothing about who you are, so an expired hour renews without the coming-soon page: Gary kept it 2026-10-05,
   go-ahead §17d, and `/privacy/` says so in his words). The form and the sign-in are
   allowed; analytics, tag managers, web fonts from another origin and embeds are not.
-- **Page counts are aggregates from the host's logs, never a visitor** (CRV-017, proposed 2026-10-24). `crv-visits`
+- **Page counts are aggregates from the host's logs, never a visitor** (CRV-017, accepted 2026-10-24). `crv-visits`
   (`amplify/functions/visits/`) runs daily, asks Amplify's `GenerateAccessLogs` for the last two UTC days of its own
   app's logs (`CRV_VISITS_APP_ID`, `CRV_VISITS_DOMAIN`, `CRV_VISITS_HOST`, set by `backendSettings`; unset in a sandbox,
   where it counts nothing), and writes PageCount rows of day, page, referring hostname and count, kept 13 months. It
