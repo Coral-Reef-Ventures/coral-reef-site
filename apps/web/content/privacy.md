@@ -32,6 +32,10 @@ Our server logs record that something happened, never who you are or what you wr
 
 Deletion happens within a few days after the date above, because the database removes expired records on its own schedule.
 
+## Page counts
+
+To know whether anyone reads this site, we count how many times each page is requested each day, and which site the request came from, by its name only, from our host's own logs. We leave out known bots. We keep those counts for 13 months. We never keep an address, a browser, or anything else that could tell one visitor from another, and nothing runs in your browser to make the count.
+
 ## Having your data erased
 
 To see, correct or erase what we hold about you, or about an address someone else submitted, write to [hello@coralreefventures.com](mailto:hello@coralreefventures.com). We erase it, and the record of the erasure holds ids only.

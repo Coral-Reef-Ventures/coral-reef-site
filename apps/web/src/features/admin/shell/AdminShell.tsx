@@ -14,9 +14,10 @@ export const ADMIN_LINKS = [
   { href: "/admin/", label: "Submissions" },
   { href: "/admin/invitations/", label: "Invitations" },
   { href: "/admin/activity/", label: "Activity" },
+  { href: "/admin/visits/", label: "Visits" },
 ] as const;
 
-/** The admin pages' frame: Mantine's provider, the three views and nothing that loads from another origin. */
+/** The admin pages' frame: Mantine's provider, the four views and nothing that loads from another origin. */
 export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <MantineProvider theme={theme} defaultColorScheme="auto">

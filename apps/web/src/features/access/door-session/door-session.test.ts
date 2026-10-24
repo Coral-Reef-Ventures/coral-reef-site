@@ -131,7 +131,7 @@ describe("enter", () => {
 });
 
 describe("the admin page a sign-in returns to", () => {
-  it.each(["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/submission/?id=01K6ABCDEF"])(
+  it.each(["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/visits/", "/admin/submission/?id=01K6ABCDEF"])(
     "carries %s through Google and back",
     (path) => expect(decodeAdminReturn(encodeAdminReturn(path))).toBe(path),
   );

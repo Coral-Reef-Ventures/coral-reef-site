@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+import { parseVisits } from "../../../amplify/auth/settings.ts";
 import { backendSettings, environments, isEnvironmentName, renderHeaders, withSignInDomain } from "./environments.ts";
 
 const headers = readFileSync(fileURLToPath(new URL("./custom-headers.yml", import.meta.url)), "utf8");
@@ -64,6 +65,22 @@ describe("the environments", () => {
       auth: { user_pool_id: "p", oauth: { domain: "auth.coralreefventures.com", scopes: ["openid"] } },
     });
     expect(() => withSignInDomain({}, environments.prod)).toThrow(/OAuth/);
+  });
+
+  it("count each environment's own pages, from its own app's access logs (CRV-017)", () => {
+    expect(backendSettings(environments.prod)).toMatchObject({
+      CRV_VISITS_APP_ID: "d5rsxrpztyob9",
+      CRV_VISITS_DOMAIN: "coralreefventures.com",
+      CRV_VISITS_HOST: "coralreefventures.com",
+    });
+    expect(backendSettings(environments.dev)).toMatchObject({
+      CRV_VISITS_APP_ID: "d8p3mdqo02ww3",
+      CRV_VISITS_DOMAIN: "coralreefventures.com",
+      CRV_VISITS_HOST: "dev.coralreefventures.com",
+    });
+    for (const env of Object.values(environments)) {
+      expect(parseVisits(backendSettings(env))?.appId, env.appId).toBe(env.appId);
+    }
   });
 
   it("render the headers flat, naming the environment's own hosted UI", () => {
