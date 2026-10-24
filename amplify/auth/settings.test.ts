@@ -13,6 +13,7 @@ import {
   parseNoticeEmail,
   parseRoleName,
   parseSignInDomain,
+  parseVisits,
   readAuthConfig,
 } from "./settings.ts";
 
@@ -39,6 +40,45 @@ describe("CRV_AUTH_DOMAIN and CRV_AUTH_CERTIFICATE_ARN", () => {
       }),
     ).toThrow(/us-east-1/);
   });
+});
+
+describe("CRV_VISITS_APP_ID, CRV_VISITS_DOMAIN and CRV_VISITS_HOST", () => {
+  const prod = {
+    CRV_VISITS_APP_ID: "d5rsxrpztyob9",
+    CRV_VISITS_DOMAIN: "coralreefventures.com",
+    CRV_VISITS_HOST: "coralreefventures.com",
+  };
+
+  it("are all three, or none, as in a sandbox, which counts nothing", () => {
+    expect(parseVisits({})).toBeUndefined();
+    expect(parseVisits(prod)).toEqual({
+      appId: "d5rsxrpztyob9",
+      domain: "coralreefventures.com",
+      host: "coralreefventures.com",
+    });
+    expect(() => parseVisits({ CRV_VISITS_APP_ID: "d5rsxrpztyob9" })).toThrow(/CRV_VISITS_DOMAIN/);
+    expect(() => parseVisits({ ...prod, CRV_VISITS_HOST: "" })).toThrow(/CRV_VISITS_HOST/);
+    expect(() => parseVisits({ ...prod, CRV_VISITS_APP_ID: "" })).toThrow(/CRV_VISITS_APP_ID/);
+  });
+
+  it("take an environment's own name under the domain, lowercased", () => {
+    expect(
+      parseVisits({
+        ...prod,
+        CRV_VISITS_DOMAIN: " CoralReefVentures.com ",
+        CRV_VISITS_HOST: "Dev.CoralReefVentures.com",
+      }),
+    ).toEqual({ appId: "d5rsxrpztyob9", domain: "coralreefventures.com", host: "dev.coralreefventures.com" });
+  });
+
+  it.each([
+    [{ CRV_VISITS_APP_ID: "arn:aws:amplify:us-east-2:1:apps/d5" }, /CRV_VISITS_APP_ID/],
+    [{ CRV_VISITS_APP_ID: "D5RSX" }, /CRV_VISITS_APP_ID/],
+    [{ CRV_VISITS_DOMAIN: "https://coralreefventures.com" }, /CRV_VISITS_DOMAIN/],
+    [{ CRV_VISITS_HOST: "coralreefventures.com:443" }, /CRV_VISITS_HOST/],
+    [{ CRV_VISITS_HOST: "driftline.app" }, /not coralreefventures.com or a name under it/],
+    [{ CRV_VISITS_HOST: "evilcoralreefventures.com" }, /not coralreefventures.com or a name under it/],
+  ])("refuses %j", (change, error) => expect(() => parseVisits({ ...prod, ...change })).toThrow(error));
 });
 
 describe("CRV_AUTH_DOMAIN_PREFIX", () => {
@@ -117,6 +157,7 @@ describe("the other settings", () => {
       adminEmails: ["gary@coralreefventures.com"],
       buildRoleName: undefined,
       testHosts: "",
+      visits: undefined,
     });
   });
 });

@@ -29,6 +29,9 @@ const settings = {
     CRV_BUILD_ROLE_NAME: "crv-amplify-backend-deploy",
     CRV_AUTH_DOMAIN: "auth.coralreefventures.com",
     CRV_AUTH_CERTIFICATE_ARN: "arn:aws:acm:us-east-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
+    CRV_VISITS_APP_ID: "d1example",
+    CRV_VISITS_DOMAIN: "coralreefventures.com",
+    CRV_VISITS_HOST: "coralreefventures.com",
   },
 } as const;
 

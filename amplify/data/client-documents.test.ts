@@ -95,6 +95,7 @@ describe("the hand-written GraphQL documents", () => {
       "query listActivityBySubject",
       "query listActivityByPerson",
       "query listActivityByArea",
+      "query listPageCountsBySite",
       "query getSubmission",
       "mutation updateSubmission",
       "mutation invite",

@@ -14,6 +14,7 @@ describe("the retention periods", () => {
     ["inactiveInvitation", "A pending or revoked one is deleted 12 months after its last change."],
     ["signedIn", "Sign-in records are kept for 12 months"],
     ["ticketIssued", "records that a site opened for you are kept for 90 days"],
+    ["pageCount", "We keep those counts for 13 months."],
     ["rateCounter", "A request limit keeps a count per source for 24 hours"],
     ["stateCookie", "one for 10 minutes when they send you here to sign in"],
     ["logs", "are deleted after 1 month"],
@@ -32,6 +33,8 @@ describe("the retention periods", () => {
     expect(retention.closedSubmission.seconds).toBe(365 * day);
     expect(retention.ticketIssued.seconds).toBe(90 * day);
     expect(retention.rateCounter.seconds).toBe(day);
+    // Thirteen months of 30.4 days, so a year ago today is always still there to compare with.
+    expect(retention.pageCount.seconds).toBe(395 * day);
     expect(retention.stateCookie.seconds).toBe(600);
     expect(backupDays).toBe(35);
   });

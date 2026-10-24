@@ -7,7 +7,15 @@ import type { Item, Key } from "./store.ts";
  * each index is given there, and a test holds the two together.
  */
 
-export const models = ["Person", "PersonEmail", "Activity", "Submission", "Invitation", "AccessGrant"] as const;
+export const models = [
+  "Person",
+  "PersonEmail",
+  "Activity",
+  "Submission",
+  "Invitation",
+  "AccessGrant",
+  "PageCount",
+] as const;
 export type Model = (typeof models)[number];
 
 /** Each model's key attributes, for the in-memory store. */
@@ -18,6 +26,7 @@ export const modelKeys: Record<Model, string[]> = {
   Submission: ["id"],
   Invitation: ["email"],
   AccessGrant: ["id"],
+  PageCount: ["id"],
 };
 
 /** Each index: its model, its name, its partition key and its sort key. */
@@ -33,6 +42,7 @@ export const indexes = {
   invitationBySub: { model: "Invitation", name: "byCognitoSub", partition: "cognitoSub" },
   grantByPerson: { model: "AccessGrant", name: "byPerson", partition: "personId", sort: "resource" },
   grantByResource: { model: "AccessGrant", name: "byResource", partition: "resource", sort: "grantedAt" },
+  pageCountBySite: { model: "PageCount", name: "bySite", partition: "site", sort: "day" },
 } as const satisfies Record<string, { model: Model; name: string; partition: string; sort?: string }>;
 
 /** A new row of `model`, with the attributes Amplify's resolvers expect. */
