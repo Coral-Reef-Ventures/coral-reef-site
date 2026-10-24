@@ -43,7 +43,7 @@ export const decodeRequest = (customState: string | undefined): DoorRequest | nu
 /**
  * An admin page the sign-in started from, which the return page goes back to. Only the admin views' own paths, so a
  * state carried through Google can never send the visitor anywhere else: `/admin/`, `/admin/invitations/`,
- * `/admin/activity/` and `/admin/submission/?id=<id>`.
+ * `/admin/activity/`, `/admin/visits/` and `/admin/submission/?id=<id>`.
  */
 const adminPath = /^\/admin\/(?:[a-z]+\/)?(?:\?id=[A-Za-z0-9_-]{1,64})?$/;
 

@@ -174,7 +174,7 @@ describe("the privacy page", () => {
   const privacy = text("privacy.md");
 
   // The retention periods (plan §2.3a). amplify/areas/retention.test.ts ties each sentence to its constant.
-  it.each(["12 months", "90 days", "24 hours", "10 minutes", "1 month", "35 days", "within a few days"])(
+  it.each(["12 months", "13 months", "90 days", "24 hours", "10 minutes", "1 month", "35 days", "within a few days"])(
     "states %s",
     (period) => {
       expect(privacy).toContain(period);
@@ -188,6 +188,24 @@ describe("the privacy page", () => {
       "What your browser keeps",
       "erase",
       "hello@coralreefventures.com",
+    ]) {
+      expect(privacy, phrase).toContain(phrase);
+    }
+  });
+});
+
+describe("the privacy page's page counts (CRV-017)", () => {
+  const privacy = text("privacy.md");
+
+  it("keeps the no-tracking promise and says what is counted, from where, and what is never kept", () => {
+    for (const phrase of [
+      "There is no tracking, no analytics and no third-party script on this site",
+      "we count how many times each page is requested each day",
+      "which site the request came from, by its name only",
+      "from our host's own logs",
+      "We leave out known bots.",
+      "We keep those counts for 13 months.",
+      "We never keep an address, a browser, or anything else that could tell one visitor from another",
     ]) {
       expect(privacy, phrase).toContain(phrase);
     }

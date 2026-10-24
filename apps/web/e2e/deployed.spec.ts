@@ -79,7 +79,7 @@ test.describe("admin views", () => {
 
   test("does not overflow at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
-    for (const path of ["/admin/", "/admin/invitations/", "/admin/activity/"]) {
+    for (const path of ["/admin/", "/admin/invitations/", "/admin/activity/", "/admin/visits/"]) {
       await page.goto(`${base}${path}`);
       await page.waitForLoadState("networkidle");
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);

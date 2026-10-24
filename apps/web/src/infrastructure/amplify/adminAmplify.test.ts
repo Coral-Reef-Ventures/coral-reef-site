@@ -487,3 +487,38 @@ describe("activity", () => {
     expect((await api.listActivity({ area: "interest" }))[0]).not.toHaveProperty("detail");
   });
 });
+
+describe("page counts", () => {
+  it("lists a site's counts between two days through PageCount.bySite, following every page", async () => {
+    const { api, sent } = mock({
+      listPageCountsBySite: ({ variables }) =>
+        variables.nextToken
+          ? { items: [{ day: "2026-10-22", path: "/whitepaper/", referrer: "internal", count: 3 }], nextToken: null }
+          : {
+              items: [{ __typename: "PageCount", day: "2026-10-23", path: "/", referrer: "direct", count: 5 }, null],
+              nextToken: "next",
+            },
+    });
+    expect(await api.listPageCounts("coralreefventures.com", "2026-09-24", "2026-10-23")).toEqual([
+      { day: "2026-10-23", path: "/", referrer: "direct", count: 5 },
+      { day: "2026-10-22", path: "/whitepaper/", referrer: "internal", count: 3 },
+    ]);
+    expect(sent.map((s) => [s.field, s.variables, s.authMode])).toEqual([
+      [
+        "listPageCountsBySite",
+        { site: "coralreefventures.com", day: { between: ["2026-09-24", "2026-10-23"] }, limit: 1000 },
+        "userPool",
+      ],
+      [
+        "listPageCountsBySite",
+        {
+          site: "coralreefventures.com",
+          day: { between: ["2026-09-24", "2026-10-23"] },
+          limit: 1000,
+          nextToken: "next",
+        },
+        "userPool",
+      ],
+    ]);
+  });
+});
