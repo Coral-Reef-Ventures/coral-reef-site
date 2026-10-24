@@ -48,7 +48,7 @@ the facts the copy must keep.
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/eddy/` (2026-10-09) introduces Eddy, in planning, and the loop with
   Capture ahead of Intent; it is reached only from the footer's "The step before intent" (the door's note asking whether the loop starts
   at intent came off the same day, at Gary's request), and Eddy has no card, mark,
-  accent or domain until each is approved. `/articles/` (CRV-016, proposed 2026-10-24) lists the company's articles, each a Markset file in
+  accent or domain until each is approved. `/articles/` (CRV-016, accepted 2026-10-24) lists the company's articles, each a Markset file in
   `apps/web/content/articles/` named in the one table `apps/web/lib/articles.ts`, which the index, each article's page, the
   RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is in the header's nav after Whitepaper. Articles are
   in the company's voice, unsigned, and link no locked site. `/privacy/`, `/signed-in/`,
@@ -85,7 +85,7 @@ the facts the copy must keep.
   holding nothing about who you are, so an expired hour renews without the coming-soon page: Gary kept it 2026-10-05,
   go-ahead §17d, and `/privacy/` says so in his words). The form and the sign-in are
   allowed; analytics, tag managers, web fonts from another origin and embeds are not.
-- **Page counts are aggregates from the host's logs, never a visitor** (CRV-017, proposed 2026-10-24). `crv-visits`
+- **Page counts are aggregates from the host's logs, never a visitor** (CRV-017, accepted 2026-10-24). `crv-visits`
   (`amplify/functions/visits/`) runs daily, asks Amplify's `GenerateAccessLogs` for the last two UTC days of its own
   app's logs (`CRV_VISITS_APP_ID`, `CRV_VISITS_DOMAIN`, `CRV_VISITS_HOST`, set by `backendSettings`; unset in a sandbox,
   where it counts nothing), and writes PageCount rows of day, page, referring hostname and count, kept 13 months. It

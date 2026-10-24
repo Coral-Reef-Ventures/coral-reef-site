@@ -38,7 +38,7 @@ intentset:
 
 ## Responsibility
 
-Owner of the site's page counts (CRV-017, proposed 2026-10-24): the PageCount model, crv-visits, the daily function that counts page requests by day, page and referring site from the host's own access logs, and the admin's Visits view of the last 30 days. It keeps aggregates only: never an address, a browser, a full referrer URL or anything that tells one visitor from another, so the site's promise of no tracking and no analytics holds (RULE-NO-TRACKING), and the counts expire after the 13 months the privacy page states (RULE-RETENTION-STATED). The slice stays a draft until Gary accepts CRV-017. Its policy and model layers are empty: model.ts holds the view's aggregation over the seam's types, which is application, and what counts as a page request is the backend function's.
+Owner of the site's page counts (CRV-017, accepted 2026-10-24): the PageCount model, crv-visits, the daily function that counts page requests by day, page and referring site from the host's own access logs, and the admin's Visits view of the last 30 days. It keeps aggregates only: never an address, a browser, a full referrer URL or anything that tells one visitor from another, so the site's promise of no tracking and no analytics holds (RULE-NO-TRACKING), and the counts expire after the 13 months the privacy page states (RULE-RETENTION-STATED). Gary accepted CRV-017 on 2026-10-24; the slice stays a draft until its verification records are written. Its policy and model layers are empty: model.ts holds the view's aggregation over the seam's types, which is application, and what counts as a page request is the backend function's.
 
 ## Public contract
 
