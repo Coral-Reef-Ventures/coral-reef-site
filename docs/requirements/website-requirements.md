@@ -1,7 +1,8 @@
 # Coral Reef Ventures website requirements v0.2
 
 **Status:** v0.2, accepted. It was proposed on 2026-10-04 (plan step P8), and Gary accepted this file's requirement
-text on 2026-10-06. CRV-015 was added and withdrawn on 2026-10-17 (below). The decision behind it is
+text on 2026-10-06. CRV-015 was added and withdrawn on 2026-10-17 (below). CRV-016 was proposed on 2026-10-24, at
+Gary's decision to publish articles at `/articles/`; its text waits for his acceptance. The decision behind it is
 [ADR 0001](../decisions/0001-the-door-and-the-app.md). The app has served coralreefventures.com since the cutover,
 2026-10-05. The GitHub Pages page that met v0.1, CRV-007
 included, was deleted with its tests on 2026-10-06, the day after the cutover, ahead of the planned 14 days.
@@ -32,6 +33,7 @@ destinations. This is a concise company site, not a combined product application
 | CRV-013 | Notification. *New in v0.2.* | Each submission notifies hello@coralreefventures.com with a link to it in the admin view, at most 10 a day, in plain text with the visitor's words marked as unverified; a failed notice never loses a submission |
 | CRV-014 | The lock. *New in v0.2.* | streamlane.app and driftline.app serve nothing, not even a static asset, to a visitor without a valid door session: a page load gets the gate's own coming-soon page, anything else an empty 401, and a host not allowed a 403; the leak check proves it daily on every host |
 | CRV-015 | **Withdrawn** (2026-10-17, the product owner's decision: Streamlane's roadmap is shown on Streamlane's own site, streamlane.app/roadmap/, not on this one). *It read:* `/streamlane/roadmap/` shows what Streamlane's own planning team shows a signed-out guest, read at build, and Streamlane's card links to it. The page, its read and the card's link were removed the same day. | |
+| CRV-016 | Articles. *Proposed 2026-10-24, at Gary's decision.* `/articles/` lists the company's articles, newest first, and each is a page of its own at `/articles/<slug>/`, written in Markset in the company's voice, unsigned, and kept to the facts this file's Content authority holds; the header's nav links it after the whitepaper. `/articles/feed.xml` offers them as RSS 2.0, and each names its own link-preview card, drawn and committed as the site's card is | Each article in `lib/articles.ts` is on the index, in the feed and in the sitemap, with its own card at the size its page claims; an article links no locked site and calls Markset and Intentset nothing but open foundations; every article page passes the CRV-005 and CRV-006 checks |
 
 ## Content authority
 
