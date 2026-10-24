@@ -21,13 +21,14 @@ The app starts as a door, and is meant to become a CRM, licence management and b
 
 ## Decision
 
-Proposed: three areas now, and three reserved. They are folders and slice domains inside one Amplify backend, not backends of their own.
+Proposed: four areas now (the fourth, visits, added 2026-10-24 with CRV-017), and three reserved. They are folders and slice domains inside one Amplify backend, not backends of their own.
 
 | Area | Owns | When |
 | --- | --- | --- |
 | people | Person, PersonEmail, Activity: the spine every other area points at | now |
 | interest | Submission, Interest, SourceSite: what a visitor tells us | now |
 | access | Invitation, AccessGrant, the site registry, tickets | now |
+| visits | PageCount: each day's page requests by page and referring site, counted from the host's logs, never a visitor | now (CRV-017, proposed) |
 | crm | organizations, contacts, conversations, deals | reserved |
 | licensing | the family source licence's keys: issue, verify offline, revoke | reserved |
 | billing | Stripe: the contributor meter, tracked users | reserved |
