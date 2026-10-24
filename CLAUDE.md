@@ -48,7 +48,10 @@ the facts the copy must keep.
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/eddy/` (2026-10-09) introduces Eddy, in planning, and the loop with
   Capture ahead of Intent; it is reached only from the footer's "The step before intent" (the door's note asking whether the loop starts
   at intent came off the same day, at Gary's request), and Eddy has no card, mark,
-  accent or domain until each is approved. `/privacy/`, `/signed-in/`,
+  accent or domain until each is approved. `/articles/` (CRV-016, accepted 2026-10-24) lists the company's articles, each a Markset file in
+  `apps/web/content/articles/` named in the one table `apps/web/lib/articles.ts`, which the index, each article's page, the
+  RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is in the header's nav after Whitepaper. Articles are
+  in the company's voice, unsigned, and link no locked site. `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest. Streamlane's roadmap is on Streamlane's
   own site (streamlane.app/roadmap/), not here: a `/streamlane/roadmap/` page was added and removed on 2026-10-17
   (CRV-015, withdrawn at the product owner's decision).
@@ -67,7 +70,9 @@ the facts the copy must keep.
   writes its own `openGraph` names it again, because Next replaces rather than merges. reef's own card builder
   (`socialCard` in `lib/site.tsx`) stays unused: it fetches a web font from Google at build time, which would put
   another origin in the build. Redraw the card when the mark, the headline or the colours change;
-  `apps/web/lib/social-card.test.ts` holds the committed file to the size the pages claim.
+  `apps/web/lib/social-card.test.ts` holds the committed file to the size the pages claim. The same run draws each
+  article's card into `apps/web/public/cards/<slug>.png`, its title as the headline and "Article" and its date beside the
+  domain; redraw them when an article is added or retitled.
 - **The social profile images are drawn the same way** (2026-10-22): `pnpm run social-profiles` runs
   `scripts/social-profiles.ts`, which draws `packages/brand/social/` (the profile picture every network uses, the X and
   Bluesky banner, the LinkedIn cover) from the mark, the card's headline and colors, and the product table's names in

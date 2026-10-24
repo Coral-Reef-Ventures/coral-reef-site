@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { parseDocument } from "@markset-lang/parser";
 import { addHeadingIds, renderHtml } from "@markset-lang/render-html";
 
+import { articleList } from "./articles.ts";
 import { doorProductGrid } from "./products.ts";
 
 /** A rendered stretch of the document, or the name of a place a component goes. */
@@ -24,10 +25,13 @@ const render = (source: string, file: string): string => {
 /**
  * A content file as Markset, cut at each `{{slot}}` line into the HTML around it and the slot's name, so a page puts
  * its React components exactly where the document says. `{{products}}` is not a slot: it is the product cards, which
- * are Markset source generated from the one product table. Anything else left over is a mistake and fails the build.
+ * are Markset source generated from the one product table, and `{{articles}}` is the articles index's list, from the one
+ * article table. Anything else left over is a mistake and fails the build.
  */
 export const segments = (file: string, slots: readonly string[] = []): Segment[] => {
-  const source = readFileSync(join(contentDir, file), "utf8").replaceAll("{{products}}", doorProductGrid());
+  const source = readFileSync(join(contentDir, file), "utf8")
+    .replaceAll("{{products}}", doorProductGrid())
+    .replaceAll("{{articles}}", articleList());
   const out: Segment[] = [];
   let chunk: string[] = [];
   const flush = (first: boolean) => {
