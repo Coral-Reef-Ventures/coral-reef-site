@@ -13,19 +13,23 @@
  * page's own title and the colors are the four already written in `lib/site.tsx`'s `socialCard`. Redraw it when any
  * of those change. `apps/web/lib/social-card.test.ts` holds the committed file to the size the pages claim.
  */
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { chromium } from "@playwright/test";
 
+import { ARTICLES, articleCard, longDate } from "../apps/web/lib/articles.ts";
 import { CARD, CARD_COLORS, CARD_FOOT, CARD_HEADLINE } from "../apps/web/lib/social-card.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = join(root, "apps", "web", "public");
 
-/** The card's markup: the door's ground, its mark, the home page's headline and the domain in the accent. */
-export function cardHtml(mark: string): string {
+/**
+ * The card's markup: the door's ground, its mark, a headline and the domain in the accent. The site's card carries the
+ * home page's headline; an article's (CRV-016) carries its title, with "Article" and its date beside the domain.
+ */
+export function cardHtml(mark: string, headline: string = CARD_HEADLINE, foot: string = CARD_FOOT): string {
   const { background, text, muted, accent } = CARD_COLORS;
   return `<!doctype html>
 <html lang="en">
@@ -53,27 +57,25 @@ export function cardHtml(mark: string): string {
 </style>
 <body>
   <div class="brand"><img src="${mark}" alt="">Coral Reef Ventures</div>
-  <h1>${CARD_HEADLINE}</h1>
+  <h1>${headline}</h1>
   <div>
     <div class="rule"></div>
-    <div class="foot"><span class="host">coralreefventures.com</span><span>${CARD_FOOT}</span></div>
+    <div class="foot"><span class="host">coralreefventures.com</span><span>${foot}</span></div>
   </div>
 </body>
 </html>
 `;
 }
 
-/** Draws the card into apps/web/public/, where the export serves it from the site's root. */
-export async function drawCard(to: string = join(publicDir, CARD.file)): Promise<string> {
-  const svg = await readFile(join(publicDir, "icon.svg"), "utf8");
-  const mark = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+/** Draws one card, from its markup, at twice the size the pages claim. */
+async function draw(html: string, to: string): Promise<string> {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({
       viewport: { width: CARD.width, height: CARD.height },
       deviceScaleFactor: 2,
     });
-    await page.setContent(cardHtml(mark), { waitUntil: "load" });
+    await page.setContent(html, { waitUntil: "load" });
     await writeFile(to, await page.screenshot({ type: "png" }));
     return to;
   } finally {
@@ -81,6 +83,29 @@ export async function drawCard(to: string = join(publicDir, CARD.file)): Promise
   }
 }
 
+const markUri = async (): Promise<string> => {
+  const svg = await readFile(join(publicDir, "icon.svg"), "utf8");
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+};
+
+/** Draws the card into apps/web/public/, where the export serves it from the site's root. */
+export async function drawCard(to: string = join(publicDir, CARD.file)): Promise<string> {
+  return draw(cardHtml(await markUri()), to);
+}
+
+/** Draws each article's card into apps/web/public/cards/, one per entry in the article table. */
+export async function drawArticleCards(): Promise<string[]> {
+  const mark = await markUri();
+  await mkdir(join(publicDir, "cards"), { recursive: true });
+  const written: string[] = [];
+  for (const article of ARTICLES) {
+    const to = join(publicDir, ...articleCard(article).split("/").filter(Boolean));
+    written.push(await draw(cardHtml(mark, article.title, `Article · ${longDate(article.published)}`), to));
+  }
+  return written;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log(`social card: ${await drawCard()}`);
+  for (const file of await drawArticleCards()) console.log(`article card: ${file}`);
 }
