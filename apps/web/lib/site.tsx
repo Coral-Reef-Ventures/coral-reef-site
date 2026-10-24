@@ -26,10 +26,11 @@ export const site = createSite({
   description:
     "Coral Reef Ventures is building open foundations and focused tools for a durable connection between product intent, execution, verification and real-world outcomes.",
   // The case before the ask, as the door reads: the whitepaper (added 2026-10-09, at Gary's decision, so the paper the
-  // door sends readers to for its evidence is reachable from every page), then the one action. Below reef's md
-  // breakpoint both fold into the menu, so a phone's row is unchanged.
+  // door sends readers to for its evidence is reachable from every page), the articles (CRV-016, 2026-10-24), then the
+  // one action. Below reef's md breakpoint all three fold into the menu, so a phone's row is unchanged.
   nav: [
     { key: "whitepaper", label: "Whitepaper", href: "/whitepaper/" },
+    { key: "articles", label: "Articles", href: "/articles/" },
     { key: "involved", label: "Get involved", href: "/get-involved/" },
   ],
   lockup: <Lockup />,

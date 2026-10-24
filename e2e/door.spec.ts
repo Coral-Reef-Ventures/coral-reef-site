@@ -7,7 +7,18 @@ import { join } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
 
 const base = () => process.env.CRV_WEB_URL as string;
-const pages = ["/", "/whitepaper/", "/eddy/", "/get-involved/", "/privacy/", "/terms/", "/signout/"];
+const pages = [
+  "/",
+  "/whitepaper/",
+  "/articles/",
+  "/articles/code-outruns-review/",
+  "/articles/we-build-streamlane-in-streamlane/",
+  "/eddy/",
+  "/get-involved/",
+  "/privacy/",
+  "/terms/",
+  "/signout/",
+];
 
 async function open(page: Page, path: string, width: number, colorScheme: "light" | "dark"): Promise<void> {
   await page.setViewportSize({ width, height: 900 });
@@ -71,11 +82,11 @@ test("the keyboard reaches the header, its scheme control and then the page in o
     rings.push(stop.ring);
     stops.push(stop.at);
   }
-  // The skip link, then the header in reading order: the lockup, the two nav links (Whitepaper, then Get involved),
+  // The skip link, then the header in reading order: the lockup, the three nav links (Whitepaper, Articles, Get involved),
   // the scheme control (the checked radio is its one stop), and then the page. The control is in the bar now, not a
   // row of its own below it.
-  expect(stops.slice(0, 5)).toEqual(["other:A", "header:A", "header:A", "header:A", "header:INPUT"]);
-  expect(stops[5]).toMatch(/^main:/);
+  expect(stops.slice(0, 6)).toEqual(["other:A", "header:A", "header:A", "header:A", "header:A", "header:INPUT"]);
+  expect(stops[6]).toMatch(/^main:/);
   expect(rings.length, "the page's stops").toBeGreaterThan(10);
   expect(rings.length, "tabbing ended").toBeLessThan(80);
   for (const ring of rings) expect(ring, "a focus stop has no ring").toMatch(/:(solid|auto):(3px|2px|1px)/);
@@ -293,6 +304,7 @@ test("the home page has one h1 and neither the form nor the sign-in; the Get inv
   await expect(page.getByRole("button", { name: "Sign in with Google" })).toHaveCount(0);
   await expect(page.getByRole("navigation", { name: "Main" }).first().getByRole("link")).toHaveText([
     "Whitepaper",
+    "Articles",
     "Get involved",
   ]);
 
