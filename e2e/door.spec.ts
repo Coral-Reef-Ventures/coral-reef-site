@@ -10,6 +10,7 @@ const base = () => process.env.CRV_WEB_URL as string;
 const pages = [
   "/",
   "/articles/",
+  "/articles/introducing-intentset/",
   "/articles/intent-is-the-work/",
   "/articles/code-outruns-review/",
   "/articles/we-build-streamlane-in-streamlane/",

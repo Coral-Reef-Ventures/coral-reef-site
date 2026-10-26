@@ -21,6 +21,13 @@ export interface Article {
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
+    slug: "introducing-intentset",
+    title: "Introducing Intentset, in 25 slides",
+    summary:
+      "Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.",
+    published: "2026-10-28",
+  },
+  {
     slug: "code-outruns-review",
     title: "Code outruns review",
     summary:
