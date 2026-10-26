@@ -27,14 +27,14 @@ describe("hosting files", () => {
   });
 
   // The short address social posts link for the Intentset deck (2026-10-24). A 302, not a 301, so the deck can move,
-  // say to intentset.org, by changing the target here: no browser keeps a permanent redirect to the old place.
+  // as it did to intentset.org on 2026-10-26, by changing the target here: no browser keeps a permanent redirect to the old place.
   it("sends /intentset-deck, with or without its slash, to the deck with a temporary redirect", () => {
     const rules = JSON.parse(read("custom-rules.json")) as { source: string; target: string; status: string }[];
     const deck = rules.filter((r) => r.source.startsWith("/intentset-deck"));
     expect(deck.map((r) => r.source)).toEqual(["/intentset-deck", "/intentset-deck/"]);
     for (const rule of deck) {
       expect(rule.status).toBe("302");
-      expect(rule.target).toMatch(/^https:\/\/claude\.ai\/artifact\/5nenDwVnYPRW6aKqyNQYPE\?sk=[\w-]+$/);
+      expect(rule.target).toBe("https://intentset.org/introducing/");
     }
     expect(rules.findIndex((r) => r.source === "/<*>")).toBeGreaterThan(
       rules.findIndex((r) => r.source === "/intentset-deck/"),
