@@ -11,7 +11,7 @@ environment, dev, staging and prod, is an Amplify Hosting app with no repository
 | --- | --- | --- |
 | `environments.ts` | Each environment's account, app, origin, sign-in address and backend settings (`backendSettings`) | `scripts/deploy.ts` |
 | `custom-headers.yml` | Security headers, a content security policy that names only this app and its AWS endpoints, and immutable caching for hashed assets | `scripts/deploy.ts`, rendered for each environment by `renderHeaders`, then `update-app --custom-headers` |
-| `custom-rules.json` | `www` to the apex, `/intentset-deck` to the Intentset deck (a 302, so the deck can move; 2026-10-24), and the 404 page | `scripts/deploy.ts`, `update-app --custom-rules` |
+| `custom-rules.json` | `www` to the apex, `/whitepaper/` to its article (a 301; 2026-10-26), `/intentset-deck` to the Intentset deck (a 302, so the deck can move; 2026-10-24), and the 404 page | `scripts/deploy.ts`, `update-app --custom-rules` |
 | `build-spec.yml` | The build spec of the old, repository-connected app (History, below) | no environment's app; `hosting.test.ts` still reads it |
 
 The design is in `docs/decisions/0001-the-door-and-the-app.md`. Every Regional resource lives in us-east-2, and the

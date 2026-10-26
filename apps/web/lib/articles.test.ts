@@ -45,10 +45,8 @@ describe("the articles", () => {
     expect(body).not.toMatch(/href="https?:\/\/(www\.)?(streamlane|driftline)\.app/);
     // Markset and Intentset are open foundations, not products (Gary, 2026-10-06).
     expect(body).not.toMatch(/\b(four|the) products\b/i);
-    // The only outside links are the open foundations' sites.
-    for (const [, href] of body.matchAll(/href="(https?:\/\/[^"]+)"/g)) {
-      expect(href).toMatch(/^https:\/\/(markset|intentset)\.org(\/|$)/);
-    }
+    // An article may cite its sources, over https; it never links a locked site (above).
+    for (const [, href] of body.matchAll(/href="(https?:\/\/[^"]+)"/g)) expect(href).toMatch(/^https:\/\//);
   });
 
   it.each(ARTICLES)("$slug has its own card, committed at the size its page claims", (a) => {
@@ -90,6 +88,6 @@ describe("the articles", () => {
     const urls = sitemap().map((entry) => entry.url);
     expect(urls).toContain("https://coralreefventures.com/articles/");
     for (const a of ARTICLES) expect(urls).toContain(`https://coralreefventures.com${articlePath(a)}`);
-    expect(site.config.nav.map((n) => n.href)).toEqual(["/whitepaper/", "/articles/", "/get-involved/"]);
+    expect(site.config.nav.map((n) => n.href)).toEqual(["/articles/", "/get-involved/"]);
   });
 });

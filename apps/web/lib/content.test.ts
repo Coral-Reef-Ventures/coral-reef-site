@@ -65,11 +65,12 @@ describe("the door's content", () => {
     }
   });
 
-  // The whitepaper is one page, kept once: no PDF beside it to maintain twice (Gary, 2026-10-06).
+  // The whitepaper is one page, kept once: no PDF beside it to maintain twice (Gary, 2026-10-06). Since 2026-10-26 it is
+  // an article like any other, at /articles/intent-is-the-work/ (Gary's decision).
   it("offers the whitepaper as its page, ungated, and nowhere as a PDF", () => {
-    expect(door).toContain('href="/whitepaper/"');
+    expect(door).toContain('href="/articles/intent-is-the-work/"');
     expect(door).not.toMatch(/\.pdf\b/);
-    expect(text("whitepaper.md")).not.toMatch(/\.pdf\b/);
+    expect(text("articles/intent-is-the-work.md")).not.toMatch(/\.pdf\b/);
     expect(readdirSync(join(import.meta.dirname, "..", "public")).filter((f) => f.endsWith(".pdf"))).toEqual([]);
   });
 
@@ -80,7 +81,7 @@ describe("the door's content", () => {
     const section = (heading: string) => door.slice(door.indexOf(heading), door.indexOf("<hr", door.indexOf(heading)));
     expect(section("Intent is the work")).toContain("Read the whitepaper");
     expect(section("Talk to us")).toContain("Take part");
-    expect(door).toContain('href="/whitepaper/"');
+    expect(door).toContain('href="/articles/intent-is-the-work/"');
     expect(door.match(/href="\/get-involved\/"/g)?.length).toBe(2);
   });
 

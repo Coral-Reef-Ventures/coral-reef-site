@@ -44,4 +44,4 @@ Review then asks a different question. Not "what did this change do?", line by l
 
 None of this makes code review go away. It gives the code review a smaller, clearer job, and gives the product decision a home of its own.
 
-This is the problem everything we build at Coral Reef Ventures is aimed at. [Intentset](https://intentset.org), an open foundation, is where that account of the product's promises lives, in the repository beside the code. The [whitepaper](/whitepaper/) sets out the whole argument, with its sources.
+This is the problem everything we build at Coral Reef Ventures is aimed at. [Intentset](https://intentset.org), an open foundation, is where that account of the product's promises lives, in the repository beside the code. The [whitepaper](/articles/intent-is-the-work/) sets out the whole argument, with its sources.

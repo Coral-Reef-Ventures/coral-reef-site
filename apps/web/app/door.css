@@ -325,20 +325,17 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .ms-document > .contact { margin-top: 2.5rem; font-size: 1.1rem; }
 .contact a { display: inline-block; padding-block: 0.4rem; font-weight: 650; }
 
-/* ---- the home page's and the whitepaper's width --------------------------------------- */
-/* Below the hero, every block on the home page and the whitepaper runs the column's full width, the product grid's, so
+/* ---- the home page's width ---------------------------------------------------------------- */
+/* Below the hero, every block on the home page runs the column's full width, the product grid's, so
  * each section's right edge lines up with the cards and the rules between sections. The hero keeps its narrower lead
- * beside the network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for these two
- * pages alone: the home page from its first rule, the whitepaper (which has none) from its first section heading. */
+ * beside the network figure. Markset stops prose at a reading measure (--ms-measure), so this lifts it for these pages
+ * alone, from their first rule. The whitepaper had a rule here too until it became an article like any other (2026-10-26). */
 .door[data-page="door"] .ms-document > hr ~ *,
-.door[data-page="eddy"] .ms-document > hr ~ *,
-.door[data-page="whitepaper"] .ms-document > :is(h2, h2 ~ *) { max-width: none; }
+.door[data-page="eddy"] .ms-document > hr ~ * { max-width: none; }
 /* Neither hero has an actions row (a reader meets each action in its section), so the network figure beside the lead
- * hangs lower than the dots; what follows the hero keeps clear of it wherever the figure shows: the home page's first
- * rule, the whitepaper's first section heading. */
+ * hangs lower than the dots; what follows the hero keeps clear of it wherever the figure shows: the first rule. */
 @media (min-width: 68rem) {
   .door:is([data-page="door"], [data-page="eddy"]) .ms-document > hr:first-of-type { margin-top: 6rem; }
-  .door[data-page="whitepaper"] .ms-document > h2:first-of-type { margin-top: 8rem; }
 }
 
 /* Markset numbers a step in white on --ms-accent; on the ink accent the number takes the page's ground instead, so it

@@ -37,20 +37,20 @@ the facts the copy must keep.
   builders into one structure that lasts, which Gary confirmed is why the name was chosen) and the contact. **The door makes the case; it does not demonstrate it** (2026-10-08): the internal
   pilot, the worked example and "Where to start" all came off that day, because a dated one-capability experiment and a
   record of a product's emptiest state told a reader how new this is, and the how-to lead was written for an engineer
-  on a page read by investors. The evidence lives where its context does, in `/whitepaper/` and in Intentset's adoption
-  log; `/get-involved/` is reached from the header's nav and the one button in "Talk to us". `/whitepaper/` is Gary's whitepaper in Markset, ungated, and kept
-  only there: no PDF beside it. Rewritten 2026-10-15 at his request around the same thesis, for design partners first and
+  on a page read by investors. The evidence lives where its context does, in the whitepaper and in Intentset's adoption
+  log; `/get-involved/` is reached from the header's nav and the one button in "Talk to us". The whitepaper is Gary's, in Markset, ungated, and kept
+  only at `/articles/intent-is-the-work/`, an article like any other since 2026-10-26 (`/whitepaper/` redirects there): no PDF beside it. Rewritten 2026-10-15 at his request around the same thesis, for design partners first and
   investors second; its status table and adoption figures are dated, so refresh them when a version or the log moves. `/get-involved/`
   holds the interest form (`#involved`) and the invitation sign-in (`#invited`), moved off the home page 2026-10-05 at
-  Gary's request; the header's nav is Whitepaper (added 2026-10-09, so the paper the door sends readers to for its
-  evidence is reachable from every page) and then Get involved. A locked site's gate redirects to the door's origin, `/`, with
+  Gary's request; the header's nav is Articles (since 2026-10-26, when the whitepaper, in the nav since 2026-10-09, became
+  one of them) and then Get involved. A locked site's gate redirects to the door's origin, `/`, with
   its request in the query, so the home page forwards any visit carrying a sign-in request, a refused sign-in or one of
   the two old anchors to `/get-involved/` (`DoorForward`, `door-session/forward.ts`). `/eddy/` (2026-10-09) introduces Eddy, in planning, and the loop with
   Capture ahead of Intent; it is reached only from the footer's "The step before intent" (the door's note asking whether the loop starts
   at intent came off the same day, at Gary's request), and Eddy has no card, mark,
   accent or domain until each is approved. `/articles/` (CRV-016, accepted 2026-10-24) lists the company's articles, each a Markset file in
   `apps/web/content/articles/` named in the one table `apps/web/lib/articles.ts`, which the index, each article's page, the
-  RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is in the header's nav after Whitepaper. Articles are
+  RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is first in the header's nav. Articles are
   in the company's voice, unsigned, and link no locked site. `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest. Streamlane's roadmap is on Streamlane's
   own site (streamlane.app/roadmap/), not here: a `/streamlane/roadmap/` page was added and removed on 2026-10-17

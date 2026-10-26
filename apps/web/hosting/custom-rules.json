@@ -1,5 +1,7 @@
 [
   { "source": "https://www.coralreefventures.com", "target": "https://coralreefventures.com", "status": "301" },
+  { "source": "/whitepaper", "target": "/articles/intent-is-the-work/", "status": "301" },
+  { "source": "/whitepaper/", "target": "/articles/intent-is-the-work/", "status": "301" },
   {
     "source": "/intentset-deck",
     "target": "https://claude.ai/artifact/5nenDwVnYPRW6aKqyNQYPE?sk=_ig8qVb2XBDgPmpUwuzBBA",
