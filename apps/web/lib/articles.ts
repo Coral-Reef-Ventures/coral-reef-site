@@ -34,6 +34,13 @@ export const ARTICLES: readonly Article[] = [
       "How an agent takes a piece of work from an item to a merged change, and why every change still traces back to a decision a person made.",
     published: "2026-10-28",
   },
+  {
+    slug: "intent-is-the-work",
+    title: "Intent is the work: building software when agents write the code",
+    summary:
+      "When agents write the code, the work that remains is deciding what the product should do, proving it still does, and learning whether it should. Why products drift when code outruns review, and what Coral Reef Ventures is building for it.",
+    published: "2026-10-15",
+  },
 ];
 
 export const articlePath = (a: Article): string => `/articles/${a.slug}/`;

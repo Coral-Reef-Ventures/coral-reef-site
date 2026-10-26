@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Whitepaper · October 2026
+Article · 15 October 2026
 
 # Intent is the work: building software when agents write the code
 

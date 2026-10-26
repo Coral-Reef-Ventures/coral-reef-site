@@ -98,7 +98,7 @@ Whitepaper
 When implementation costs little, the cost moves to deciding, proving and learning. The whitepaper sets out why products drift when code outruns review, why the tools teams already use leave the gap open, and how one reviewed account of what a product promises, kept with the code, closes it.
 
 {.actions}
-[[Read the whitepaper](/whitepaper/)]{.button .primary}
+[[Read the whitepaper](/articles/intent-is-the-work/)]{.button .primary}
 
 {.note}
 Free to read, with no form and no sign-up.

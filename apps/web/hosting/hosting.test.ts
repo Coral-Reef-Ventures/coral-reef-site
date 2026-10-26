@@ -17,6 +17,15 @@ describe("hosting files", () => {
     expect(rules.at(-1)).toEqual({ source: "/<*>", target: "/404.html", status: "404" });
   });
 
+  // The whitepaper became an article on 2026-10-26 (CRV-016, amended): its old address keeps working, permanently.
+  it("sends /whitepaper, with or without its slash, to its article with a permanent redirect", () => {
+    const rules = JSON.parse(read("custom-rules.json")) as { source: string; target: string; status: string }[];
+    expect(rules.filter((r) => r.source.startsWith("/whitepaper"))).toEqual([
+      { source: "/whitepaper", target: "/articles/intent-is-the-work/", status: "301" },
+      { source: "/whitepaper/", target: "/articles/intent-is-the-work/", status: "301" },
+    ]);
+  });
+
   // The short address social posts link for the Intentset deck (2026-10-24). A 302, not a 301, so the deck can move,
   // say to intentset.org, by changing the target here: no browser keeps a permanent redirect to the old place.
   it("sends /intentset-deck, with or without its slash, to the deck with a temporary redirect", () => {
