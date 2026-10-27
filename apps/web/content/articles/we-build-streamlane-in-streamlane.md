@@ -22,7 +22,9 @@ Every change starts as an item: a task, a bug or an idea, written in plain langu
 
 When work starts, the item gets a working session with seven stages: Review, Refine, Spec, Build, Review environment, Feedback and Ship. The item's page shows them as a strip with the current one marked, and says whose move it is: the agent's, or a named person's. The stage moves as the work does. A person can move it by hand only by giving a reason, which the item's history keeps.
 
-FIGURE
+:::figure[A task in Ottervale, the invented company in Streamlane's demo, at its Feedback stage. Its pull request is in review, people have tried the change in its review environment, and the session waits on the agent to answer their comments.]{.shot}
+![A Streamlane task page. Under the title, a delivery strip reads "In review · PR #120". A Working session panel shows seven stages with Review through Review environment ticked and Feedback current, and says it is waiting on the agent: it works through feedback round 1, answering each comment in its thread. Below it, a Review environment card for pr-120 has a Review it button and reads "Round 1 · 2 comments · 1 waits for an answer". The properties on the right show the branch and pull request #120, open.](/pictures/we-build-streamlane-in-streamlane/feedback-stage.png)
+:::
 
 A person starts the agent from the item, either by opening it in Claude Code or by assigning it to Claude, which runs it in the repository on GitHub. Either way the agent signs in as that person, with their rights and nothing more, and everything it does on the item says it was Claude Code, for them.
 
@@ -31,6 +33,10 @@ A person starts the agent from the item, either by opening it in Claude Code or 
 Before it changes any code, the agent reads what the product already promises in the area it is about to touch: the behaviors, the rules each one keeps, and the code accountable for each.
 
 It posts its review and its plan on the item. When it needs a decision, it asks on the item, and the question waits in that person's Inbox until they answer it in its thread. Meanwhile the session says it is waiting on them. The agent does not guess at product decisions, and it does not quietly settle an ambiguity that a person should settle.
+
+:::figure[Another task in the same demo. Claude Code, working for the task's assignee, posts its plan, then asks the question the plan left open. The question waits for a person's answer.]{.shot}
+![Two comments on a task, both by "Claude Code for Tomás Lindqvist". The earlier one is a plan: keep the offer's expiry on the waitlist entry, check it when the reminder job runs, and offer the slot to the next client once it passes; nothing yet says what happens outside opening hours. The later one, marked Needs an answer, asks whether an offer made at 7pm should expire at 9pm or two hours after the clinic opens the next morning.](/pictures/we-build-streamlane-in-streamlane/question-and-plan.png)
+:::
 
 Each person has one list of the work in motion: every session they started or that waits on them, across teams, with its stage.
 

@@ -64,6 +64,20 @@ describe("the articles", () => {
     for (const [, href] of body.matchAll(/href="(https?:\/\/[^"]+)"/g)) expect(href).toMatch(/^https:\/\//);
   });
 
+  it.each(ARTICLES)("$slug shows only committed pictures, each described and captioned", (a) => {
+    const body = html(articleFile(a));
+    for (const [img, src = ""] of body.matchAll(/<img src="([^"]+)"[^>]*>/g)) {
+      expect(src, src).toMatch(new RegExp(`^/pictures/${a.slug}/[a-z0-9-]+\\.png$`));
+      expect(
+        readFileSync(join(publicDir, ...src.split("/").filter(Boolean)))
+          .subarray(1, 4)
+          .toString("ascii"),
+      ).toBe("PNG");
+      expect(img).toMatch(/alt="[^"]{40,}"/);
+    }
+    expect(body.match(/<img\b/g)?.length ?? 0).toBe(body.match(/<figcaption>/g)?.length ?? 0);
+  });
+
   it.each(ARTICLES)("$slug has its own card, committed at the size its page claims", (a) => {
     const png = readFileSync(join(publicDir, ...articleCard(a).split("/").filter(Boolean)));
     expect(png.subarray(1, 4).toString("ascii")).toBe("PNG");
