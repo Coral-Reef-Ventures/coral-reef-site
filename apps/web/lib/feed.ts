@@ -1,4 +1,4 @@
-import { ARTICLES, type Article, articlePath, feedPath } from "./articles.ts";
+import { type Article, articlePath, feedPath, publishedBy } from "./articles.ts";
 import { siteUrl } from "./site.tsx";
 
 const xml = (text: string): string =>
@@ -7,8 +7,8 @@ const xml = (text: string): string =>
 /** A publication day as RFC 822, which RSS 2.0 requires: noon UTC, so no reader's time zone moves it to another day. */
 export const rfc822 = (iso: string): string => new Date(`${iso}T12:00:00Z`).toUTCString();
 
-/** The articles as an RSS 2.0 document, newest first, each item its title, link, summary and day. */
-export function articlesFeed(articles: readonly Article[] = ARTICLES): string {
+/** The published articles as an RSS 2.0 document, newest first, each item its title, link, summary and day. */
+export function articlesFeed(articles: readonly Article[] = publishedBy()): string {
   const items = articles.map((a) => {
     const link = `${siteUrl}${articlePath(a)}`;
     return [

@@ -5,14 +5,14 @@ markset: 0
 {.eyebrow}
 Article · 28 October 2026
 
-# Introducing Intentset, in 25 slides
+# Introducing Intentset, in 23 slides
 
 {.lead}
 Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.
 
 ## Why a deck
 
-A team used to understand its product because it wrote the code. Now agents write most of it, in changes too long to read line by line, and the question "what does our product actually promise?" has nowhere reliable to be answered. [Code outruns review](/articles/code-outruns-review/) makes that argument in prose. The deck shows the answer we are building for it, one idea per slide, in an order you can present to a team.
+A team used to understand its product because it wrote the code. Now agents write most of it, in changes too long to read line by line, and the question "what does our product actually promise?" has nowhere reliable to be answered. [Intent is the work](/articles/intent-is-the-work/), our whitepaper, makes that argument in prose. The deck shows the answer we are building for it, one idea per slide, in an order you can present to a team.
 
 {.actions}
 [[Read the deck on intentset.org](https://intentset.org/introducing/)]{.button .primary}
@@ -21,7 +21,7 @@ A team used to understand its product because it wrote the code. Now agents writ
 
 The deck has two halves.
 
-**The first half needs no technical background.** It starts from the problem, then the idea in plain words: write down what the product promises, which code delivers each promise, how each one is checked and what you may tell people about it, and keep all of it true as the code changes. It shows how a team works with it, with agents doing the writing and people doing the deciding, and it is precise about what Intentset does not do.
+**The first half needs no technical background.** It starts from the problem, then the idea in plain words: write down what the product promises, which code delivers each promise, how each one is checked and what you may tell people about it, and keep all of it true as the code changes. It shows how a team works with it, with agents doing the writing and people doing the deciding, and what a reviewer reads in place of the diff.
 
 **The second half is under the hood**, for the people who will set it up and live with it: the records as files beside the code, the links between them, which part of the code owns each promise, how evidence counts as current, the checks that catch drift, and the tools that read it all. It ends with how to try it on one capability of your own.
 

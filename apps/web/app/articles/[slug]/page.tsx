@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ARTICLES, type Article, articleCard, articleFile, articlePath, feedPath } from "../../../lib/articles.ts";
+import { type Article, articleCard, articleFile, articlePath, feedPath, publishedBy } from "../../../lib/articles.ts";
 import { CARD } from "../../../lib/social-card.ts";
 import { DoorDocument } from "../../../lib/page.tsx";
 
@@ -9,15 +9,16 @@ type Params = { params: Promise<{ slug: string }> };
 
 const find = async ({ params }: Params): Promise<Article> => {
   const { slug } = await params;
-  const article = ARTICLES.find((a) => a.slug === slug);
+  const article = publishedBy().find((a) => a.slug === slug);
   if (!article) notFound();
   return article;
 };
 
 export const dynamicParams = false;
 
+/** Only the articles published by the build's day get a page; a later one has none until a build on its date. */
 export function generateStaticParams(): { slug: string }[] {
-  return ARTICLES.map((a) => ({ slug: a.slug }));
+  return publishedBy().map((a) => ({ slug: a.slug }));
 }
 
 /** Each article names its own card, so a link to it previews as its headline rather than the site's. */

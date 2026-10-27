@@ -14,31 +14,31 @@ export interface Article {
   title: string;
   /** One or two sentences: the page's description, the feed item's and the line under it on the index. */
   summary: string;
-  /** The day it was published, as YYYY-MM-DD. */
+  /** The day it is published, as YYYY-MM-DD: a build before that day leaves it out (`publishedBy`). */
   published: string;
 }
 
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
-    slug: "introducing-intentset",
-    title: "Introducing Intentset, in 25 slides",
+    slug: "we-build-streamlane-in-streamlane",
+    title: "We build Streamlane in Streamlane",
     summary:
-      "Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.",
-    published: "2026-10-28",
+      "How an agent takes a piece of work from an item to a merged change in seven stages, and why every change still traces back to a decision a person made.",
+    published: "2026-11-05",
   },
   {
     slug: "code-outruns-review",
     title: "Code outruns review",
     summary:
       "An agent can open more pull requests in an afternoon than a team can review in a week. When the diff can no longer be where the product is decided, something else has to be.",
-    published: "2026-10-28",
+    published: "2026-10-29",
   },
   {
-    slug: "we-build-streamlane-in-streamlane",
-    title: "We build Streamlane in Streamlane",
+    slug: "introducing-intentset",
+    title: "Introducing Intentset, in 23 slides",
     summary:
-      "How an agent takes a piece of work from an item to a merged change, and why every change still traces back to a decision a person made.",
+      "Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.",
     published: "2026-10-28",
   },
   {
@@ -49,6 +49,19 @@ export const ARTICLES: readonly Article[] = [
     published: "2026-10-15",
   },
 ];
+
+/**
+ * The day a build publishes for, as YYYY-MM-DD: `CRV_PUBLISH_DAY` when it is set (the browser tests set a far one, so
+ * every article is built and checked), else the build's own day in UTC. A deploy at 03:00 Central is already that day.
+ */
+export const publishDay = (): string => process.env.CRV_PUBLISH_DAY || new Date().toISOString().slice(0, 10);
+
+/**
+ * The articles a build on `day` publishes: those dated that day or earlier. A later one waits in the table, its page,
+ * index entry, feed item and sitemap entry all left out, until a build on or after its date puts it in all of them.
+ */
+export const publishedBy = (day: string = publishDay(), articles: readonly Article[] = ARTICLES): readonly Article[] =>
+  articles.filter((a) => a.published <= day);
 
 export const articlePath = (a: Article): string => `/articles/${a.slug}/`;
 export const articleFile = (a: Article): string => `articles/${a.slug}.md`;
@@ -79,7 +92,7 @@ export function longDate(iso: string): string {
  * The index's list as Markset source, one entry per article, so the index stays one Markset document and the renderer
  * is the only thing writing its markup (as the product cards are, product-facts.ts).
  */
-export function articleList(articles: readonly Article[] = ARTICLES): string {
+export function articleList(articles: readonly Article[] = publishedBy()): string {
   return articles
     .map((a) =>
       ["{.eyebrow}", longDate(a.published), "", `### [${a.title}](${articlePath(a)})`, "", a.summary].join("\n"),

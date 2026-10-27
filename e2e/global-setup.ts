@@ -14,6 +14,8 @@ function buildWeb(dist: string, stubs: { door: boolean; admin: boolean }): strin
       NEXT_PUBLIC_CRV_STUB: stubs.door ? "1" : "",
       NEXT_PUBLIC_CRV_ADMIN_STUB: stubs.admin ? "1" : "",
       CRV_WEB_DIST: dist,
+      // Every article, whatever its date, so the specs check the pages a later deploy will publish too.
+      CRV_PUBLISH_DAY: "9999-12-31",
     },
   });
   return join(root, "apps", "web", dist);
