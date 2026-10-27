@@ -12,7 +12,7 @@ Why we built Intentset, who the deck is for, and how to read it: the product's p
 
 ## Why a deck
 
-A team used to understand its product because it wrote the code. Now agents write most of it, in changes too long to read line by line, and the question "what does our product actually promise?" has nowhere reliable to be answered. [Intent is the work](/articles/intent-is-the-work/), our whitepaper, makes that argument in prose. The deck shows the answer we are building for it, one idea per slide, in an order you can present to a team.
+A team used to understand its product because it wrote the code. Now agents write most of it, in changes too long to read line by line, and the question "what does our product actually promise?" has nowhere reliable to be answered. [Code outruns review](/articles/code-outruns-review/) makes that argument in prose. The deck shows the answer we are building for it, one idea per slide, in an order you can present to a team.
 
 {.actions}
 [[Read the deck on intentset.org](https://intentset.org/introducing/)]{.button .primary}

@@ -50,10 +50,7 @@ the facts the copy must keep.
   at intent came off the same day, at Gary's request), and Eddy has no card, mark,
   accent or domain until each is approved. `/articles/` (CRV-016, accepted 2026-10-24) lists the company's articles, each a Markset file in
   `apps/web/content/articles/` named in the one table `apps/web/lib/articles.ts`, which the index, each article's page, the
-  RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is first in the header's nav. An article is
-  published on its date: a build before that day leaves out its page, index entry, feed item and sitemap entry
-  (`publishedBy`, 2026-10-27, so their dates can be spread), so one dated ahead appears only with a deploy on or after
-  its day, and links only articles dated no later than itself; the browser tests build every one. Articles are
+  RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is first in the header's nav. Articles are
   in the company's voice, unsigned, and link no locked site. `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest. Streamlane's roadmap is on Streamlane's
   own site (streamlane.app/roadmap/), not here: a `/streamlane/roadmap/` page was added and removed on 2026-10-17

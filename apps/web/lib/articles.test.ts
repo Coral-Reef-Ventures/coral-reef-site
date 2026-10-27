@@ -1,20 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import sitemap from "../app/sitemap.ts";
-import {
-  type Article,
-  ARTICLES,
-  articleCard,
-  articleFile,
-  articleList,
-  articlePath,
-  feedPath,
-  longDate,
-  publishDay,
-  publishedBy,
-} from "./articles.ts";
+import { ARTICLES, articleCard, articleFile, articleList, articlePath, feedPath, longDate } from "./articles.ts";
 import { articlesFeed, rfc822 } from "./feed.ts";
 import { segments } from "./markset.ts";
 import { CARD } from "./social-card.ts";
@@ -32,10 +21,6 @@ const publicDir = join(import.meta.dirname, "..", "public");
  * the sitemap and with its own drawn card; the copy keeps the claims the rest of the site keeps.
  */
 describe("the articles", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
   it("each have a unique slug, a real date, and newest come first", () => {
     expect(new Set(ARTICLES.map((a) => a.slug)).size).toBe(ARTICLES.length);
     for (const a of ARTICLES) {
@@ -91,7 +76,7 @@ describe("the articles", () => {
     expect(index.match(/<h1\b/g)).toHaveLength(1);
     expect(index).toContain(`href="${feedPath}"`);
     let at = 0;
-    for (const a of publishedBy()) {
+    for (const a of ARTICLES) {
       const found = index.indexOf(`href="${articlePath(a)}"`, at);
       expect(found, a.slug).toBeGreaterThan(-1);
       at = found;
@@ -99,30 +84,8 @@ describe("the articles", () => {
     expect(articleList([])).toBe("");
   });
 
-  it("wait for their day: a build before an article's date leaves it off the index, the feed and the sitemap", () => {
-    const [later, ...rest] = ARTICLES as [Article, ...Article[]];
-    const dayBefore = new Date(Date.parse(`${later.published}T12:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
-    expect(publishedBy(later.published)).toContain(later);
-    expect(publishedBy(dayBefore)).toEqual(rest.filter((a) => a.published <= dayBefore));
-    expect(articleList(publishedBy(dayBefore))).not.toContain(articlePath(later));
-    expect(articlesFeed(publishedBy(dayBefore))).not.toContain(articlePath(later));
-    vi.stubEnv("CRV_PUBLISH_DAY", dayBefore);
-    expect(publishDay()).toBe(dayBefore);
-    expect(sitemap().map((entry) => entry.url)).not.toContain(`https://coralreefventures.com${articlePath(later)}`);
-    vi.stubEnv("CRV_PUBLISH_DAY", "");
-    expect(publishDay()).toBe(new Date().toISOString().slice(0, 10));
-  });
-
-  it.each(ARTICLES)("$slug links only articles published by its own day", (a) => {
-    for (const [, slug] of html(articleFile(a)).matchAll(/href="\/articles\/([^/"]+)\/"/g)) {
-      const linked = ARTICLES.find((b) => b.slug === slug)?.published ?? "";
-      expect(linked, `${a.slug} links ${slug}, which is not in the table`).not.toBe("");
-      expect(linked <= a.published, `${a.slug} links ${slug}, published later`).toBe(true);
-    }
-  });
-
   it("are in the feed, as RSS 2.0 with each article's link, summary and day", () => {
-    const feed = articlesFeed(ARTICLES);
+    const feed = articlesFeed();
     expect(feed.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"')).toBe(true);
     expect(feed).toContain(`<atom:link href="https://coralreefventures.com${feedPath}" rel="self"`);
     for (const a of ARTICLES) {
@@ -138,7 +101,7 @@ describe("the articles", () => {
   it("are in the sitemap, with the index, and reached from the header", () => {
     const urls = sitemap().map((entry) => entry.url);
     expect(urls).toContain("https://coralreefventures.com/articles/");
-    for (const a of publishedBy()) expect(urls).toContain(`https://coralreefventures.com${articlePath(a)}`);
+    for (const a of ARTICLES) expect(urls).toContain(`https://coralreefventures.com${articlePath(a)}`);
     expect(site.config.nav.map((n) => n.href)).toEqual(["/articles/", "/get-involved/"]);
   });
 });

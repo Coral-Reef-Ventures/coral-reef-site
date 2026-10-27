@@ -14,7 +14,7 @@ export interface Article {
   title: string;
   /** One or two sentences: the page's description, the feed item's and the line under it on the index. */
   summary: string;
-  /** The day it is published, as YYYY-MM-DD: a build before that day leaves it out (`publishedBy`). */
+  /** The day it was published, as YYYY-MM-DD. */
   published: string;
 }
 
@@ -50,19 +50,6 @@ export const ARTICLES: readonly Article[] = [
   },
 ];
 
-/**
- * The day a build publishes for, as YYYY-MM-DD: `CRV_PUBLISH_DAY` when it is set (the browser tests set a far one, so
- * every article is built and checked), else the build's own day in UTC. A deploy at 03:00 Central is already that day.
- */
-export const publishDay = (): string => process.env.CRV_PUBLISH_DAY || new Date().toISOString().slice(0, 10);
-
-/**
- * The articles a build on `day` publishes: those dated that day or earlier. A later one waits in the table, its page,
- * index entry, feed item and sitemap entry all left out, until a build on or after its date puts it in all of them.
- */
-export const publishedBy = (day: string = publishDay(), articles: readonly Article[] = ARTICLES): readonly Article[] =>
-  articles.filter((a) => a.published <= day);
-
 export const articlePath = (a: Article): string => `/articles/${a.slug}/`;
 export const articleFile = (a: Article): string => `articles/${a.slug}.md`;
 export const articleCard = (a: Article): string => `/cards/${a.slug}.png`;
@@ -92,7 +79,7 @@ export function longDate(iso: string): string {
  * The index's list as Markset source, one entry per article, so the index stays one Markset document and the renderer
  * is the only thing writing its markup (as the product cards are, product-facts.ts).
  */
-export function articleList(articles: readonly Article[] = publishedBy()): string {
+export function articleList(articles: readonly Article[] = ARTICLES): string {
   return articles
     .map((a) =>
       ["{.eyebrow}", longDate(a.published), "", `### [${a.title}](${articlePath(a)})`, "", a.summary].join("\n"),
