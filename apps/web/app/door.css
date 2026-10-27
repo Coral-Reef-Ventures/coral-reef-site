@@ -421,3 +421,8 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
   .skip-link, .ms-document::before, .site-scheme, .door-scheme-slot { display: none; }
   .cta a::after { content: " (" attr(href) ")"; font-weight: 400; }
 }
+
+/* A screenshot in an article (`:::figure[caption]{.shot}`): the picture on a hairline frame, so a light screen keeps its
+ * edge on the light ground, and its caption muted beneath it. */
+.ms-figure.shot > img { display: block; width: 100%; border: 1px solid var(--ms-border); border-radius: var(--ms-radius); }
+.ms-figure.shot > figcaption { margin-top: 0.6rem; color: var(--ms-fg-muted); font-size: 0.95rem; }

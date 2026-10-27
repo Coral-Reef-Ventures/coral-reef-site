@@ -21,24 +21,24 @@ export interface Article {
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
-    slug: "introducing-intentset",
-    title: "Introducing Intentset, in 25 slides",
+    slug: "we-build-streamlane-in-streamlane",
+    title: "We build Streamlane in Streamlane",
     summary:
-      "Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.",
-    published: "2026-10-28",
+      "How an agent takes a piece of work from an item to a merged change in seven stages, and why every change still traces back to a decision a person made.",
+    published: "2026-11-05",
   },
   {
     slug: "code-outruns-review",
     title: "Code outruns review",
     summary:
       "An agent can open more pull requests in an afternoon than a team can review in a week. When the diff can no longer be where the product is decided, something else has to be.",
-    published: "2026-10-28",
+    published: "2026-10-29",
   },
   {
-    slug: "we-build-streamlane-in-streamlane",
-    title: "We build Streamlane in Streamlane",
+    slug: "introducing-intentset",
+    title: "Introducing Intentset, in 23 slides",
     summary:
-      "How an agent takes a piece of work from an item to a merged change, and why every change still traces back to a decision a person made.",
+      "Why we built Intentset, who the deck is for, and how to read it: the product's promises written down and kept true while agents change the code.",
     published: "2026-10-28",
   },
   {
