@@ -1,10 +1,11 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { segments } from "./markset.ts";
 import { doorProducts } from "./products.ts";
-import { site } from "./site.tsx";
+import { site, socialAccounts } from "./site.tsx";
 
 const text = (file: string, slots: string[] = []) =>
   segments(file, slots)
@@ -261,5 +262,22 @@ describe("a production build", () => {
     for (const file of walk(out).filter((f) => f.endsWith(".js"))) {
       expect(readFileSync(file, "utf8"), file).not.toContain("stubbed outage");
     }
+  });
+});
+
+// The company's accounts (MKT-2): every page's footer links each by its plain name, and links nothing else outside.
+describe("the footer's social links", () => {
+  const footer = renderToStaticMarkup(site.config.footer.maker);
+
+  it("names the four accounts, in order, each linked to its profile", () => {
+    expect(socialAccounts.map((a) => a.label)).toEqual(["LinkedIn", "X", "Bluesky", "Threads"]);
+    expect(footer).toContain(
+      'Follow us on <span><a href="https://www.linkedin.com/company/coral-reef-ventures/" rel="me">LinkedIn</a></span><span>, <a href="https://x.com/coralreefvntrs" rel="me">X</a></span><span>, <a href="https://bsky.app/profile/coralreefventures.com" rel="me">Bluesky</a></span><span> and <a href="https://www.threads.com/@coralreefventures" rel="me">Threads</a></span>',
+    );
+  });
+
+  it("links out only to the contact address and those accounts", () => {
+    const outside = [...footer.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    expect(outside).toEqual(["mailto:hello@coralreefventures.com", ...socialAccounts.map((a) => a.href)]);
   });
 });

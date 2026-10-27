@@ -6,6 +6,33 @@ import { CARD_COLORS } from "./social-card.ts";
 export const siteUrl = "https://coralreefventures.com";
 export const contactEmail = "hello@coralreefventures.com";
 
+/**
+ * The company's own accounts (MKT-2, live since 2026-10-22), named in every page's footer as plain words, no logos.
+ * X's handle is @coralreefvntrs because @coralreef was taken; Bluesky's is the domain, verified by its TXT record;
+ * Threads' is the company Instagram's.
+ */
+export const socialAccounts = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/coral-reef-ventures/" },
+  { label: "X", href: "https://x.com/coralreefvntrs" },
+  { label: "Bluesky", href: "https://bsky.app/profile/coralreefventures.com" },
+  { label: "Threads", href: "https://www.threads.com/@coralreefventures" },
+] as const;
+
+/** "LinkedIn, X, Bluesky and Threads", each a link, rel="me" so a network that checks it can see the site claims it. */
+const Follow = () => (
+  <>
+    Follow us on{" "}
+    {socialAccounts.map((account, i) => (
+      <span key={account.href}>
+        {i === 0 ? "" : i === socialAccounts.length - 1 ? " and " : ", "}
+        <a href={account.href} rel="me">
+          {account.label}
+        </a>
+      </span>
+    ))}
+  </>
+);
+
 /** The mark and the name: the way home. A plain image, so the header ships no client code. */
 const Lockup = () => (
   <span className="door-lockup">
@@ -46,7 +73,7 @@ export const site = createSite({
     maker: (
       <>
         Open foundations and focused tools for teams that build software with agents. © 2026 Coral Reef Ventures · Write
-        to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+        to <a href={`mailto:${contactEmail}`}>{contactEmail}</a> · <Follow />
       </>
     ),
     // Eddy, in planning, is reached from here alone (2026-10-09): the door keeps its four, and every page carries the way
