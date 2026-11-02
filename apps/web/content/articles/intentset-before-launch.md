@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 26 November 2026
+Article · 25 November 2026
 
 # Intentset before launch
 

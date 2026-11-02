@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 19 November 2026
+Article · 18 November 2026
 
 # Intentset in a million lines
 

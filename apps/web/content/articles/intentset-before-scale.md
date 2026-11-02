@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 12 November 2026
+Article · 11 November 2026
 
 # Intentset before scale
 
