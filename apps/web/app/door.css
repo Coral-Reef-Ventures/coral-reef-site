@@ -435,7 +435,7 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 .door[data-page^="articles/"] {
   --crv-font-reading: ui-serif, Charter, "Bitstream Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
   --ms-font-heading: var(--ms-font-body);
-  --ms-measure: 40rem;
+  --ms-measure: 48rem;
 }
 .door[data-page^="articles/"] .ms-document { font-family: var(--crv-font-reading); font-size: 1.1875rem; line-height: 1.7; }
 .door[data-page^="articles/"] .ms-document > h1 {
@@ -469,7 +469,7 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 /* Code keeps the size it has on the rest of the site, not the larger reading size around it. */
 .door[data-page^="articles/"] pre { font-size: 0.875rem; }
 /* Pictures and tables may run a little wider than the prose beside them. */
-.door[data-page^="articles/"] .ms-document > :is(.ms-figure, table, .ms-grid, .ms-columns) { max-width: 48rem; }
+.door[data-page^="articles/"] .ms-document > :is(.ms-figure, table, .ms-grid, .ms-columns) { max-width: 56rem; }
 .door[data-page^="articles/"] .ms-document > .ms-metrics { max-width: var(--ms-measure); }
 
 /* A key number or two (`:::metrics`): a strip between two rules, each value large in the ink with its label above it
