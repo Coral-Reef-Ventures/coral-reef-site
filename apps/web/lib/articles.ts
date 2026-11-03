@@ -21,6 +21,27 @@ export interface Article {
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
+    slug: "intentset-before-launch",
+    title: "Intentset before launch",
+    summary:
+      "A new product for teachers, a month old and not yet released, wrote down its 41 behaviors and bound every promise to the test that proves it, in one pull request.",
+    published: "2026-11-25",
+  },
+  {
+    slug: "intentset-in-a-million-lines",
+    title: "Intentset in a million lines",
+    summary:
+      "A learning platform for schools is writing down what it promises, one area at a time. In twelve days the record found more than 500 gaps, and one modeled rule led to four authorization fixes.",
+    published: "2026-11-18",
+  },
+  {
+    slug: "intentset-before-scale",
+    title: "Intentset before scale",
+    summary:
+      "A school assessment app wrote down what it promises before agents took on most of its work. In the twelve days after, it merged 186 pull requests, and writing it down found security gaps code review had not.",
+    published: "2026-11-11",
+  },
+  {
     slug: "we-build-streamlane-in-streamlane",
     title: "We build Streamlane in Streamlane",
     summary:
