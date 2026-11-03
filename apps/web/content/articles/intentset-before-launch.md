@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 25 November 2026
+{{dateline}}
 
 # Intentset before launch
 
@@ -16,13 +16,29 @@ This is the third of three adoption stories from one education company. The [fir
 
 The product lets teachers search a curated set of printable classroom resources, such as worksheets and graphic organizers, by keyword, grade, subject and curriculum standard. They can preview a resource in the page, print or download it, and save it to a list of their own. A second screen lets staff curators approve, reject or park resources, edit their details and preview what a teacher will see. It runs inside the company's existing apps.
 
-It is a month old, about 18,000 lines with 838 tests, and it has not launched. Before launch is the cheapest moment to write down what a product promises. Nothing else depends on it yet, and every gap found is a gap no customer has met.
+It is a month old, about 18,000 lines with 838 tests, and it has not launched.
+
+{.pull}
+Before launch is the cheapest moment to write down what a product promises.
+
+Nothing else depends on it yet, and every gap found is a gap no customer has met.
 
 ## One setup, copied unchanged
 
 The team didn't design its adoption. It copied the setup the company's largest repository already runs: Intentset in strict mode with no baseline, the same pinned version, and the same three checks in CI (validation, strict validation and the drift review). The checks need no secrets and finish within a five-minute limit.
 
-Then it wrote the product down: 380 records in all. Four capabilities (search, resources, saved lists and curation) hold 41 behaviors and 64 rules, and 232 verifications name an existing test, file and exact title. Seven slice records say what each part of the code owns, which other parts it may use, and what it exposes.
+Then it wrote the product down:
+
+:::metrics
+| Measure | Value |
+|---|---|
+| Records | 380 |
+| Behaviors | 41 |
+| Rules | 64 |
+| Verifications | 232 |
+:::
+
+Four capabilities (search, resources, saved lists and curation) hold the behaviors and rules, and every verification names an existing test, file and exact title. Seven slice records say what each part of the code owns, which other parts it may use, and what it exposes.
 
 The drift review stayed off until the behavior records existed, and went on in the next commit. From then on, code and records change together.
 

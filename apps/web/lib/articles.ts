@@ -16,6 +16,8 @@ export interface Article {
   summary: string;
   /** The day it was published, as YYYY-MM-DD. */
   published: string;
+  /** The series it is a part of, by name; its parts are read in the order they were published. */
+  series?: string;
 }
 
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
@@ -26,6 +28,7 @@ export const ARTICLES: readonly Article[] = [
     summary:
       "A new product for teachers, a month old and not yet released, wrote down its 41 behaviors and bound every promise to the test that proves it, in one pull request.",
     published: "2026-11-25",
+    series: "Adoption stories",
   },
   {
     slug: "intentset-in-a-million-lines",
@@ -33,6 +36,7 @@ export const ARTICLES: readonly Article[] = [
     summary:
       "A learning platform for schools is writing down what it promises, one area at a time. In twelve days the record found more than 500 gaps, and one modeled rule led to four authorization fixes.",
     published: "2026-11-18",
+    series: "Adoption stories",
   },
   {
     slug: "intentset-before-scale",
@@ -40,6 +44,7 @@ export const ARTICLES: readonly Article[] = [
     summary:
       "A school assessment app wrote down what it promises before agents took on most of its work. In the twelve days after, it merged 186 pull requests, and writing it down found security gaps code review had not.",
     published: "2026-11-11",
+    series: "Adoption stories",
   },
   {
     slug: "we-build-streamlane-in-streamlane",
@@ -75,6 +80,61 @@ export const articlePath = (a: Article): string => `/articles/${a.slug}/`;
 export const articleFile = (a: Article): string => `articles/${a.slug}.md`;
 export const articleCard = (a: Article): string => `/cards/${a.slug}.png`;
 export const feedPath = "/articles/feed.xml";
+
+/** The article a content file is the body of, if it is one. */
+export const articleOf = (file: string): Article | undefined => ARTICLES.find((a) => articleFile(a) === file);
+
+/**
+ * Minutes to read a Markset source, at 230 words a minute, counting the prose a reader reads: not the frontmatter,
+ * a fence's own line, an attribute line or a picture's address and description, which a reader looks at rather than reads.
+ */
+export function readingMinutes(source: string): number {
+  const prose = source
+    .replace(/^---\n[\s\S]*?\n---\n/, "")
+    .split("\n")
+    .filter((line) => !/^\s*(:::|::col|\{[.#][^}]*\}\s*$)/.test(line))
+    .join("\n")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\]\([^)]*\)/g, "]");
+  const words = prose.match(/[\p{L}\p{N}][\p{L}\p{N}'’,.%-]*/gu)?.length ?? 0;
+  return Math.max(1, Math.ceil(words / 230));
+}
+
+/** The line above an article's title: what it is, the day it was published and how long it takes to read. */
+export const dateline = (a: Article, source: string): string =>
+  `Article · ${longDate(a.published)} · ${readingMinutes(source)} min read`;
+
+/**
+ * What follows an article, as Markset source: the other parts of its series, in order, with this one marked, or else
+ * the article to read next (the one published after it, or before it for the newest); then the index and the feed.
+ */
+export function articleEnd(a: Article, articles: readonly Article[] = ARTICLES): string {
+  const oldestFirst = [...articles].reverse();
+  const parts = a.series === undefined ? [] : oldestFirst.filter((p) => p.series === a.series);
+  const blocks: string[] = [];
+  if (parts.length > 1) {
+    const at = parts.indexOf(a);
+    blocks.push(
+      "{.eyebrow}",
+      `${a.series} · Part ${at + 1} of ${parts.length}`,
+      "",
+      "{.series}",
+      parts
+        .map(
+          (p, i) =>
+            `${i + 1}. ${p === a ? `[${p.title}]{.current} [(this article)]{.muted}` : `[${p.title}](${articlePath(p)})`}`,
+        )
+        .join("\n"),
+    );
+  } else {
+    const at = oldestFirst.indexOf(a);
+    const next = oldestFirst[at + 1] ?? oldestFirst[at - 1];
+    if (next !== undefined)
+      blocks.push("{.eyebrow}", "Read next", "", `### [${next.title}](${articlePath(next)})`, "", next.summary);
+  }
+  blocks.push("", "{.more}", `[All articles](/articles/) · [RSS feed](${feedPath})`);
+  return blocks.join("\n");
+}
 
 /** A publication date as the pages show it: "28 October 2026". */
 export function longDate(iso: string): string {

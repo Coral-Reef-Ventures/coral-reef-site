@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { parseDocument } from "@markset-lang/parser";
 import { addHeadingIds, renderHtml } from "@markset-lang/render-html";
 
-import { articleList } from "./articles.ts";
+import { articleList, articleOf, dateline } from "./articles.ts";
 import { doorProductGrid } from "./products.ts";
 
 /** A rendered stretch of the document, or the name of a place a component goes. */
@@ -22,14 +22,27 @@ const render = (source: string, file: string): string => {
   return renderHtml(addHeadingIds(ast));
 };
 
+/** Markset source the build writes itself, such as the end of an article (`articleEnd`), as HTML. */
+export const renderSource = (source: string, name: string): string =>
+  render(`---\nmarkset: 0\n---\n\n${source}\n`, name);
+
+/** An article's `{{dateline}}`, from the one article table and the file's own length; anything else has none. */
+const withDateline = (source: string, file: string): string => {
+  if (!source.includes("{{dateline}}")) return source;
+  const article = articleOf(file);
+  if (article === undefined) throw new Error(`${file}: {{dateline}} outside an article`);
+  return source.replaceAll("{{dateline}}", dateline(article, source));
+};
+
 /**
  * A content file as Markset, cut at each `{{slot}}` line into the HTML around it and the slot's name, so a page puts
  * its React components exactly where the document says. `{{products}}` is not a slot: it is the product cards, which
  * are Markset source generated from the one product table, and `{{articles}}` is the articles index's list, from the one
- * article table. Anything else left over is a mistake and fails the build.
+ * article table, and `{{dateline}}` is an article's line above its title. Anything else left over is a mistake and fails
+ * the build.
  */
 export const segments = (file: string, slots: readonly string[] = []): Segment[] => {
-  const source = readFileSync(join(contentDir, file), "utf8")
+  const source = withDateline(readFileSync(join(contentDir, file), "utf8"), file)
     .replaceAll("{{products}}", doorProductGrid())
     .replaceAll("{{articles}}", articleList());
   const out: Segment[] = [];

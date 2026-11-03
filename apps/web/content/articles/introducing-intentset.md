@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 28 October 2026
+{{dateline}}
 
 # Introducing Intentset, in 23 slides
 

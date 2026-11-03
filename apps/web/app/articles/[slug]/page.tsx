@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ARTICLES, type Article, articleCard, articleFile, articlePath, feedPath } from "../../../lib/articles.ts";
+import {
+  ARTICLES,
+  type Article,
+  articleCard,
+  articleEnd,
+  articleFile,
+  articlePath,
+  feedPath,
+} from "../../../lib/articles.ts";
 import { CARD } from "../../../lib/social-card.ts";
 import { DoorDocument } from "../../../lib/page.tsx";
 
@@ -50,8 +58,8 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
   };
 }
 
-/** One article (CRV-016), its body in Markset at content/articles/<slug>.md. */
+/** One article (CRV-016), its body in Markset at content/articles/<slug>.md, then its series or what to read next. */
 export default async function Page(props: Params) {
   const article = await find(props);
-  return <DoorDocument file={articleFile(article)} />;
+  return <DoorDocument file={articleFile(article)} after={articleEnd(article)} />;
 }

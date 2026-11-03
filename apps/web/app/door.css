@@ -426,3 +426,103 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
  * edge on the light ground, and its caption muted beneath it. */
 .ms-figure.shot > img { display: block; width: 100%; border: 1px solid var(--ms-border); border-radius: var(--ms-radius); }
 .ms-figure.shot > figcaption { margin-top: 0.6rem; color: var(--ms-fg-muted); font-size: 0.95rem; }
+
+/* ---- articles ------------------------------------------------------------------------ */
+/* An article reads as one rather than as a page of the door (CRV-016): a reading column in the system's serif, with
+ * the headings, the dateline and everything that is not prose kept in the site's sans; a header of its own, its title
+ * smaller than a hero's and with no network figure or product dots; and an end that holds its series or the article to
+ * read next. The index (data-page="articles") is a page of the door and keeps its look. Still system fonts only. */
+.door[data-page^="articles/"] {
+  --crv-font-reading: ui-serif, Charter, "Bitstream Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+  --ms-font-heading: var(--ms-font-body);
+  --ms-measure: 40rem;
+}
+.door[data-page^="articles/"] .ms-document { font-family: var(--crv-font-reading); font-size: 1.1875rem; line-height: 1.7; }
+.door[data-page^="articles/"] .ms-document > h1 {
+  max-width: 18em;
+  font-size: clamp(2.4rem, 5vw, 3.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.door[data-page^="articles/"] .ms-document > h1 + .lead {
+  max-width: var(--ms-measure);
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--ms-border);
+  font-family: var(--ms-font-body);
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+.door[data-page^="articles/"] .ms-document > h1 + .lead::before,
+.door[data-page^="articles/"] .ms-document > h1 + .lead::after { content: none; }
+.door[data-page^="articles/"] .ms-document > h2 {
+  margin-top: 3.25rem;
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.door[data-page^="articles/"] .ms-document h3 { font-size: 1.35rem; letter-spacing: -0.015em; }
+/* What is not prose stays in the sans, at the body's size: tables, cards, callouts, steps, captions, buttons. */
+.door[data-page^="articles/"] :is(table, .ms-card, .ms-callout, .ms-steps, .ms-metrics, figcaption, .actions, .contact) {
+  font-family: var(--ms-font-body);
+  font-size: 1rem;
+}
+/* Code keeps the size it has on the rest of the site, not the larger reading size around it. */
+.door[data-page^="articles/"] pre { font-size: 0.875rem; }
+/* Pictures and tables may run a little wider than the prose beside them. */
+.door[data-page^="articles/"] .ms-document > :is(.ms-figure, table, .ms-grid, .ms-columns) { max-width: 48rem; }
+.door[data-page^="articles/"] .ms-document > .ms-metrics { max-width: var(--ms-measure); }
+
+/* A key number or two (`:::metrics`): a strip between two rules, each value large in the ink with its label above it
+ * in the eyebrow's mono, so the numbers read at a glance and the prose around them keeps the detail. */
+.door[data-page^="articles/"] .ms-document > .ms-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 1.25rem 2rem;
+  margin-block: 2.25rem;
+  padding-block: 1.5rem;
+  border-block: 1px solid var(--ms-border);
+}
+/* A label that wraps takes the extra lines above its value, so the values in a row stay on one baseline. */
+.door[data-page^="articles/"] .ms-metric { display: flex; flex-direction: column; padding: 0; border: 0; border-radius: 0; background: none; }
+.door[data-page^="articles/"] .ms-metric-label { flex: 1; }
+.door[data-page^="articles/"] .ms-metric-label {
+  font-family: var(--ms-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+.door[data-page^="articles/"] .ms-metric-value {
+  margin-top: 0.5rem;
+  font-size: clamp(2rem, 3.6vw, 2.6rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+/* A statement the article turns on (`{.pull}` on a paragraph of its own, said once, not repeated): larger, in the
+ * sans, set off by the mark's coral rule, as the door's origin story is. */
+.door[data-page^="articles/"] .ms-document > .pull {
+  max-width: 34rem;
+  margin-block: 2.25rem;
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--crv-focus);
+  font-family: var(--ms-font-body);
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  font-weight: 560;
+  text-wrap: balance;
+}
+
+/* The end of an article (`articleEnd`): its series with this part marked, or the article to read next, then the
+ * index and the feed, under a rule the width of the prose. */
+.door-after { margin-top: 4.5rem; }
+.door-after::before { content: ""; display: block; max-width: var(--ms-measure); margin-bottom: 2rem; border-top: 1px solid var(--ms-border); }
+.door-after .series { padding-left: 1.6rem; font-family: var(--ms-font-body); font-size: 1.05rem; }
+.door-after .series > li { padding-block: 0.3rem; }
+.door-after .series > li::marker { font-family: var(--ms-font-mono); font-size: 0.85em; color: var(--ms-fg-muted); }
+.door-after .current { font-weight: 650; }
+.door-after h3 { margin-top: 0.75rem; font-size: 1.5rem; }
+.door-after .more { margin-top: 2rem; font-family: var(--ms-font-body); font-size: 0.95rem; color: var(--ms-fg-muted); }
+@media (max-width: 36rem) {
+  .door[data-page^="articles/"] .ms-document { font-size: 1.125rem; }
+  .door[data-page^="articles/"] .ms-document > h1 + .lead { font-size: 1.2rem; }
+}
