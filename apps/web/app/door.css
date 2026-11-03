@@ -514,14 +514,16 @@ body[data-scheme="dark"] :is(.streamlane, .driftline) { --crv-mark: var(--crv-ma
 
 /* The end of an article (`articleEnd`): its series with this part marked, or the article to read next, then the
  * index and the feed, under a rule the width of the prose. */
-.door-after { margin-top: 4.5rem; }
+/* All of it is in the site's sans, at the body's size, so nothing here reads as more of the article. */
+.door[data-page^="articles/"] .ms-document.door-after { margin-top: 4.5rem; font-family: var(--ms-font-body); font-size: 1rem; }
+.door-after h3 + p { color: var(--ms-fg-muted); }
 .door-after::before { content: ""; display: block; max-width: var(--ms-measure); margin-bottom: 2rem; border-top: 1px solid var(--ms-border); }
-.door-after .series { padding-left: 1.6rem; font-family: var(--ms-font-body); font-size: 1.05rem; }
+.door-after .series { padding-left: 1.6rem; font-size: 1.05rem; }
 .door-after .series > li { padding-block: 0.3rem; }
 .door-after .series > li::marker { font-family: var(--ms-font-mono); font-size: 0.85em; color: var(--ms-fg-muted); }
 .door-after .current { font-weight: 650; }
 .door-after h3 { margin-top: 0.75rem; font-size: 1.5rem; }
-.door-after .more { margin-top: 2rem; font-family: var(--ms-font-body); font-size: 0.95rem; color: var(--ms-fg-muted); }
+.door-after .more { margin-top: 2rem; font-size: 0.95rem; color: var(--ms-fg-muted); }
 @media (max-width: 36rem) {
   .door[data-page^="articles/"] .ms-document { font-size: 1.125rem; }
   .door[data-page^="articles/"] .ms-document > h1 + .lead { font-size: 1.2rem; }
