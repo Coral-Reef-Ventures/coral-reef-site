@@ -51,7 +51,12 @@ the facts the copy must keep.
   accent or domain until each is approved. `/articles/` (CRV-016, accepted 2026-10-24) lists the company's articles, each a Markset file in
   `apps/web/content/articles/` named in the one table `apps/web/lib/articles.ts`, which the index, each article's page, the
   RSS feed at `/articles/feed.xml`, the sitemap and the cards read; it is first in the header's nav. Articles are
-  in the company's voice, unsigned, and link no locked site. `/privacy/`, `/signed-in/`,
+  in the company's voice, unsigned, and link no locked site. An article looks like one, not like a page of the door
+  (2026-11-03, Gary's request; `door.css`, "articles"): a serif reading column of 48rem (40rem was too narrow, Gary, 2026-11-03), a header without the hero's network
+  figure and dots, its `{{dateline}}` (date and reading time) written from the table, and an end the page builds
+  (`articleEnd`: its series, such as the three Adoption stories, or the article to read next). Markset highlights the
+  key numbers and statements sparingly: at most one `:::metrics` strip and one `{.pull}` statement in an article,
+  the statement being the article's own sentence on a line of its own, never a repeat of one. `/privacy/`, `/signed-in/`,
   `/signout/`, `/signout/done/` and the admin views under `/admin/` are the rest. Streamlane's roadmap is on Streamlane's
   own site (streamlane.app/roadmap/), not here: a `/streamlane/roadmap/` page was added and removed on 2026-10-17
   (CRV-015, withdrawn at the product owner's decision).

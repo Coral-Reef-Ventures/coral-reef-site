@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 29 October 2026
+{{dateline}}
 
 # Code outruns review
 
@@ -26,7 +26,10 @@ A large diff can hide a consequential change in behavior. A short summary can hi
 
 ## The failure is drift, not bad code
 
-What goes wrong is rarely a bad line of code. It is decisions nobody recorded. One area handles a case one way and the next area handles it another, because each agent session, like each person before it, resolved the ambiguity in front of it. Each decision was reasonable. Together they make a product nobody decided on.
+What goes wrong is rarely a bad line of code. It is decisions nobody recorded. One area handles a case one way and the next area handles it another, because each agent session, like each person before it, resolved the ambiguity in front of it.
+
+{.pull}
+Each decision was reasonable. Together they make a product nobody decided on.
 
 Customers feel it first: the part of the product they learned behaves differently from the part they open next. By the time the team asks what the product is meant to do, the answer has to be reconstructed from code, tickets and memory.
 

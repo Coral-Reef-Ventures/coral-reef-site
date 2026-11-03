@@ -3,9 +3,21 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import sitemap from "../app/sitemap.ts";
-import { ARTICLES, articleCard, articleFile, articleList, articlePath, feedPath, longDate } from "./articles.ts";
+import {
+  ARTICLES,
+  articleCard,
+  articleEnd,
+  articleFile,
+  articleList,
+  articleOf,
+  articlePath,
+  dateline,
+  feedPath,
+  longDate,
+  readingMinutes,
+} from "./articles.ts";
 import { articlesFeed, rfc822 } from "./feed.ts";
-import { segments } from "./markset.ts";
+import { renderSource, segments } from "./markset.ts";
 import { CARD } from "./social-card.ts";
 import { site } from "./site.tsx";
 
@@ -36,7 +48,52 @@ describe("the articles", () => {
     const body = html(articleFile(a));
     expect(body.match(/<h1\b/g)).toHaveLength(1);
     expect(body).toContain(`>${a.title}</h1>`);
-    expect(body).toContain(`Article · ${longDate(a.published)}`);
+    expect(body).toContain(`Article · ${longDate(a.published)} · `);
+    expect(body).toMatch(/ · \d+ min read</);
+  });
+
+  it("each give their reading time from their prose, at 230 words a minute", () => {
+    expect(readingMinutes("---\nmarkset: 0\n---\n\nOne two three.")).toBe(1);
+    const words = Array.from({ length: 460 }, () => "word").join(" ");
+    expect(readingMinutes(`{.lead}\n${words}\n\n:::figure[A caption]{.shot}\n![a long description](/x.png)\n:::`)).toBe(
+      2,
+    );
+    expect(readingMinutes(`${words} one more`)).toBe(3);
+    const [first] = ARTICLES;
+    if (first === undefined) throw new Error("no articles");
+    expect(dateline(first, words)).toBe(`Article · ${longDate(first.published)} · 2 min read`);
+  });
+
+  it("give a dateline only to an article's own file", () => {
+    for (const a of ARTICLES) expect(articleOf(articleFile(a))).toBe(a);
+    expect(articleOf("articles.md")).toBeUndefined();
+    expect(articleOf("door.md")).toBeUndefined();
+  });
+
+  it.each(ARTICLES)("$slug ends with its series, or the article to read next, then the index and the feed", (a) => {
+    const end = renderSource(articleEnd(a), "end");
+    expect(end).toContain('href="/articles/"');
+    expect(end).toContain(`href="${feedPath}"`);
+    expect(end).not.toContain(`href="${articlePath(a)}"`);
+    if (a.series === undefined) expect(end).toContain("Read next");
+    else {
+      const parts = [...ARTICLES].reverse().filter((p) => p.series === a.series);
+      expect(end).toContain(`${a.series} · Part ${parts.indexOf(a) + 1} of ${parts.length}`);
+      for (const p of parts) if (p !== a) expect(end).toContain(`href="${articlePath(p)}"`);
+      expect(end).toContain(`<span class="ms-span current">${a.title}</span>`);
+    }
+  });
+
+  it("read in order: each article not in a series points at the next one published, the newest at the one before", () => {
+    const list = [
+      { slug: "c", title: "C", summary: "", published: "2026-03-01" },
+      { slug: "b", title: "B", summary: "", published: "2026-02-01" },
+      { slug: "a", title: "A", summary: "", published: "2026-01-01" },
+    ];
+    const [c, b, a] = list as [(typeof list)[0], (typeof list)[0], (typeof list)[0]];
+    expect(articleEnd(a, list)).toContain("](/articles/b/)");
+    expect(articleEnd(b, list)).toContain("](/articles/c/)");
+    expect(articleEnd(c, list)).toContain("](/articles/b/)");
   });
 
   it.each(ARTICLES)("$slug keeps the site's claims", (a) => {

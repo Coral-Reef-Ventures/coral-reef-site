@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 5 November 2026
+{{dateline}}
 
 # We build Streamlane in Streamlane
 
@@ -54,7 +54,10 @@ The session cannot move past Spec while the change's records wait for approval. 
 
 The agent never approves its own work, and the tooling refuses an approval from an agent's sign-in outright. Once the records are approved and every gate is green, the agent merges. Production is different: a person starts every deploy to it.
 
-This is the part that matters most to us. The point isn't speed, though it is fast. The point is that every change still traces back to a decision a person made, written down where the next person can find it.
+This is the part that matters most to us. The point isn't speed, though it is fast.
+
+{.pull}
+The point is that every change still traces back to a decision a person made, written down where the next person can find it.
 
 ## Why we work this way
 

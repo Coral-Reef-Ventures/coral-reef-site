@@ -3,7 +3,7 @@ markset: 0
 ---
 
 {.eyebrow}
-Article · 11 November 2026
+{{dateline}}
 
 # Intentset before scale
 
@@ -16,7 +16,10 @@ This is the first of three adoption stories from one education company, which ha
 
 The app is the web front end of an assessment platform used by schools. Teachers and staff write test questions and reading passages in it, assign learning pathways, read reports and manage their accounts. It is twenty months old, about 265,000 lines of code, and it sits beside a much older server application that keeps half of most of the promises the app makes.
 
-In October it was about to grow. Assessment screens were moving in from the older application, and a whole suite of internal staff tools was to be rebuilt inside it, with agents doing most of the writing. The team's decision record put the problem plainly: nothing tied what the app promises teachers and staff to the code that delivers it or the test that proves it. Reviewers read code changes, not product behavior. At the volume that was coming, the diff could not be where the product was decided.
+In October it was about to grow. Assessment screens were moving in from the older application, and a whole suite of internal staff tools was to be rebuilt inside it, with agents doing most of the writing. The team's decision record put the problem plainly: nothing tied what the app promises teachers and staff to the code that delivers it or the test that proves it. Reviewers read code changes, not product behavior.
+
+{.pull}
+At the volume that was coming, the diff could not be where the product was decided.
 
 So the record came first.
 
@@ -57,7 +60,15 @@ And some were about the tests. Several functions were never called. One test pas
 
 ## Then the scale
 
-Before adoption the app merged about four pull requests a week. In the twelve days after the gates went on, it merged 186, and 122 in a single week. The staff-tools rebuild started the day adoption closed.
+The staff-tools rebuild started the day adoption closed, and the pace of merged pull requests changed at once.
+
+:::metrics
+| Pull requests | Merged |
+|---|---|
+| A week, before adoption | about 4 |
+| The twelve days after | 186 |
+| The busiest week | 122 |
+:::
 
 The app now holds 2,883 records, 1,822 of them verifications bound to tests. Every change to a slice's code either changes what its records say or states that it did not change behavior, so the record stays true at that pace without anyone reading every diff.
 
