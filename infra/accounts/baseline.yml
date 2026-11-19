@@ -3,7 +3,9 @@ Description: >-
   Coral Reef's account baseline (Streamlane ADR 0087, docs/plans/cells-and-accounts.md in the streamlane repository):
   GitHub's OIDC provider and one deploy role per repository, each trusted only by that repository's GitHub environment
   of the same name as this account's. Each names both forms of GitHub's subject: the repositories use the immutable
-  one (owner and repository ids), and the plain one is kept in case that setting is turned off. The sandbox account gets none: agents deploy there with their own sign-in.
+  one (owner and repository ids), and the plain one is kept in case that setting is turned off. The sandbox account gets none:
+  agents deploy there with their own sign-in, and so does Streamlane's nightly browser run, through the one role this
+  stack gives that account (github-sandbox-ci-streamlane).
 
 Parameters:
   Environment:
@@ -12,6 +14,7 @@ Parameters:
 
 Conditions:
   Deploys: !Not [!Equals [!Ref Environment, sandbox]]
+  Sandbox: !Equals [!Ref Environment, sandbox]
 
 Resources:
   GitHubOidc:
@@ -267,6 +270,32 @@ Resources:
                   - cloudformation:DescribeStacks
                   - cloudformation:ListStacks
                 Resource: "*"
+
+  # Streamlane's nightly browser run (Streamlane ADR 0120, SL-568): deploys the sandbox slot crv-ci and runs the e2e
+  # suite against it, as an agent's sign-in does, so it holds what that sign-in holds. Trusted only by streamlane's
+  # GitHub environment sandbox-ci, which is deployable from main only. The sandbox account's OIDC provider was made by
+  # hand on 2026-10-15, outside this stack (GitHubOidc is not created there), so the role names it by its ARN.
+  StreamlaneSandboxCi:
+    Type: AWS::IAM::Role
+    Condition: Sandbox
+    Properties:
+      RoleName: github-sandbox-ci-streamlane
+      # The deploy and the suite run for hours in one job; the workflow asks for five.
+      MaxSessionDuration: 21600
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/AdministratorAccess]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub:
+                  - repo:Coral-Reef-Ventures/streamlane:environment:sandbox-ci
+                  - repo:Coral-Reef-Ventures@337009897/streamlane@1391669013:environment:sandbox-ci
 
   # Every build's own role. Amplify Hosting assumes it to build the app and deploy its Amplify Gen 2 backend.
   AmplifyBackendDeploy:

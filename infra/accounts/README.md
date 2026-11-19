@@ -19,6 +19,10 @@ The profiles share one Identity Center sign-in: `aws sso login --sso-session crv
   deploy may start and follow an Amplify Hosting build and deploy CDK stacks through the bootstrap's roles, and nothing
   else. Only the product owner starts a prod deploy (each repository's CLAUDE.md); no agent does. The sandbox account
   has none.
+- `github-sandbox-ci-streamlane`, in the sandbox account only, for Streamlane's nightly browser run (Streamlane ADR
+  0120, SL-568): it deploys the sandbox slot `crv-ci` and runs the e2e suite there, with administrator access as an
+  agent's sign-in has. Only streamlane's GitHub environment `sandbox-ci` may assume it. It names the account's OIDC
+  provider by ARN: that provider was made by hand, outside this stack.
 - `github-data-streamlane`, for Streamlane's data scripts (the demo seed), which only streamlane's `dev` and `staging`
   GitHub environments may assume: tables, the areas' functions, user lookups and the snapshot bucket.
 - `amplify-backend-deploy`, the service role Amplify Hosting builds with, which a deploy may hand to an app.
@@ -52,3 +56,6 @@ streamlane also has `site-dev`, `site-staging` and `site-prod` (2026-10-22, Stre
 and holding the same `github-deploy-streamlane` role, which trusts both names in each account. Its public site deploys
 in them once the repository variable `SITE_ENVIRONMENT_PREFIX` is `site-`, so Streamlane never reads a site deploy as
 the product's.
+
+streamlane's `sandbox-ci` (Streamlane SL-568) is deployable from `main` only and holds no variable: the workflow reads
+the role from the repository variable `BROWSER_EVIDENCE_AWS_ROLE_ARN`.
