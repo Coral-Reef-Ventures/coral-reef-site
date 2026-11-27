@@ -23,6 +23,13 @@ export interface Article {
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
+    slug: "a-test-nobody-ran",
+    title: "A test nobody ran",
+    summary:
+      "A rule with a linked test is a claim that it is checked, not proof. Three adoptions found checks nothing ran, tests that could not fail and rules that never fired, and what makes a check count.",
+    published: "2026-12-02",
+  },
+  {
     slug: "intentset-before-launch",
     title: "Intentset before launch",
     summary:

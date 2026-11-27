@@ -17,6 +17,7 @@ const pages = [
   "/articles/intentset-before-scale/",
   "/articles/intentset-in-a-million-lines/",
   "/articles/intentset-before-launch/",
+  "/articles/a-test-nobody-ran/",
   "/eddy/",
   "/get-involved/",
   "/privacy/",
