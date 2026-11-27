@@ -23,6 +23,13 @@ export interface Article {
 /** Newest first, which is the order the index and the feed show; on the same day, the order to read them in. */
 export const ARTICLES: readonly Article[] = [
   {
+    slug: "tickets-measure-the-wrong-constraint",
+    title: "Tickets measure the wrong constraint",
+    summary:
+      "A ticket tracker counts how much work gets built. When agents do the building, a team runs short of other things: deciding what to build, trusting what was built, and people's attention.",
+    published: "2026-12-16",
+  },
+  {
     slug: "a-test-nobody-ran",
     title: "A test nobody ran",
     summary:
